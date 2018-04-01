@@ -1,6 +1,11 @@
 # My Ignores
 test.py
 sessions/
+old*
+*.bat
+*.ui
+.idea/
+
 
 
 # Python Ignores

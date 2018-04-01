@@ -65,7 +65,10 @@ def retrieveData(KEY, CONTENT=None):
     data = plistlib.readPlist(dataFile)
 
     keyContent = data[KEY]
-    return keyContent[CONTENT]
+    if CONTENT is None:
+        return data[KEY]
+    else:
+        return keyContent[CONTENT]
 
 def deleteData(KEY):
     dataFile = getDataFile()
@@ -92,3 +95,13 @@ def modifyData(KEY, CONTENT=None, NEWKEY=None, NEWCONTENT=None):
         keyData['LastModified'] = d['today_full']
 
     plistlib.writePlist(data, dataFile)
+
+def iterateKeys():
+    dataFile = getDataFile()
+    data = plistlib.readPlist(dataFile)
+
+    keys = []
+    for key in data:
+        keys.append(key)
+
+    return keys

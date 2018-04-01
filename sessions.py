@@ -143,12 +143,14 @@ def editSession():
 
     print("%s's %s changed to '%s'" % (a['name'], content, newCont))
 
-def iterateSession():
+def iterateSessions():
     # Import Dictionaries
-    from main import paths as p, argData as a, date as d
+    from main import paths as p, argData as a
 
-    if 'date' in a != "0":
-        print("date passed")
-        print(a['date'])
-    else:
-        print("not passed")
+    keys = plist.iterateKeys()
+    keys.remove('Info')
+    return keys
+
+
+
+
