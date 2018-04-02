@@ -13,6 +13,8 @@ import subprocess
 import psutil
 # Files
 import plist
+import signal
+
 
 # Create Session
 def createSession():
@@ -49,19 +51,30 @@ def createSession():
 
 
     # Find and copy RAW files in path given.
-    oImages = []
+    cr2 = []
     for file in imageDir:
         if file.endswith(".CR2"):
             copyfile("%s/%s" % (a['path'], file), "%s/RAW/%s" % (newSesDir, file))
-            oImages.append(file)
+            cr2.append(file)
 
     # Convert RAW to DNG
-    os.system("open -a %s --args -p2 %s/%s/RAW/*.CR2" % (p['dng'], p['cwd'], newSesDir))
+    #os.system("open -a %s --args -p2 %s/%s/RAW/*.CR2" % (p['dng'], p['cwd'], newSesDir))
+    subprocess.Popen("open -a %s --args -p2 %s/%s/RAW/*.CR2" % (p['dng'], p['cwd'], newSesDir), shell=True)
         # Wait for DNG converter to finish
-    time.sleep(5) # Give the converter a few seconds to launch
-    while "Adobe DNG Converter" in (p.name() for p in psutil.process_iter()):
-        print("Converting files")
-        time.sleep(2)
+    dng = []
+    while True:
+        for file in os.listdir("%s/RAW/" % newSesDir):
+            if file.endswith(".dng"):
+                dng.append(file)
+        if len(dng) >= len(cr2):
+            time.sleep(1)
+            print("Finished converting")
+            break
+        else:
+            print("Converting...(%s/%s)" %(len(dng), len(cr2)))
+            dng = []
+            time.sleep(2)
+
     # Move DNG files up one directory
     os.system("mv %s/RAW/*.dng %s" % (newSesDir, newSesDir))
 
@@ -74,11 +87,22 @@ def createSession():
         print("-r argument passed, RAW files kept.")
 
     # Create PLIST entry
-    plist.addData(a['name'], fullnewSesDir, len(oImages), a['desc'], a['keepraw'])
+    plist.addSession(a['name'], fullnewSesDir, len(cr2), a['desc'], a['keepraw'])
     print("Info for session '%s' added to information file." % a['name'])
+    # File data PLIST entry
+    plist.createDataList(a['name'])
+    x = 1
+    for file in os.listdir("%s" % newSesDir):
+        filename = "%s_%s.dng" % (a['name'].replace(" ", ""), x)
+        if file.endswith(".dng"):
+            os.rename("%s/%s" %(newSesDir, file), "%s/%s" %(newSesDir, filename))
+            name = filename.strip(".dng")
+            plist.addfileData(a['name'], name)
+            x = x+1
 
     # Finished creating session
-    print("Session %s created with %s images" % (a['name'], len(oImages)))
+    print("Session %s created with %s images" % (a['name'], len(cr2)))
+
 
 
 # Delete Session

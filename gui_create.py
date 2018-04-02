@@ -26,6 +26,7 @@ class Ui_createWindow(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.pathText = QtWidgets.QLineEdit(self.gridLayoutWidget)
+        self.pathText.setReadOnly(True)
         self.pathText.setObjectName("pathText")
         self.gridLayout.addWidget(self.pathText, 0, 1, 1, 1)
         self.pushButton = QtWidgets.QPushButton(self.gridLayoutWidget)
@@ -105,22 +106,24 @@ class Ui_createWindow(object):
         self.label_4 = QtWidgets.QLabel(self.gridLayoutWidget_2)
         self.label_4.setObjectName("label_4")
         self.gridLayout_2.addWidget(self.label_4, 1, 0, 1, 1)
-        self.errorInfo = QtWidgets.QTextBrowser(self.frame)
-        self.errorInfo.setEnabled(True)
-        self.errorInfo.setGeometry(QtCore.QRect(390, 4, 251, 55))
-        self.errorInfo.setMinimumSize(QtCore.QSize(251, 55))
-        self.errorInfo.setMaximumSize(QtCore.QSize(251, 55))
-        self.errorInfo.setAutoFillBackground(False)
-        self.errorInfo.setStyleSheet("background-color:rgba(0,0,0,0);\n"
-"border: 1px solid red;\n"
+        self.box = QtWidgets.QTextBrowser(self.frame)
+        self.box.setEnabled(True)
+        self.box.setGeometry(QtCore.QRect(390, 4, 251, 55))
+        self.box.setMinimumSize(QtCore.QSize(251, 55))
+        self.box.setMaximumSize(QtCore.QSize(251, 55))
+        self.box.setAutoFillBackground(False)
+        self.box.setStyleSheet("background-color:rgba(0,0,0,0);\n"
 "\n"
-"body (\n"
-"font-size:14px;font-color:rgb(80, 80, 80);\n"
+"p span{\n"
+"margin:auto !important;\n"
 "text-align:center;\n"
-")")
-        self.errorInfo.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.errorInfo.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.errorInfo.setObjectName("errorInfo")
+"font-size:14px;\n"
+"color:red;\n"
+"}")
+        self.box.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.box.setAutoFormatting(QtWidgets.QTextEdit.AutoNone)
+        self.box.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.box.setObjectName("box")
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.frame)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(390, 3, 201, 60))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -135,6 +138,14 @@ class Ui_createWindow(object):
         self.loadingText.setStyleSheet("font-size:14pt; color:#505050;")
         self.loadingText.setObjectName("loadingText")
         self.horizontalLayout.addWidget(self.loadingText)
+        self.errorInfo = QtWidgets.QLabel(self.frame)
+        self.errorInfo.setGeometry(QtCore.QRect(390, 10, 241, 51))
+        self.errorInfo.setStyleSheet("font-size:14px;\n"
+"color:red;\n"
+"")
+        self.errorInfo.setText("")
+        self.errorInfo.setWordWrap(True)
+        self.errorInfo.setObjectName("errorInfo")
         self.gridLayoutWidget_3 = QtWidgets.QWidget(createWindow)
         self.gridLayoutWidget_3.setGeometry(QtCore.QRect(410, 500, 250, 70))
         self.gridLayoutWidget_3.setObjectName("gridLayoutWidget_3")
@@ -174,7 +185,7 @@ class Ui_createWindow(object):
         self.label_2.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:16pt; color:#505050;\">Images</span></p></body></html>"))
         self.label_3.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:14pt; color:#505050;\">Name:</span></p></body></html>"))
         self.label_4.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:14pt; color:#505050;\">Description:</span></p></body></html>"))
-        self.errorInfo.setHtml(_translate("createWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.box.setHtml(_translate("createWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"

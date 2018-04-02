@@ -18,21 +18,38 @@ pl = {
 
 }
 
-def getDataFile():
+def getSessionData():
     from main import paths as p
-    global dataFile
     dataFile = os.path.expanduser(p['data'])
     return dataFile
 
+def getFileData(KEY):
+    path = retrieveData(KEY, CONTENT="Path")
+    dataPath = path + "/info.plist"
+    dataFile = os.path.expanduser(dataPath)
+    return dataFile
+
+
 def createList():
-    dataFile = getDataFile()
+    dataFile = getSessionData()
     plistlib.writePlist(pl, dataFile)
 
+def createDataList(KEY):
+    dataFile = getFileData(KEY)
+    plistlib.writePlist(pl, dataFile)
 
-def addData(SESSIONNAME, PATH, PHOTOCOUNT, DESC, RAWSTAT):
+def modifyList(LIST, FILE):
+    oldList = plistlib.readPlist(FILE)
+    newList = {}
+    newList.update(oldList.items())
+    newList.update(LIST.items())
+    plistlib.writePlist(newList, FILE)
+
+
+def addSession(SESSIONNAME, PATH, PHOTOCOUNT, DESC, RAWSTAT):
     # Imports Dictionaries
     from main import date as d
-    dataFile = getDataFile()
+    dataFile = getSessionData()
 
     Session = {
         SESSIONNAME : {
@@ -45,23 +62,35 @@ def addData(SESSIONNAME, PATH, PHOTOCOUNT, DESC, RAWSTAT):
         },
     }
 
-    oldList = plistlib.readPlist(dataFile)
-    newList = {}
-    newList.update(oldList.items())
-    newList.update(Session.items())
-    plistlib.writePlist(newList, dataFile)
+    modifyList(Session, dataFile)
+
+def addfileData(KEY, FILENAME):
+    dataFile = getFileData(KEY)
+    path = retrieveData(KEY, CONTENT="Path")
+    PATH = path + "/%s.dng" % FILENAME
+
+    data = {
+        FILENAME : {
+            "Position" : "RAW",
+            "Path" : PATH,
+            "JPG_Path" : "",
+        },
+    }
+
+    modifyList(data, dataFile)
+
 
 def validateKey(KEY):
-    dataFile = getDataFile()
+    dataFile = getSessionData()
     data = plistlib.readPlist(dataFile)
 
     if KEY in data:
-        return(True)
+        return True
     else:
-        return(False)
+        return False
 
 def retrieveData(KEY, CONTENT=None):
-    dataFile = getDataFile()
+    dataFile = getSessionData()
     data = plistlib.readPlist(dataFile)
 
     keyContent = data[KEY]
@@ -71,7 +100,7 @@ def retrieveData(KEY, CONTENT=None):
         return keyContent[CONTENT]
 
 def deleteData(KEY):
-    dataFile = getDataFile()
+    dataFile = getSessionData()
     data = plistlib.readPlist(dataFile)
 
     del data[KEY]
@@ -80,10 +109,10 @@ def deleteData(KEY):
 def modifyData(KEY, CONTENT=None, NEWKEY=None, NEWCONTENT=None):
     # Import dicts
     from main import date as d
-    dataFile = getDataFile()
+    dataFile = getSessionData()
     data = plistlib.readPlist(dataFile)
 
-    if NEWKEY == None:
+    if NEWKEY is None:
         keyData = data[KEY]
         keyData[CONTENT] = NEWCONTENT
         keyData['LastModified'] = d['today_full']
@@ -97,7 +126,7 @@ def modifyData(KEY, CONTENT=None, NEWKEY=None, NEWCONTENT=None):
     plistlib.writePlist(data, dataFile)
 
 def iterateKeys():
-    dataFile = getDataFile()
+    dataFile = getSessionData()
     data = plistlib.readPlist(dataFile)
 
     keys = []

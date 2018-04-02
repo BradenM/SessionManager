@@ -5,9 +5,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from gui_main import Ui_MainFrame
 from gui_deleteWarn import Ui_DeletePopup
 from gui_create import Ui_createWindow
+from gui_manage import Ui_Manage
 # SM Files
 import sessions
 import plist
+import signal
 
 
 # Create Session thread:
@@ -29,6 +31,15 @@ class CreateSession(QtCore.QThread):
         main.create(self.path, self.name, self.desc, self.raw)
         return self.finished.emit()
 
+#
+# class ManageWindow(QtWidgets.QTabWidget):
+#     def __init__(self, KEY):
+#         super(ManageWindow, self).__init__()
+#         self.ui = Ui_Manage()
+#         self.ui.setupUi(self)
+#         self.key = KEY
+
+
 
 class DeletePopup(QtWidgets.QDialog):
     def __init__(self):
@@ -44,7 +55,7 @@ class createWindow(QtWidgets.QDialog):
 
         # Path
         self.ui.openPath.clicked.connect(self.updateList)
-        self.ui.pathText.textChanged.connect(self.updateImage)
+       # self.ui.pathText.textChanged.connect(self.updateImage)
 
         # Buttons
         self.ui.cancelButton.clicked.connect(self.reject)
@@ -64,10 +75,12 @@ class createWindow(QtWidgets.QDialog):
         global dialog
         dialog = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.ui.pathText.setText(dialog)
+        self.ui.imageList.clear()
+        self.updateImage()
 
     def updateImage(self):
+        self.ui.errorInfo.clear()
         if os.path.isdir(dialog):
-            self.ui.createButton.setDisabled(False)
             images = []
             for file in os.listdir(dialog):
                 if file.endswith(".CR2"):
@@ -80,6 +93,11 @@ class createWindow(QtWidgets.QDialog):
                 item.setIcon(QtGui.QIcon(icon))
                 item.setText(x)
                 self.ui.imageList.addItem(item)
+            if len(images) < 1:
+                self.ui.errorInfo.show()
+                self.ui.errorInfo.setText("This directory holds no RAW images")
+            else:
+                self.ui.createButton.setDisabled(False)
         else:
             self.ui.errorInfo.show()
             self.ui.errorInfo.setText("Invalid Path, please select another.")
@@ -90,11 +108,12 @@ class createWindow(QtWidgets.QDialog):
             self.ui.loadingGif.clear()
             self.ui.loadingGif.setText("")
             self.ui.loadingText.setText("Finished!")
-            QtCore.QTimer().singleShot(3500, lambda: self.close())
+            QtCore.QTimer().singleShot(2500, lambda: self.close())
         def working():
             gif.start()
             self.ui.loadingGif.show()
             self.ui.loadingText.show()
+            self.ui.createButton.setDisabled(True)
 
         self.ui.errorInfo.hide()
         path = self.ui.pathText.text()
@@ -152,6 +171,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Create Button
         g.createSesButton.clicked.connect(self.createSession)
 
+        # Manage
+        # g.manageButton.clicked.connect(self.manageSession)
+
         # List Sessions
     def updateList(self):
         model.clear()
@@ -168,6 +190,11 @@ class MainWindow(QtWidgets.QMainWindow):
         g.desc_Box.clear()
         g.sesDelete.hide()
         g.sesFilter.clear()
+
+    # def getInfo(self):
+    #     sesKeyObj = g.sessionList.selectedIndexes()[0]
+    #     sesKey = sesKeyObj.data()
+    #     return sesKey
 
     def updateInfo(self):
         sesKeyObj = g.sessionList.selectedIndexes()[0]
@@ -205,6 +232,16 @@ class MainWindow(QtWidgets.QMainWindow):
         cwindow = createWindow()
         cwindow.exec_()
         self.updateList()
+    #
+    # def manageSession(self):
+    #     sesKeyObj = g.sessionList.selectedIndexes()[0]
+    #     sesKey = sesKeyObj.data()
+    #     if plist.validateKey(sesKey):
+    #         window = ManageWindow(sesKey)
+    #         window.show()
+    #         self.close()
+    #     else:
+    #         pass
 
 
 
