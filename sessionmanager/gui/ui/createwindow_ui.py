@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'create.ui'
+# Form implementation generated from reading ui file 'createwindow_ui.ui'
 #
 # Created by: PyQt5 UI code generator 5.10.1
 #
@@ -61,8 +61,8 @@ class Ui_createWindow(object):
         self.label_2.setObjectName("label_2")
         self.verticalLayout_4.addWidget(self.label_2)
         self.imageList = QtWidgets.QListWidget(self.verticalLayoutWidget)
-        self.imageList.setMinimumSize(QtCore.QSize(637, 310))
-        self.imageList.setMaximumSize(QtCore.QSize(637, 310))
+        self.imageList.setMinimumSize(QtCore.QSize(640, 310))
+        self.imageList.setMaximumSize(QtCore.QSize(640, 310))
         self.imageList.setToolTip("")
         self.imageList.setToolTipDuration(5)
         self.imageList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -100,12 +100,12 @@ class Ui_createWindow(object):
         self.createDesc = QtWidgets.QLineEdit(self.gridLayoutWidget_2)
         self.createDesc.setObjectName("createDesc")
         self.gridLayout_2.addWidget(self.createDesc, 1, 1, 1, 1)
-        self.label_3 = QtWidgets.QLabel(self.gridLayoutWidget_2)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout_2.addWidget(self.label_3, 0, 0, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.gridLayoutWidget_2)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout_2.addWidget(self.label_4, 1, 0, 1, 1)
+        self.label_35 = QtWidgets.QLabel(self.gridLayoutWidget_2)
+        self.label_35.setObjectName("label_35")
+        self.gridLayout_2.addWidget(self.label_35, 0, 0, 1, 1)
+        self.label_dsad = QtWidgets.QLabel(self.gridLayoutWidget_2)
+        self.label_dsad.setObjectName("label_dsad")
+        self.gridLayout_2.addWidget(self.label_dsad, 1, 0, 1, 1)
         self.box = QtWidgets.QTextBrowser(self.frame)
         self.box.setEnabled(True)
         self.box.setGeometry(QtCore.QRect(390, 4, 251, 55))
@@ -180,11 +180,11 @@ class Ui_createWindow(object):
         createWindow.setWindowTitle(_translate("createWindow", "Create Session"))
         self.groupBox.setTitle(_translate("createWindow", "Images Location"))
         self.pushButton.setText(_translate("createWindow", "Auto Detect"))
-        self.label.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:12pt; color:#505050;\">Path: </span></p></body></html>"))
+        self.label.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:12pt; color:#505050;\">Path:</span></p></body></html>"))
         self.openPath.setText(_translate("createWindow", "..."))
         self.label_2.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:16pt; color:#505050;\">Images</span></p></body></html>"))
-        self.label_3.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:14pt; color:#505050;\">Name:</span></p></body></html>"))
-        self.label_4.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:14pt; color:#505050;\">Description:</span></p></body></html>"))
+        self.label_35.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:14pt; color:#505050;\">Name:</span></p></body></html>"))
+        self.label_dsad.setText(_translate("createWindow", "<html><head/><body><p><span style=\" font-size:14pt; color:#505050;\">Description:</span></p></body></html>"))
         self.box.setHtml(_translate("createWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

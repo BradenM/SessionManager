@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main.ui'
+# Form implementation generated from reading ui file 'mainwindow_ui.ui'
 #
 # Created by: PyQt5 UI code generator 5.10.1
 #
@@ -8,18 +8,18 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_MainFrame(object):
-    def setupUi(self, MainFrame):
-        MainFrame.setObjectName("MainFrame")
-        MainFrame.resize(700, 700)
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(700, 700)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(MainFrame.sizePolicy().hasHeightForWidth())
-        MainFrame.setSizePolicy(sizePolicy)
-        MainFrame.setMinimumSize(QtCore.QSize(700, 700))
-        MainFrame.setMaximumSize(QtCore.QSize(700, 700))
-        self.centralwidget = QtWidgets.QWidget(MainFrame)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setMinimumSize(QtCore.QSize(700, 700))
+        MainWindow.setMaximumSize(QtCore.QSize(700, 700))
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalWidget.setGeometry(QtCore.QRect(0, 0, 160, 700))
@@ -34,7 +34,7 @@ class Ui_MainFrame(object):
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.sessionList = QtWidgets.QListView(self.verticalWidget)
+        self.sessionList = QtWidgets.QListWidget(self.verticalWidget)
         self.sessionList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.sessionList.setObjectName("sessionList")
         self.verticalLayout.addWidget(self.sessionList)
@@ -151,28 +151,28 @@ class Ui_MainFrame(object):
         self.sesDelete.setFlat(False)
         self.sesDelete.setObjectName("sesDelete")
         self.gridLayout_5.addWidget(self.sesDelete, 0, 0, 1, 1)
-        MainFrame.setCentralWidget(self.centralwidget)
+        MainWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainFrame)
-        QtCore.QMetaObject.connectSlotsByName(MainFrame)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, MainFrame):
+    def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainFrame.setWindowTitle(_translate("MainFrame", "Session Manager"))
-        self.label.setText(_translate("MainFrame", "<html><head/><body><p><span style=\" font-size:18pt; color:#505050;\">Sessions</span></p></body></html>"))
-        self.label_3.setText(_translate("MainFrame", "<html><head/><body><p><span style=\" font-size:11pt; color:#505050;\">Sort:</span></p></body></html>"))
-        self.sesFilter.setPlaceholderText(_translate("MainFrame", "Search"))
-        self.label_2.setText(_translate("MainFrame", "<html><head/><body><p><span style=\" font-size:11pt; color:#505050;\">Search:</span></p></body></html>"))
-        self.date_text.setText(_translate("MainFrame", "<html><head/><body><p><span style=\" font-size:10pt; color:#505050;\"></span></p></body></html>"))
-        self.label_7.setText(_translate("MainFrame", "<html><head/><body><p><span style=\" font-size:12pt; color:#505050;\">Description:</span></p></body></html>"))
-        self.label_6.setText(_translate("MainFrame", "<html><head/><body><p><span style=\" font-size:12pt; color:#505050;\">Creation Date:</span></p></body></html>"))
-        self.desc_Box.setHtml(_translate("MainFrame", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        MainWindow.setWindowTitle(_translate("MainWindow", "Session Manager"))
+        self.label.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:18pt; color:#505050;\">Sessions</span></p></body></html>"))
+        self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt; color:#505050;\">Sort:</span></p></body></html>"))
+        self.sesFilter.setPlaceholderText(_translate("MainWindow", "Search"))
+        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt; color:#505050;\">Search:</span></p></body></html>"))
+        self.date_text.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; color:#505050;\"></span></p></body></html>"))
+        self.label_7.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; color:#505050;\">Description:</span></p></body></html>"))
+        self.label_6.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; color:#505050;\">Creation Date:</span></p></body></html>"))
+        self.desc_Box.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.25pt;\"><br /></p></body></html>"))
-        self.sesName.setText(_translate("MainFrame", "<html><head/><body><p><span style=\" font-size:18pt; color:#505050;\">Select a session</span></p></body></html>"))
-        self.createSesButton.setText(_translate("MainFrame", "Create Session"))
-        self.manageButton.setText(_translate("MainFrame", "Open Session"))
-        self.sesDelete.setText(_translate("MainFrame", "Delete Session"))
+        self.sesName.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:18pt; color:#505050;\">Select a session</span></p></body></html>"))
+        self.createSesButton.setText(_translate("MainWindow", "Create Session"))
+        self.manageButton.setText(_translate("MainWindow", "Open Session"))
+        self.sesDelete.setText(_translate("MainWindow", "Delete Session"))
 

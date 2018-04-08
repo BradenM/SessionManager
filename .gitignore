@@ -1,9 +1,9 @@
 # My Ignores
-test.py
+*/test.py
+*/updateui.py
 sessions/
-old*
 *.bat
-*.ui
+*/designer/
 .idea/
 
 
