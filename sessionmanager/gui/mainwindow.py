@@ -7,6 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from gui.ui.mainwindow_ui import Ui_MainWindow
 from gui import gui_handle as handle
 from gui.dialogs.create import CreateWindow
+from gui.dialogs.manage import ManageWindow
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -21,9 +22,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.sesDelete.clicked.connect(self.delete_session)
         self.ui.sesFilter.textChanged.connect(self.search_list)
         self.ui.createSesButton.clicked.connect(self.create_session)
+        self.ui.open_button.clicked.connect(self.open_session)
         # TODO: add completer to sesFilter
         # Elements
         self.ui.sesDelete.hide()
+
 
     # Functions
     def update_list(self):
@@ -34,17 +37,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_info(self):
         item = self.ui.sessionList.currentItem().text()
-        date, desc = handle.get_info(item)
+        date, desc, _ = handle.get_info(item)
         self.ui.sesName.setText(item)
         self.ui.date_text.setText(date)
         self.ui.desc_Box.setText(desc)
         self.ui.sesDelete.show()
+        self.ui.open_button.setDisabled(False)
 
     def reset_info(self, event):
         self.ui.sesName.clear()
         self.ui.date_text.clear()
         self.ui.desc_Box.clear()
         self.ui.sesDelete.hide()
+        self.ui.open_button.setDisabled(True)
         
     def delete_session(self):
         item = self.ui.sessionList.currentItem().text()
@@ -67,3 +72,10 @@ class MainWindow(QtWidgets.QMainWindow):
         window = CreateWindow()
         window.exec_()
         self.update_list()
+
+    def open_session(self):
+        name = self.ui.sessionList.currentItem().text()
+        self.hide()
+        window = ManageWindow(name)
+        window.exec_()
+        self.show()

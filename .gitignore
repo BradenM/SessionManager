@@ -5,6 +5,7 @@ sessions/
 *.bat
 */designer/
 .idea/
+*/database.sqlite
 
 
 

@@ -32,12 +32,16 @@ s_name = "SessionName"
 s_name_type = "TEXT"
 f_name = "FileName"
 f_name_type = "TEXT"
+f_display = "DisplayName"
+f_display_type = "TEXT"
 position = "Position"
 position_type = "TEXT"
 f_path = "Path"
 f_path_type = "TEXT"
 f_jpg_path = "JPG_Path"
 f_jpg_path_type = "TEXT"
+f_modified_date = "LastModified"
+f_modified_date_type = "TEXT"
 
 
 def connect():
@@ -63,9 +67,10 @@ def create_db():
     db.execute(s_query)
     conn.commit()
 
-    f_query = "CREATE TABLE files ({id} {id_type}, {sid} {sidt}, {n} {nt}, {pos} {post}, {p} {pt}, {jpg} {jpgt})"\
+    f_query = "CREATE TABLE files ({id} {id_type}, {sid} {sidt}, {n} {nt}, {pos} {post}, {p} {pt}, {jpg} {jpgt}, {dn} {dnt}, {m} {mt})"\
         .format(id=f_id, id_type=f_id_type, sid=s_name, sidt=s_name_type, n=f_name, nt=f_name_type,
-                pos=position, post=position_type, p=f_path, pt=f_path_type, jpg=f_jpg_path, jpgt=f_jpg_path_type)
+                pos=position, post=position_type, p=f_path, pt=f_path_type, jpg=f_jpg_path, jpgt=f_jpg_path_type,
+                dn=f_display, dnt=f_display_type, m=f_modified_date, mt=f_modified_date_type)
     db.execute(f_query)
     close()
 
@@ -83,7 +88,7 @@ def add_session(name, path, count, desc, raw):
 
 def add_files(session, name, pos, path):
     connect()
-    query = "INSERT INTO files VALUES (NULL, '{sn}', '{n}', '{p}', '{pa}', '{j}')".format(sn=session, n=name, p=pos, pa=path, j=None)
+    query = "INSERT INTO files VALUES (NULL, '{sn}', '{n}', '{p}', '{pa}', '{j}', '{dn}', '{m}')".format(sn=session, n=name, p=pos, pa=path, j=None, dn=name, m=None)
     db.execute(query)
     close()
 
@@ -94,7 +99,7 @@ def retrieve_data(table, name=None, column=None, string=False, iterate=False):
         col = "Name"
     else:
         table = "files"
-        col = "SessionName"
+        col = "FileName"
     if iterate:
         query = "SELECT {c} FROM '{t}'".format(c=col, t=table)
     else:
@@ -103,10 +108,35 @@ def retrieve_data(table, name=None, column=None, string=False, iterate=False):
     db.execute(query)
     data = db.fetchall()
     if string:
-        path = ''.join(data[0])
+        try:
+            path = ''.join(data[0])
+        except IndexError:
+            close()
+            return False
+        close()
         return path
     else:
+        close()
         return data
+
+
+def get_realname(display_name):
+    connect()
+    query = "SELECT FileName FROM files WHERE DisplayName='{dn}'".format(dn=display_name)
+    db.execute(query)
+    data = db.fetchall()
+    name = ''.join(data[0])
+    close()
+    return name
+
+
+def update_data(table, column, update, check_column, check_data):
+    connect()
+    query = "UPDATE '{t}' SET {c}=('{up}') WHERE {cc}=('{cd}')".format(t=table, c=column, up=update, cc=check_column,
+                                                                         cd=check_data)
+    print(query)
+    db.execute(query)
+    close()
 
 
 def delete_session(name):
