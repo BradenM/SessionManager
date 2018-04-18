@@ -22,6 +22,8 @@ def iterate_sessions():
     for x in sessions:
         item = QtWidgets.QListWidgetItem()
         item.setText(x)
+        icon = "icons/camera.png"
+        item.setIcon(QtGui.QIcon(icon))
         items.append(item)
     return items
 
@@ -30,7 +32,15 @@ def get_info(name):
     date = data.retrieve_data("sessions", name, column='CreationDate', string=True)
     desc = data.retrieve_data("sessions", name, column="Description", string=True)
     path = data.retrieve_data("sessions", name, column="Path", string=True)
-    return date, desc, path
+    count = data.retrieve_data("sessions", name, column="FileCount")
+    count = str(count[0])
+    raw = data.retrieve_data("sessions", name, column="HasRaw", string=True)
+    modify = data.retrieve_data("sessions", name, column="LastModified", string=True)
+    if raw is not '0':
+        raw = 'Yes'
+    else:
+        raw = 'No'
+    return date, desc, path, count, raw, modify
 
 
 def delete_session(name):
@@ -54,12 +64,11 @@ def update_images(dir):
     items = []
     for x in images:
         item = QtWidgets.QListWidgetItem()
-        icon = "icons/cr2.png"
+        icon = "icons/raw.png"
         item.setIcon(QtGui.QIcon(icon))
         item.setText(x)
         items.append(item)
     return images, items
-
 
 # Check if session name exist
 def check_name_exist(name):

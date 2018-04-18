@@ -1,0 +1,249 @@
+
+#MainWindow{
+	background-color:#1b1b1b;
+}
+
+#navBar_create,
+#navBar{
+	background-color:#323232;
+}
+
+#navSep,
+#navSep_create,
+#navBar_create QPushButton,
+#navBar_create QLabel,
+#navBar QPushButton{
+	color:grey;
+	font: 13pt "Montserrat";
+	
+}
+
+#navBar_create QPushButton:hover,
+#navBar QPushButton:hover{
+	color:white;
+	cursor:pointer;
+}
+
+#navBar_create QPushButton:pressed,
+#navBar QPushButton:pressed{
+	border:none;
+}
+
+
+#navBar QLabel{
+	color:grey;
+	font: 13pt "Font Awesome 5 Free";
+}
+
+
+#navBar QLineEdit{
+	border: none;
+	border-bottom:1px solid gray;
+	color:white;
+    padding: 0 8px;
+    padding-bottom:2px;
+    background: rbga(0,0,0,0);
+    selection-color:white;
+}
+
+#navBar_create QLineEdit:focus,
+#navBar QLineEdit:focus{
+	color:white;
+	border-bottom:1px solid white;
+}
+
+
+#sessionlist_header #label{
+	color:#f2f2f2;
+	font: 16pt "Montserrat";
+	text-transform: uppercase;
+
+}
+
+#sessionlist_header #sessionlist_count {
+	color:gray !important;
+	font: 14pt "Montserrat" !important;
+
+}
+
+#image_list,
+#sessionList{
+	background-color:rgba(0,0,0,0);
+	border:none;
+}
+
+#sessionList::item{
+	background-color:#323232;
+	padding-left:65px;
+	padding-right:65px;
+	padding-top:50px;
+	padding-bottom:50px;
+	border:1px solid #151515;
+	border-radius: 5px;
+	color:#f2f2f2;
+}
+
+#sessionList::item:hover{
+	color:#1473e6;
+	background-color:#282828;
+	cursor:pointer;
+	outline:none;
+}
+
+#sessionList::item:selected{
+	border:1px solid #1473e6;
+	border-radius: 5px;
+	outline:none;
+}
+
+
+QAbstractItemView:selected{
+	outline:none;
+	color:none;
+}
+
+#info_frame_create,
+#info_frame{
+	background-color: #323232;
+	border-top:1px solid #151515;
+}
+
+
+#info_frame_create #info_inputs,
+#info_frame #details{
+	border:none;
+	color:grey;
+	font: 14pt "Roboto";
+}
+
+#info_frame_create QGroupBox,
+#info_frame QGroupBox{
+	border:none;
+	color:grey;
+	font: 14pt "Roboto";
+	margin-right:14px;
+}
+
+#info_frame_create QTextBrowser,
+#info_frame QTextBrowser{
+	border:none;
+	background-color: rgba(0,0,0,0);
+	color:white;
+}
+
+#desc_box p span{
+	font: 14pt "Montserrat";
+}
+
+#info_frame #session_name{
+	color:#f2f2f2;
+	margin-top:20px;
+	margin-bottom:30px;
+	font:16pt "Montserrat";
+	border-bottom:1px solid white;
+}
+
+
+#info_misc QLabel{
+	color:#f2f2f2;
+	font: 14pt "Roboto";
+	font-weight:300;
+}
+
+QPushButton#create_button,
+QPushButton#open_button{
+	color:white;
+	background-color:#1473e6;
+	border-style:solid;
+	border-width:2px;
+	border-radius:14px;
+	border-color:#1473e6;
+	padding:6 18 6 18px;
+	font:16pt "Roboto";
+	transition: all 2s ease-in-out;
+}
+QPushButton#create_button:hover,
+QPushButton#open_button:hover{
+	background-color: #0E50A1;
+	border-color:#0E50A1;
+}
+
+QPushButton#close_button{
+	color:#D3D3D3;
+	background-color:rgba(0,0,0,0);
+	border-style:solid;
+	border-width:2px;
+	border-radius:14px;
+	border-color:#D3D3D3;
+	padding:6 18 6 18px;
+	font:16pt "Roboto";
+}
+
+QPushButton#close_button:hover{
+	background-color:#D3D3D3;
+	color:white;
+}
+
+#info_frame_create #inputs QLabel{
+	color:grey;
+	font: 14pt "Montserrat";
+}
+
+#info_frame_create #inputs QTextEdit,
+#info_frame_create #inputs QLineEdit{
+	background-color:#1b1b1b;
+	border:1px solid #151515;
+	border-radius:3px;
+	color:#f2f2f2;
+}
+
+#info_frame_create #inputs QTextEdit:hover,
+#info_frame_create #inputs QLineEdit:hover{
+	border-color:grey;
+}
+
+#info_frame_create #inputs QTextEdit:focus,
+#info_frame_create #inputs QLineEdit:focus{
+	border-color:#0E50A1;
+}
+
+#info_frame_create #inputs QToolButton{
+	background-color:rgba(0,0,0,0);
+	border:1px solid #151515;
+	border-radius:3px;
+	color:grey;
+	font-family:"Font Awesome 5 Free";
+}
+
+#info_frame_create #inputs QToolButton:hover{
+	border-color:grey;
+}
+
+#info_frame_create #inputs QToolButton:hover{
+	border-color:grey;
+}
+
+#info_frame_create #inputs QCheckBox{
+	color:grey;
+	font: 14pt "Montserrat";
+}
+
+#info_frame_create #inputs QCheckBox::Active{
+	background-color:rgba(0,0,0,0);
+
+}
+
+#info_frame_create #inputs QCheckBox::Base{
+	background-color:rgba(0,0,0,0);
+}
+
+#info_frame_create #inputs QCheckBox:hover{
+	color:#f2f2f2;
+}
+
+#image_list::item{
+	padding-top:10px;
+	color:#f2f2f2;
+}
+
+

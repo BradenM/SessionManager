@@ -17,6 +17,10 @@ def get_month_year(num=False):
     return date
 
 
+def get_today():
+    date = "%s %s, %s" % (time.strftime("%B"), time.strftime("%d"), time.strftime("%Y"))
+    return date
+
 # Remove Whitespace
 def remove_whitespace(string):
     new_str = string.replace(' ', '')

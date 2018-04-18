@@ -56,7 +56,7 @@ def copy_raw(raw_path, path):
 
 
 # Convert RAW to DNG
-def convert_raw(dng, path):
+def convert_raw(dng, path, prog_callback):
     cr2 = len(iterate_files(path, ".CR2"))
     subprocess.Popen("open -a %s --args -p2 %s/*.CR2" % (dng, path), shell=True)
     global files
@@ -71,6 +71,7 @@ def convert_raw(dng, path):
             break
         else:
             status = "Converting...(%s/%s)" % (len(files), cr2)
+            prog_callback.emit(len(files))
             print(status)
             files = []
             time.sleep(2)

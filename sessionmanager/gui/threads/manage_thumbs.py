@@ -23,7 +23,7 @@ class ManageThumbs(QtCore.QThread):
 
     def run(self):
         self.working.emit()
-        raw, proof, final= handle.get_thumbs(self.path)
+        raw, proof, final = handle.get_thumbs(self.path)
         for x in raw:
             self.raw.emit(x)
         for x in proof:

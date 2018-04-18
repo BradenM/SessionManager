@@ -9,6 +9,7 @@ from PyQt5 import QtWidgets
 
 
 def start():
+    QtWidgets.QApplication.setStyle('Fusion')
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()

@@ -3,29 +3,32 @@
 # Desc: Create session GUI thread
 # Author: Braden Mars
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from manage import handle
-import os
-from manage import manage as m
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 
-class CreateSession(QtCore.QThread):
-    working = QtCore.pyqtSignal()
-    finished = QtCore.pyqtSignal()
+class WorkerSignals(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
 
-    def __init__(self, name, path, desc, raw):
-        QtCore.QThread.__init__(self)
+
+class CreateSession(QRunnable):
+    def __init__(self, fn, name, path, desc, raw, *args, **kwargs):
+        super(CreateSession, self).__init__()
+        self.signals = WorkerSignals()
+        kwargs['prog_callback'] = self.signals.progress
         self.name = name
         self.path = path
         self.desc = desc
         self.raw = raw
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
 
-    def __del__(self):
-        self.wait()
-
+    @pyqtSlot()
     def run(self):
-        self.working.emit()
-        handle.create(self.name, self.path, self.desc, self.raw)
-        return self.finished.emit()
-
-
+        try:
+            self.fn(self.name, self.path, self.desc, self.raw, *self.args, **self.kwargs)
+        finally:
+            self.signals.finished.emit()

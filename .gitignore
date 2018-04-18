@@ -1,12 +1,16 @@
 # My Ignores
 */test.py
 */updateui.py
+*/finalizeui.py
+*/win.css
+*/changes.txt
 sessions/
 *.bat
 */designer/
 .idea/
 */database.sqlite
-
+uitest/
+sessionmanager_og/
 
 
 # Python Ignores

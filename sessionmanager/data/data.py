@@ -77,7 +77,7 @@ def create_db():
 
 def add_session(name, path, count, desc, raw):
     connect()
-    date = h.get_month_year()
+    date = h.get_today()
     query = "INSERT INTO sessions VALUES (NULL, '{n}', '{p}', '{d}', '{c}', '{desc}', '{r}', '{md}')".format(n=name, p=path,
                                                                                                       d=date, c=count,
                                                                                                       desc=desc, r=raw, md=None)

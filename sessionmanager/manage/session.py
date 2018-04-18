@@ -29,7 +29,7 @@ class Session(object):
         self.keepraw = keepraw
 
     # Functions
-    def create(self):
+    def create(self, prog_callback):
         name = self.name
         rawpath = self.rawpath
         keepraw = self.keepraw
@@ -38,7 +38,7 @@ class Session(object):
 
         path = m.structure(name)
         m.copy_raw(rawpath, path)
-        m.convert_raw(dng, path)
+        m.convert_raw(dng, path, prog_callback)
         if keepraw:
             pass
         else:

@@ -18,7 +18,7 @@ class ManageWindow(QtWidgets.QDialog):
         self.ui.setupUi(self)
         self.name = name
         # Setup
-        _, _, self.path = handle.get_info(self.name)
+        _, _, self.path, _, _, _ = handle.get_info(self.name)
         global gif
         gif = QtGui.QMovie("%s/icons/loading.gif" % ROOT_DIR)
         self.ui.preview_label.hide()
