@@ -5,12 +5,12 @@
 
 import manage.manage as m
 import data.data as d
+from definitions import DNG
 
 
 class Session(object):
 
     parent_dir = "sessions"
-    dng = "/Applications/Adobe\ DNG\ Converter.app/Contents/MacOS/Adobe\ DNG\ Converter"
 
     def __init__(self, name):
         self.name = name
@@ -34,11 +34,10 @@ class Session(object):
         rawpath = self.rawpath
         keepraw = self.keepraw
         desc = self.description
-        dng = self.dng
 
         path = m.structure(name)
         m.copy_raw(rawpath, path)
-        m.convert_raw(dng, path, prog_callback)
+        m.convert_raw(path, prog_callback)
         if keepraw:
             pass
         else:

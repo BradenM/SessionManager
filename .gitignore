@@ -11,6 +11,8 @@ sessions/
 */database.sqlite
 uitest/
 sessionmanager_og/
+*_old.py
+*_UIC.py
 
 
 # Python Ignores

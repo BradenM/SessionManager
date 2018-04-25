@@ -3,24 +3,28 @@
 # Desc: Process Images and AppleScript
 # Author: Braden Mars
 
-import rawpy
-import imageio
 import os
+from utils import helpers
 from definitions import ROOT
+from manage import manage
 import subprocess
+import multiprocessing as mp
+from rawkit.raw import Raw
 
 
-# Generate Thumbnails
-def generate_thumbs(dir):
-    os.chdir(dir)
+# Generate Thumbs
+def generate_thumbs(path, prog_callback):
+    os.chdir(path)
+    if os.path.isdir('thumbs'):
+        return False
     os.mkdir('thumbs')
-    for file in os.listdir(dir):
-        if file.endswith(".dng"):
-            raw = rawpy.imread(file)
-            rgb = raw.postprocess()
+    files = helpers.get_dng(path)
+    for file in files:
+        with Raw(file) as raw:
             name = file.replace(".dng", "_thumb.jpg")
-            imageio.imsave(name, rgb)
-            os.rename(name, "thumbs/%s" % name)
+            raw.save_thumb(name)
+        prog_callback.emit(1)
+        os.rename(name, "thumbs/%s" % name)
 
 
 # Iterate Thumbnails

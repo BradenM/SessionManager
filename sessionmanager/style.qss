@@ -1,4 +1,3 @@
-
 #MainWindow{
 	background-color:#1b1b1b;
 }
@@ -13,17 +12,12 @@
 #navBar_create QPushButton,
 #navBar_create QLabel,
 #navBar QPushButton{
-	color:grey;
-	font: 13pt "Montserrat";
-	
+	color:gray;
+	font: 16pt "Montserrat";
+
 }
 
-#navBar_create QPushButton:hover,
-#navBar QPushButton:hover{
-	color:white;
-	cursor:pointer;
-}
-
+#shift_proof QPushButton:pressed,
 #navBar_create QPushButton:pressed,
 #navBar QPushButton:pressed{
 	border:none;
@@ -32,9 +26,8 @@
 
 #navBar QLabel{
 	color:grey;
-	font: 13pt "Font Awesome 5 Free";
+	font: 16pt "Font Awesome 5 Free";
 }
-
 
 #navBar QLineEdit{
 	border: none;
@@ -57,6 +50,7 @@
 	color:#f2f2f2;
 	font: 16pt "Montserrat";
 	text-transform: uppercase;
+	padding-right:1px;
 
 }
 
@@ -74,13 +68,16 @@
 
 #sessionList::item{
 	background-color:#323232;
+	/*
 	padding-left:65px;
 	padding-right:65px;
 	padding-top:50px;
 	padding-bottom:50px;
+	*/
 	border:1px solid #151515;
-	border-radius: 5px;
+	border-radius: 10px;
 	color:#f2f2f2;
+
 }
 
 #sessionList::item:hover{
@@ -92,7 +89,7 @@
 
 #sessionList::item:selected{
 	border:1px solid #1473e6;
-	border-radius: 5px;
+	border-radius: 10px;
 	outline:none;
 }
 
@@ -162,11 +159,7 @@ QPushButton#open_button{
 	font:16pt "Roboto";
 	transition: all 2s ease-in-out;
 }
-QPushButton#create_button:hover,
-QPushButton#open_button:hover{
-	background-color: #0E50A1;
-	border-color:#0E50A1;
-}
+
 
 QPushButton#close_button{
 	color:#D3D3D3;
@@ -179,10 +172,7 @@ QPushButton#close_button{
 	font:16pt "Roboto";
 }
 
-QPushButton#close_button:hover{
-	background-color:#D3D3D3;
-	color:white;
-}
+
 
 #info_frame_create #inputs QLabel{
 	color:grey;
@@ -247,3 +237,79 @@ QPushButton#close_button:hover{
 }
 
 
+/* MANAGE WINDOW */
+
+#selection QPushButton{
+	background-color:#323232;
+	color:#f2f2f2;
+	font: 16pt "Roboto";
+}
+
+#selection QPushButton:checked{
+	background-color:#282828;
+	color:white;
+}
+
+#proof_select{
+	border-top:1px solid #151515;
+	border-bottom:1px solid #151515;
+}
+
+#final_select{
+	border-top: 1px solid #323232;
+	border-bottom:1px solid #151515;
+}
+
+#title{
+	color:#f2f2f2;
+	font: 16pt "Montserrat";
+	text-transform: uppercase;
+}
+
+#shift_proof{
+	border-left: 1px solid #323232;
+	border-top:1px solid #323232;
+}
+
+#add_proof,
+#remove_proof{
+	font: 16pt "Roboto";
+	font-weight:300;
+	color:#323232;
+}
+
+#add_proof:hover,
+#remove_proof:hover{
+	color:#f2f2f2;
+}
+
+#proof_list{
+	background-color: rgba(0,0,0,0);
+	border-top:1px solid #323232;
+	border-bottom:1px solid #323232;
+}
+
+#proof_info{
+	border-bottom:1px solid #323232;
+	border-right:1px solid #323232;
+}
+
+#proof_info QLabel{
+	font: 14pt "Roboto";
+	font-weight:300;
+	color:#f2f2f2;
+}
+
+#proof_info QLineEdit{
+	font: 14pt "Roboto";
+	font-weight:300;
+	color:#f2f2f2;
+	background-color:rgba(0,0,0,0);
+	border: 1px solid #323232;
+	border-radius:2px;
+	padding-left:3px;
+}
+
+#proof_info QLineEdit:focus{
+	border: 1px solid #f2f2f2;
+}

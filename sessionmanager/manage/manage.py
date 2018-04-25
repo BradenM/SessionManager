@@ -10,11 +10,12 @@ import time
 from utils import helpers as h, validate as v
 from data import data
 from definitions import ROOT, SESSIONS
+import multiprocessing as mp
 
 cwd = os.getcwd()
 date = h.get_month_year()
 parent = "%s" % date
-
+DNG = "/Applications/Adobe\ DNG\ Converter.app/Contents/MacOS/Adobe\ DNG\ Converter"
 
 # Structure Session
 def structure(name):
@@ -56,25 +57,52 @@ def copy_raw(raw_path, path):
 
 
 # Convert RAW to DNG
-def convert_raw(dng, path, prog_callback):
-    cr2 = len(iterate_files(path, ".CR2"))
-    subprocess.Popen("open -a %s --args -p2 %s/*.CR2" % (dng, path), shell=True)
-    global files
-    files = []
-    while True:
-        for file in os.listdir(path):
-            if file.endswith(".dng"):
-                files.append("%s/%s" % (path, file))
-        if len(files) >= cr2:
-            time.sleep(1)
-            print("Finished converting")
-            break
-        else:
-            status = "Converting...(%s/%s)" % (len(files), cr2)
-            prog_callback.emit(len(files))
-            print(status)
-            files = []
-            time.sleep(2)
+# def convert_raw(dng, path, prog_callback):
+#     cr2 = len(iterate_files(path, ".CR2"))
+#     subprocess.Popen("open -a %s --args -p2 %s/*.CR2" % (dng, path), shell=True)
+#     global files
+#     files = []
+#     while True:
+#         for file in os.listdir(path):
+#             if file.endswith(".dng"):
+#                 files.append("%s/%s" % (path, file))
+#         if len(files) >= cr2:
+#             time.sleep(1)
+#             print("Finished converting")
+#             break
+#         else:
+#             status = "Converting...(%s/%s)" % (len(files), cr2)
+#             prog_callback.emit(len(files))
+#             print(status)
+#             files = []
+#             time.sleep(2)
+
+# Convert RAW to DNG MP
+def convert(chunk, path):
+    os.chdir(path)
+    for file in chunk:
+        p = subprocess.Popen("%s %s" % (DNG, file), shell=True)
+        p.wait()
+    return chunk
+
+
+# Convert RAW to DNG
+def convert_raw(path, prog):
+    raw = []
+    for file in os.listdir(path):
+        if file.endswith(".CR2"):
+            raw.append(file)
+    workers = mp.cpu_count()
+    chunk_f = h.chunk_factor(raw)
+    if chunk_f is False:
+        chunk_f = workers
+    chunks = list(h.chunk(raw, chunk_f))
+    pool = mp.Pool(workers)
+    for x in chunks:
+        print('Process Called')
+        pool.apply_async(convert, args=(x, path,), callback=prog)
+    pool.close()
+    pool.join()
 
 
 # Delete CR2 files
@@ -87,6 +115,7 @@ def delete_raw(path):
 # Rename Files
 def rename_files(path):
     os.chdir(path)
+    files = iterate_files(path, ".dng")
     for count, file in enumerate(files):
         if file.endswith(".dng"):
             os.rename(file, "%s_%s.dng" % (session_name, count))

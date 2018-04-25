@@ -51,3 +51,26 @@ def has_jpg(file_name):
         return False
     else:
         return path
+
+
+def get_dng(dir):
+    files = []
+    for file in os.listdir(dir):
+        if file.endswith(".dng"):
+            files.append(file)
+    return files
+
+
+# Chunk Generator
+def chunk(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
+# Determines best number of chunks to split files into
+def chunk_factor(files):
+    factor = len(files)
+    if factor < 20:
+        return 2
+    else:
+        return False

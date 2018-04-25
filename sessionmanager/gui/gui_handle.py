@@ -7,11 +7,12 @@ from data import data
 from manage import handle
 from utils import process, helpers as h
 from gui.dialogs.popup import Popup
-from definitions import ROOT
+from definitions import ROOT_DIR
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 import os
 from shutil import copy
+from gui.widgets.sessionitem import QSessionItem
 
 
 # Iterate Sessions from database
@@ -19,13 +20,15 @@ def iterate_sessions():
     sessions = data.retrieve_data("sessions", column='Name', iterate=True)
     print(sessions)
     items = []
-    for x in sessions:
-        item = QtWidgets.QListWidgetItem()
-        item.setText(x)
-        icon = "icons/camera.png"
-        item.setIcon(QtGui.QIcon(icon))
-        items.append(item)
-    return items
+    s_items = []
+    # for x in sessions:
+    #     item = QtWidgets.QListWidgetItem()
+    #     item.setText(x)
+    #     icon = "icons/camera.png"
+    #     item.setIcon(QtGui.QIcon(icon))
+    #     items.append(item)
+    # return items
+    return sessions
 
 
 def get_info(name):
@@ -64,11 +67,12 @@ def update_images(dir):
     items = []
     for x in images:
         item = QtWidgets.QListWidgetItem()
-        icon = "icons/raw.png"
+        icon = "%s/icons/raw.png" % ROOT_DIR
         item.setIcon(QtGui.QIcon(icon))
         item.setText(x)
         items.append(item)
     return images, items
+
 
 # Check if session name exist
 def check_name_exist(name):

@@ -58,12 +58,17 @@ class CreateWindow(QtWidgets.QStackedWidget):
 
     def create(self):
         def finished():
+            print("FINISHED")
             self.ui.create_prog.setValue(100)
             QtCore.QTimer().singleShot(2500, lambda: self.ui.home_button.click())
 
+        a = []
         def update(n):
-            self.ui.create_prog.show()
-            self.ui.create_prog.setValue((n/len(images))*100)
+            self.ui.create_prog.setMaximum(100)
+            self.ui.create_prog.setFormat("%p%")
+            a.extend(n)
+            progress = int((len(a) / int(len(images))) * 100)
+            self.ui.create_prog.setValue(progress)
 
         self.ui.error_info.hide()
         name = self.ui.create_name.text()
@@ -76,12 +81,14 @@ class CreateWindow(QtWidgets.QStackedWidget):
                 self.ui.error_info.show()
                 self.ui.error_info.setText("A session with the name '%s' already exist!" % name)
             else:
+                self.ui.create_prog.show()
                 self.ui.create_button.setDisabled(True)
-                worker = CreateSession(session.create, name, path, desc, raw)
-                worker.signals.progress.connect(update)
-                worker.signals.finished.connect(finished)
-                self.threadpool.start(worker)
-
+                #worker = CreateSession(session.create, name, path, desc, raw)
+                #worker.signals.progress.connect(update)
+                #worker.signals.finished.connect(finished)
+                #self.threadpool.start(worker)
+                session.create(name, path, desc, raw, update)
+                finished()
         else:
             self.ui.error_info.show()
             self.ui.error_info.setText("Name and Description field must contain more than 1 character.")
