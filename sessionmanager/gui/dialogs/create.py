@@ -6,11 +6,12 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui import gui_handle as handle
-from manage import handle as session
-from gui.threads.create_session import CreateSession
+from manage.session import Session
+from gui.threads.setup_session import SetupSession
 from gui.ui.createwindow_ui import Ui_MainWindow
 from definitions import ROOT_DIR
 import os
+import time
 
 
 class CreateWindow(QtWidgets.QStackedWidget):
@@ -31,6 +32,9 @@ class CreateWindow(QtWidgets.QStackedWidget):
 
         # Thread
         self.threadpool = QtCore.QThreadPool()
+
+        # Vars
+        self.session = Session
 
     # Functions
     def update_list(self):
@@ -58,11 +62,11 @@ class CreateWindow(QtWidgets.QStackedWidget):
 
     def create(self):
         def finished():
-            print("FINISHED")
             self.ui.create_prog.setValue(100)
             QtCore.QTimer().singleShot(2500, lambda: self.ui.home_button.click())
 
         a = []
+
         def update(n):
             self.ui.create_prog.setMaximum(100)
             self.ui.create_prog.setFormat("%p%")
@@ -72,23 +76,24 @@ class CreateWindow(QtWidgets.QStackedWidget):
 
         self.ui.error_info.hide()
         name = self.ui.create_name.text()
-        path = self.ui.path_text.text()
+        r_path = self.ui.path_text.text()
         desc = self.ui.create_desc.toPlainText()
         raw = self.ui.keep_raw.checkState()
 
         if len(name) and len(desc) > 1:
-            if handle.check_name_exist(name):
+            if self.session(name).exist():
                 self.ui.error_info.show()
                 self.ui.error_info.setText("A session with the name '%s' already exist!" % name)
             else:
                 self.ui.create_prog.show()
                 self.ui.create_button.setDisabled(True)
-                #worker = CreateSession(session.create, name, path, desc, raw)
-                #worker.signals.progress.connect(update)
-                #worker.signals.finished.connect(finished)
-                #self.threadpool.start(worker)
-                session.create(name, path, desc, raw, update)
+                # worker = SetupSession(s.setup, r_path, desc, raw)
+                # self.threadpool.start(worker)
+                s = self.session(name)
+                s.setup(r_path, desc, raw)
+                s.create(update)
                 finished()
+
         else:
             self.ui.error_info.show()
             self.ui.error_info.setText("Name and Description field must contain more than 1 character.")

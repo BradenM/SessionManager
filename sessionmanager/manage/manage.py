@@ -6,11 +6,11 @@
 import os
 import subprocess
 from shutil import copyfile, rmtree
-import time
 from utils import helpers as h, validate as v
 from data import data
 from definitions import ROOT, SESSIONS
 import multiprocessing as mp
+from rawkit.raw import Raw
 
 cwd = os.getcwd()
 date = h.get_month_year()
@@ -37,7 +37,10 @@ def get_path(name):
     session_name_path = h.remove_whitespace(name)
     session_path = "%s/%s" % (parent, session_name_path)
     path = "%s/sessions/%s" % (cwd, session_path)
-    return path
+    if os.path.isdir(path):
+        return path
+    else:
+        return False
 
 
 # Iterate Files
@@ -55,27 +58,6 @@ def copy_raw(raw_path, path):
         if file.endswith(".CR2"):
             copyfile("%s/%s" % (raw_path, file), "%s/%s" % (path, file))
 
-
-# Convert RAW to DNG
-# def convert_raw(dng, path, prog_callback):
-#     cr2 = len(iterate_files(path, ".CR2"))
-#     subprocess.Popen("open -a %s --args -p2 %s/*.CR2" % (dng, path), shell=True)
-#     global files
-#     files = []
-#     while True:
-#         for file in os.listdir(path):
-#             if file.endswith(".dng"):
-#                 files.append("%s/%s" % (path, file))
-#         if len(files) >= cr2:
-#             time.sleep(1)
-#             print("Finished converting")
-#             break
-#         else:
-#             status = "Converting...(%s/%s)" % (len(files), cr2)
-#             prog_callback.emit(len(files))
-#             print(status)
-#             files = []
-#             time.sleep(2)
 
 # Convert RAW to DNG MP
 def convert(chunk, path):
@@ -135,3 +117,70 @@ def delete_session(name):
     path = data.retrieve_data("sessions", name, "Path", string=True)
     data.delete_session(name)
     rmtree(path)
+
+
+# Check if session name exist
+def session_exist(name):
+    check = data.retrieve_data("sessions", name=name, column="Name")
+    if len(check) <= 0:
+        return False
+    else:
+        return True
+
+
+# Iterate Sessions
+def iterate_sessions():
+    sessions = data.retrieve_data("sessions", column='Name', iterate=True)
+    return sessions
+
+
+# Get Session Info
+def get_session(name):
+    date = data.retrieve_data("sessions", name, column='CreationDate', string=True)
+    desc = data.retrieve_data("sessions", name, column="Description", string=True)
+    path = data.retrieve_data("sessions", name, column="Path", string=True)
+    count = data.retrieve_data("sessions", name, column="FileCount")
+    count = str(count[0])
+    raw = data.retrieve_data("sessions", name, column="HasRaw", string=True)
+    modify = data.retrieve_data("sessions", name, column="LastModified", string=True)
+    if raw is not '0':
+        raw = 'Yes'
+    else:
+        raw = 'No'
+
+    info = {
+        "name": name,
+        "create_date": date,
+        "desc": desc,
+        "path": path,
+        "count": count,
+        "raw": raw,
+        "modify_date": modify
+    }
+    return info
+
+
+''' ---- IMAGES ----'''
+
+
+# Get File Info
+
+# Generate Thumbs
+def gen_thumbs(path, prog_callback):
+    os.chdir(path)
+    if os.path.isdir('thumbs'):
+        return False
+    os.mkdir('thumbs')
+    files = h.get_dng(path)
+    for file in files:
+        with Raw(file) as raw:
+            name = file.replace(".dng", "_thumb.jpg")
+            raw.save_thumb(name)
+        data.insert_thumb(file, "%s/thumbs/%s" % (path, name))
+        prog_callback.emit(1)
+        os.rename(name, "thumbs/%s" % name)
+
+
+def get_thumbs(session):
+    thumbs = data.retrieve_data("files", name=session, column="THUMB_Path")
+    return thumbs

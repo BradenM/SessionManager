@@ -4,19 +4,20 @@
 # Author: Braden Mars
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from manage.session import Session
 from gui.ui.managewindow_ui import Ui_MainWindow
 from gui import gui_handle as handle
 from gui.threads.create_thumbs import CreateThumbs
 from gui.threads.watch_directory import WatchDirectory
 from utils import process
-import time
+from gui.widgets.imageitem import QImageItem
+
 
 class ManageWindow(QtWidgets.QWidget):
     def __init__(self, parent, name):
         super(ManageWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.name = name
 
         # Connections
         self.ui.home_button.clicked.connect(parent.close_window)
@@ -26,29 +27,32 @@ class ManageWindow(QtWidgets.QWidget):
         self.threadpool = QtCore.QThreadPool()
 
         # Vars
-        _, _, self.path, self.count, _, _ = handle.get_info(self.name)
+        self.name = name
+        self.session = Session(name)
+        self.info = self.session.info()
 
         # Setup
         self.ui.session_name.setText(self.name)
         self.ui.progress.setValue(0)
+        self.ui.progress.hide()
 
     # Functions
     def create_thumbs(self):
         a = []
         def update(n):
+            self.ui.progress.show()
             a.append(n)
-            progress = int((len(a)/int(self.count))*100)
+            progress = int((len(a)/int(self.info['count']))*100)
             self.ui.progress.setValue(progress)
 
         def finished():
-            QtCore.QTimer().singleShot(2500, lambda: self.ui.progress.hide())
+            self.ui.progress.hide()
 
-        worker = CreateThumbs(process.generate_thumbs, self.path)
+        worker = CreateThumbs(self.session.generate_thumbs)
         worker.signals.progress.connect(update)
         worker.signals.finished.connect(finished)
         self.threadpool.start(worker)
-        #progress = QtCore.pyqtSignal(str)
-        # kwargs = dict()
-        # kwargs['prog_callback'] = progress
-        #process.generate_thumbs(self.path, update)
+
+    def update_thumbs(self):
+        thumbs = process.iterate_thumbs(self.path)
 

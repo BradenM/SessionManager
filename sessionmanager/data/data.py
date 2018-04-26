@@ -40,6 +40,8 @@ f_path = "Path"
 f_path_type = "TEXT"
 f_jpg_path = "JPG_Path"
 f_jpg_path_type = "TEXT"
+f_thumb_path = "THUMB_PATH"
+f_thumb_path_type = "TEXT"
 f_modified_date = "LastModified"
 f_modified_date_type = "TEXT"
 
@@ -67,10 +69,10 @@ def create_db():
     db.execute(s_query)
     conn.commit()
 
-    f_query = "CREATE TABLE files ({id} {id_type}, {sid} {sidt}, {n} {nt}, {pos} {post}, {p} {pt}, {jpg} {jpgt}, {dn} {dnt}, {m} {mt})"\
+    f_query = "CREATE TABLE files ({id} {id_type}, {sid} {sidt}, {n} {nt}, {pos} {post}, {p} {pt}, {jpg} {jpgt}, {dn} {dnt}, {m} {mt}, {th} {tht})"\
         .format(id=f_id, id_type=f_id_type, sid=s_name, sidt=s_name_type, n=f_name, nt=f_name_type,
                 pos=position, post=position_type, p=f_path, pt=f_path_type, jpg=f_jpg_path, jpgt=f_jpg_path_type,
-                dn=f_display, dnt=f_display_type, m=f_modified_date, mt=f_modified_date_type)
+                dn=f_display, dnt=f_display_type, m=f_modified_date, mt=f_modified_date_type, th=f_thumb_path, tht=f_thumb_path_type)
     db.execute(f_query)
     close()
 
@@ -88,7 +90,9 @@ def add_session(name, path, count, desc, raw):
 
 def add_files(session, name, pos, path):
     connect()
-    query = "INSERT INTO files VALUES (NULL, '{sn}', '{n}', '{p}', '{pa}', '{j}', '{dn}', '{m}')".format(sn=session, n=name, p=pos, pa=path, j=None, dn=name, m=None)
+    query = "INSERT INTO files VALUES (NULL, '{sn}', '{n}', '{p}', " \
+            "'{pa}', '{j}', '{dn}', '{m}', '{th}')".format(sn=session,
+                                                         n=name, p=pos, pa=path, j=None, dn=name, m=None, th=None)
     db.execute(query)
     close()
 
@@ -137,6 +141,13 @@ def update_data(table, column, update, check_column, check_data):
     print(query)
     db.execute(query)
     close()
+
+
+def insert_thumb(file_name, path):
+    connect()
+    name = file_name.replace('.dng', "")
+    query = "UPDATE files SET THUMB_Path=('{p}') WHERE FileName=('{n}')".format(p=path, n=name)
+    db.execute(query)
 
 
 def delete_session(name):

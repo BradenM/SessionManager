@@ -12,58 +12,17 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 import os
 from shutil import copy
-from gui.widgets.sessionitem import QSessionItem
 
 
-# Iterate Sessions from database
-def iterate_sessions():
-    sessions = data.retrieve_data("sessions", column='Name', iterate=True)
-    print(sessions)
-    items = []
-    s_items = []
-    # for x in sessions:
-    #     item = QtWidgets.QListWidgetItem()
-    #     item.setText(x)
-    #     icon = "icons/camera.png"
-    #     item.setIcon(QtGui.QIcon(icon))
-    #     items.append(item)
-    # return items
-    return sessions
+""" ---- CREATE WINDOW ---- """
 
 
-def get_info(name):
-    date = data.retrieve_data("sessions", name, column='CreationDate', string=True)
-    desc = data.retrieve_data("sessions", name, column="Description", string=True)
-    path = data.retrieve_data("sessions", name, column="Path", string=True)
-    count = data.retrieve_data("sessions", name, column="FileCount")
-    count = str(count[0])
-    raw = data.retrieve_data("sessions", name, column="HasRaw", string=True)
-    modify = data.retrieve_data("sessions", name, column="LastModified", string=True)
-    if raw is not '0':
-        raw = 'Yes'
-    else:
-        raw = 'No'
-    return date, desc, path, count, raw, modify
-
-
-def delete_session(name):
-    pop = Popup()
-    delete = "Delete '%s'?" % name
-    pop.setWindowTitle(delete)
-    pop.ui.info.setText("WARNING:")
-    pop.ui.desc.setText("Are you sure you want to delete '%s' ?" % name)
-    check = pop.exec_()
-    if check is 1:
-        handle.delete(name)
-
-
-# Create Session Dialog
+# Update Images in List
 def update_images(dir):
     images = []
     for file in os.listdir(dir):
         if file.endswith(".CR2"):
             images.append(file)
-
     items = []
     for x in images:
         item = QtWidgets.QListWidgetItem()
@@ -74,16 +33,7 @@ def update_images(dir):
     return images, items
 
 
-# Check if session name exist
-def check_name_exist(name):
-    check = data.retrieve_data("sessions", name=name, column="Name")
-    if len(check) <= 0:
-        return False
-    else:
-        return True
-
-
-# Manage Sessions
+""" ---- MANAGE WINDOW ---- """
 
 # Update Thumbs
 def get_thumbs(path):

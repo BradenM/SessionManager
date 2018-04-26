@@ -90,7 +90,10 @@ class Ui_MainWindow(object):
         self.error_info.setObjectName("error_info")
         self.create_prog = QtWidgets.QProgressBar(self.inputs)
         self.create_prog.setGeometry(QtCore.QRect(0, 390, 281, 23))
+        self.create_prog.setMaximum(0)
         self.create_prog.setProperty("value", 0)
+        self.create_prog.setTextVisible(True)
+        self.create_prog.setOrientation(QtCore.Qt.Horizontal)
         self.create_prog.setInvertedAppearance(False)
         self.create_prog.setObjectName("create_prog")
         self.layoutWidget1 = QtWidgets.QWidget(self.inputs)
@@ -265,6 +268,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Name"))
         self.keep_raw.setToolTip(_translate("MainWindow", "Store RAW files for extraction if needed"))
         self.keep_raw.setText(_translate("MainWindow", "Keep Raw"))
+        self.create_prog.setFormat(_translate("MainWindow", "%p%"))
         self.label_8.setText(_translate("MainWindow", "Description"))
         self.create_desc.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

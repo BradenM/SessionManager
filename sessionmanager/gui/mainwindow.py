@@ -5,11 +5,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui.ui.mainwindow_ui import Ui_MainWindow
+from manage.session import Session
 from gui import gui_handle as handle
 from gui.dialogs import create
 from gui.dialogs import manage
-import time
-import sip
+from gui.dialogs.popup import Popup
 from gui.animate import Animate
 from gui.widgets.sessionitem import QSessionItem
 import qtawesome as fa
@@ -44,16 +44,23 @@ class MainWindow(QtWidgets.QStackedWidget):
         #self.ui.search_ico.setProperty("animate", "color_fade")
 
         # Vars
+        self.session = Session
         self.animate = Animate(self)
         self.delete_icon = fa.icon('fa.ban', color='red')
         self.create_window = create.CreateWindow(self)
 
 
     # Functions
+    def active_session(self):
+        try:
+         item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
+        except AttributeError:
+            return False
+        return item
 
     def update_list(self):
         self.ui.sessionList.clear()
-        sessions = handle.iterate_sessions()
+        sessions = self.session().list()
         for x in sessions:
             session_item = QSessionItem()
             session_item.set_name(x)
@@ -74,16 +81,16 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.update_info()
 
     def update_info(self):
-        item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
-        date, desc, _, count, raw, modify = handle.get_info(item)
-        self.ui.session_name.setText(item)
-        self.ui.create_date.setText(date)
-        self.ui.desc_box.setText(desc)
-        self.ui.image_count.setText(count)
-        self.ui.has_raw.setText(raw)
-        self.ui.modify_date.setText(modify)
-        #self.ui.sesDelete.show()
-        self.ui.open_button.setDisabled(False)
+        item = self.active_session()
+        if item is not False:
+            info = self.session(item).info()
+            self.ui.session_name.setText(item)
+            self.ui.create_date.setText(info['create_date'])
+            self.ui.desc_box.setText(info['desc'])
+            self.ui.image_count.setText(info['count'])
+            self.ui.has_raw.setText(info['raw'])
+            self.ui.modify_date.setText(info['modify_date'])
+            self.ui.open_button.setDisabled(False)
 
     def reset_info(self, event):
         #self.ui.sesName.clear()
@@ -93,8 +100,15 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.ui.open_button.setDisabled(True)
         
     def delete_session(self):
-        item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
-        handle.delete_session(item)
+        name = self.active_session()
+        pop = Popup()
+        delete = "Delete '%s'?" % name
+        pop.setWindowTitle(delete)
+        pop.ui.info.setText("WARNING:")
+        pop.ui.desc.setText("Are you sure you want to delete '%s' ?" % name)
+        check = pop.exec_()
+        if check is 1:
+            self.session(name).delete()
         self.ui.session_filter.clear()
         self.update_list()
         self.reset_info(event=None)

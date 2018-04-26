@@ -4,49 +4,58 @@
 # Author: Braden Mars
 
 import manage.manage as m
-import data.data as d
-from definitions import DNG
 
 
 class Session(object):
 
     parent_dir = "sessions"
 
-    def __init__(self, name):
+    def __init__(self, name=None):
         self.name = name
         self.rawpath = ""
         self.description = "desc"
         self.keepraw = False
-
-    # Attributes
-    def raw_path(self, rawpath):
-        self.rawpath = rawpath
-
-    def desc(self, description):
-        self.description = description
-
-    def keep_raw(self, keepraw):
-        self.keepraw = keepraw
+        self.path = ""
+        if name is not None:
+            self.path = m.get_path(name)
 
     # Functions
-    def create(self, prog_callback):
-        name = self.name
-        rawpath = self.rawpath
-        keepraw = self.keepraw
-        desc = self.description
+    def list(self):
+        sessions = m.iterate_sessions()
+        return sessions
 
-        path = m.structure(name)
-        m.copy_raw(rawpath, path)
-        m.convert_raw(path, prog_callback)
-        if keepraw:
-            pass
-        else:
-            m.delete_raw(path)
-        m.rename_files(path)
-        # Save
-        file_cnt = m.iterate_files(path, ".dng")
-        m.save_session(name, path, file_cnt, desc, keepraw)
-    
+    def exist(self):
+        check = m.session_exist(self.name)
+        return check
+
+    def setup(self, raw_path, desc, raw):
+        self.rawpath = raw_path
+        self.description = desc
+        self.keepraw = raw
+
+        self.path = m.structure(self.name)
+        print(self.path)
+        m.copy_raw(self.rawpath, self.path)
+
+    def create(self, prog_callback):
+        m.convert_raw(self.path, prog_callback)
+        if self.keepraw is not True:
+            m.delete_raw(self.path)
+        m.rename_files(self.path)
+        file_cnt = m.iterate_files(self.path, ".dng")
+        m.save_session(self.name, self.path, file_cnt, self.description, self.keepraw)
+
+    def info(self):
+        info = m.get_session(self.name)
+        return info
+
+    def generate_thumbs(self, callback):
+        m.gen_thumbs(self.path, callback)
+
+    def thumbs(self):
+        thumbs = m.get_thumbs(self.name)
+        return thumbs
+
     def delete(self):
         name = self.name
         m.delete_session(name)

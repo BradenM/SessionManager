@@ -247,4 +247,5 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Name:"))
         self.label_2.setText(_translate("MainWindow", "File Name:"))
         self.label_5.setText(_translate("MainWindow", "Opened:"))
+        self.progress.setFormat(_translate("MainWindow", "Generating Thumbnails... %p%"))
 

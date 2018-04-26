@@ -14,19 +14,18 @@ class WorkerSignals(QObject):
 
 
 class CreateThumbs(QRunnable):
-    def __init__(self, fn, path, *args, **kwargs):
+    def __init__(self, fn, *args, **kwargs):
         super(CreateThumbs, self).__init__()
         # Vars
         self.signals = WorkerSignals()
-        kwargs['prog_callback'] = self.signals.progress
+        kwargs['callback'] = self.signals.progress
         self.fn = fn
-        self.path = path
         self.args = args
         self.kwargs = kwargs
 
     @pyqtSlot()
     def run(self):
         try:
-            self.fn(self.path, *self.args, **self.kwargs)
+            self.fn(*self.args, **self.kwargs)
         finally:
             self.signals.finished.emit()
