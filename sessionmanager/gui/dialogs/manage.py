@@ -4,7 +4,7 @@
 # Author: Braden Mars
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from manage.session import Session
+from manage.session import Thumb
 from gui.ui.managewindow_ui import Ui_MainWindow
 from gui import gui_handle as handle
 from gui.threads.create_thumbs import CreateThumbs
@@ -28,8 +28,8 @@ class ManageWindow(QtWidgets.QWidget):
 
         # Vars
         self.name = name
-        self.session = Session(name)
-        self.info = self.session.info()
+        self.thumb = Thumb(name)
+        self.info = self.thumb.info()
 
         # Setup
         self.ui.session_name.setText(self.name)
@@ -39,6 +39,7 @@ class ManageWindow(QtWidgets.QWidget):
     # Functions
     def create_thumbs(self):
         a = []
+
         def update(n):
             self.ui.progress.show()
             a.append(n)
@@ -48,7 +49,7 @@ class ManageWindow(QtWidgets.QWidget):
         def finished():
             self.ui.progress.hide()
 
-        worker = CreateThumbs(self.session.generate_thumbs)
+        worker = CreateThumbs(self.thumb.generate)
         worker.signals.progress.connect(update)
         worker.signals.finished.connect(finished)
         self.threadpool.start(worker)

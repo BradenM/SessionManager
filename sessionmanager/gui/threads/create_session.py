@@ -1,5 +1,5 @@
 # Program: Session Manager
-# File: gui/threads/setup_session.py
+# File: gui/threads/create_session.py
 # Desc: Create session GUI thread
 # Author: Braden Mars
 
@@ -10,23 +10,27 @@ from PyQt5.QtCore import *
 
 class WorkerSignals(QObject):
     finished = pyqtSignal()
+    progress = pyqtSignal(list)
 
 
-class SetupSession(QRunnable):
-    def __init__(self, fn, path, desc, raw, *args, **kwargs):
-        super(SetupSession, self).__init__()
+class CreateSession(QRunnable):
+    def __init__(self, setup_fn, create_fn, path, desc, raw, *args, **kwargs):
+        super(CreateSession, self).__init__()
         self.signals = WorkerSignals()
         self.path = path
         self.desc = desc
         self.raw = raw
-        self.fn = fn
+        self.setup = setup_fn
+        self.create = create_fn
         self.args = args
         self.kwargs = kwargs
 
     @pyqtSlot()
     def run(self):
+        def update(ch):
+            self.signals.progress.emit(ch)
         try:
-            self.fn(self.path, self.desc, self.raw, *self.args, **self.kwargs)
+            self.setup(self.path, self.desc, self.raw, *self.args)
         finally:
+            self.create(update)
             self.signals.finished.emit()
-

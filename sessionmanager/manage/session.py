@@ -19,11 +19,13 @@ class Session(object):
         if name is not None:
             self.path = m.get_path(name)
 
-    # Functions
-    def list(self):
+    # Static Methods
+    @staticmethod
+    def list():
         sessions = m.iterate_sessions()
         return sessions
 
+    # Functions
     def exist(self):
         check = m.session_exist(self.name)
         return check
@@ -49,21 +51,20 @@ class Session(object):
         info = m.get_session(self.name)
         return info
 
-    def generate_thumbs(self, callback):
-        m.gen_thumbs(self.path, callback)
-
-    def thumbs(self):
-        thumbs = m.get_thumbs(self.name)
-        return thumbs
-
     def delete(self):
         name = self.name
         m.delete_session(name)
         
 
+class Thumb(Session):
 
+    def generate(self, callback):
+        m.gen_thumbs(self.path, callback)
 
-        
+    def get(self):
+        thumbs = m.get_thumbs(self.name)
+        return thumbs
+
         
         
 

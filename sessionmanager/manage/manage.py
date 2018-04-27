@@ -69,7 +69,7 @@ def convert(chunk, path):
 
 
 # Convert RAW to DNG
-def convert_raw(path, prog):
+def convert_raw(path, update):
     raw = []
     for file in os.listdir(path):
         if file.endswith(".CR2"):
@@ -82,7 +82,7 @@ def convert_raw(path, prog):
     pool = mp.Pool(workers)
     for x in chunks:
         print('Process Called')
-        pool.apply_async(convert, args=(x, path,), callback=prog)
+        pool.apply_async(convert, args=(x, path), callback=update)
     pool.close()
     pool.join()
 

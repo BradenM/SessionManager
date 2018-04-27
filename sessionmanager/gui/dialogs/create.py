@@ -7,11 +7,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui import gui_handle as handle
 from manage.session import Session
-from gui.threads.setup_session import SetupSession
+from gui.threads.create_session import CreateSession
 from gui.ui.createwindow_ui import Ui_MainWindow
 from definitions import ROOT_DIR
 import os
-import time
 
 
 class CreateWindow(QtWidgets.QStackedWidget):
@@ -24,17 +23,19 @@ class CreateWindow(QtWidgets.QStackedWidget):
         self.ui.open_path.clicked.connect(self.update_list)
         self.ui.create_button.clicked.connect(self.create)
         self.ui.create_button.setDisabled(True)
-        self.ui.home_button.clicked.connect(parent.close_window)
+        self.ui.home_button.clicked.connect(self.close)
 
         # Setup Elements
         self.ui.error_info.hide()
         self.ui.create_prog.hide()
+        self.clear()
 
         # Thread
         self.threadpool = QtCore.QThreadPool()
 
         # Vars
         self.session = Session
+        self.parent = parent
 
     # Functions
     def update_list(self):
@@ -61,9 +62,9 @@ class CreateWindow(QtWidgets.QStackedWidget):
             self.ui.error_info.setText("Invalid Path, please select another.")
 
     def create(self):
-        def finished():
+        def done():
             self.ui.create_prog.setValue(100)
-            QtCore.QTimer().singleShot(2500, lambda: self.ui.home_button.click())
+            QtCore.QTimer().singleShot(2500, self.close)
 
         a = []
 
@@ -85,17 +86,28 @@ class CreateWindow(QtWidgets.QStackedWidget):
                 self.ui.error_info.show()
                 self.ui.error_info.setText("A session with the name '%s' already exist!" % name)
             else:
+                self.ui.create_prog.setFormat("Processing...")
                 self.ui.create_prog.show()
                 self.ui.create_button.setDisabled(True)
-                # worker = SetupSession(s.setup, r_path, desc, raw)
-                # self.threadpool.start(worker)
-                s = self.session(name)
-                s.setup(r_path, desc, raw)
-                s.create(update)
-                finished()
+                self.s = self.session(name)
+                worker = CreateSession(self.s.setup, self.s.create, r_path, desc, raw)
+                worker.signals.progress.connect(update)
+                worker.signals.finished.connect(done)
+                self.threadpool.start(worker)
 
         else:
             self.ui.error_info.show()
             self.ui.error_info.setText("Name and Description field must contain more than 1 character.")
 
+    def clear(self):
+        objects = [self.ui.create_name, self.ui.create_desc, self.ui.path_text, self.ui.image_list]
+        for x in objects:
+            x.clear()
+        self.ui.create_prog.hide()
 
+    def close(self):
+        self.clear()
+        os.chdir(ROOT_DIR)
+        window = self.currentWidget()
+        self.parent.setCurrentIndex(0)
+        self.parent.close_window(window)

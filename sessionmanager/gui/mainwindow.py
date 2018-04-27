@@ -14,6 +14,7 @@ from gui.animate import Animate
 from gui.widgets.sessionitem import QSessionItem
 import qtawesome as fa
 
+
 class MainWindow(QtWidgets.QStackedWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -48,6 +49,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.animate = Animate(self)
         self.delete_icon = fa.icon('fa.ban', color='red')
         self.create_window = create.CreateWindow(self)
+        self.update_list()
 
 
     # Functions
@@ -132,11 +134,9 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.addWidget(manage.ManageWindow(self, item))
         self.setCurrentIndex(1)
 
-    def close_window(self):
-        window = self.currentWidget()
+    def close_window(self, window):
         self.removeWidget(window)
-        #sip.delete(window)
-        self.setCurrentIndex(0)
+        self.update_list()
 
     def eventFilter(self, object, event):
         action = str(object.property("action"))
