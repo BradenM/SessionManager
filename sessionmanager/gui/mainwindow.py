@@ -14,6 +14,8 @@ from gui.animate import Animate
 from gui.widgets.sessionitem import QSessionItem
 import qtawesome as fa
 
+from data import data
+
 
 class MainWindow(QtWidgets.QStackedWidget):
     def __init__(self):
@@ -49,33 +51,34 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.animate = Animate(self)
         self.delete_icon = fa.icon('fa.ban', color='red')
         self.create_window = create.CreateWindow(self)
+        self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
         self.update_list()
 
 
     # Functions
     def active_session(self):
         try:
-         item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
+            item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
         except AttributeError:
             return False
         return item
 
     def update_list(self):
         self.ui.sessionList.clear()
-        sessions = self.session().list()
-        for x in sessions:
+        sessions = data.iterate_table(self.session)
+        for s in sessions:
             session_item = QSessionItem()
-            session_item.set_name(x)
+            session_item.set_name(s.name)
             session_item.set_icon("icons/camera.png")
             self.ui.sessionList.setGridSize(QtCore.QSize(200, 200))
             print(session_item.size())
             item = QtWidgets.QListWidgetItem(self.ui.sessionList)
-            item.setData(QtCore.Qt.UserRole, x)
+            item.setData(QtCore.Qt.UserRole, s.name)
             item.setSizeHint(session_item.size())
             self.ui.sessionList.addItem(item)
             self.ui.sessionList.setItemWidget(item, session_item)
             print(item)
-        count = str(self.ui.sessionList.count())
+        count = len(sessions)
         self.ui.sessionlist_count.setText("(%s)" % count)
         if self.ui.sessionList.count() >= 1:
             self.ui.sessionList.setCurrentItem(self.ui.sessionList.item(0))
@@ -85,14 +88,9 @@ class MainWindow(QtWidgets.QStackedWidget):
     def update_info(self):
         item = self.active_session()
         if item is not False:
-            info = self.session(item).info()
-            self.ui.session_name.setText(item)
-            self.ui.create_date.setText(info['create_date'])
-            self.ui.desc_box.setText(info['desc'])
-            self.ui.image_count.setText(info['count'])
-            self.ui.has_raw.setText(info['raw'])
-            self.ui.modify_date.setText(info['modify_date'])
-            self.ui.open_button.setDisabled(False)
+            s = handle.session_info(self.session, item)
+            for i, elm in enumerate(self.info_elements):
+                elm.setText(s[i])
 
     def reset_info(self, event):
         #self.ui.sesName.clear()
@@ -103,6 +101,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         
     def delete_session(self):
         name = self.active_session()
+        session = data.get_row(self.session, name)
         pop = Popup()
         delete = "Delete '%s'?" % name
         pop.setWindowTitle(delete)
@@ -110,7 +109,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         pop.ui.desc.setText("Are you sure you want to delete '%s' ?" % name)
         check = pop.exec_()
         if check is 1:
-            self.session(name).delete()
+            self.session.delete(session)
         self.ui.session_filter.clear()
         self.update_list()
         self.reset_info(event=None)
@@ -131,7 +130,8 @@ class MainWindow(QtWidgets.QStackedWidget):
 
     def open_session(self):
         item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
-        self.addWidget(manage.ManageWindow(self, item))
+        session = data.get_row(self.session, item)
+        self.addWidget(manage.ManageWindow(self, session))
         self.setCurrentIndex(1)
 
     def close_window(self, window):

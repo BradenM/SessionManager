@@ -3,37 +3,46 @@
 # Desc: Session classes
 # Author: Braden Mars
 
+
+from sqlalchemy import Column, String, Integer, Date, Boolean, Table, ForeignKey
+from data.base import Base
+from sqlalchemy.orm import relationship
+from datetime import date
 import manage.manage as m
+import os
 
-
-class Session(object):
-
-    parent_dir = "sessions"
+class Session(Base):
+    # Database Information
+    __tablename__ = "sessions"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    path = Column(String)
+    create_date = Column(Date)
+    file_count = Column(Integer)
+    desc = Column(String)
+    has_raw = Column(Boolean)
+    modify_date = Column(Date)
+    images = relationship('Image', backref="sessions")
 
     def __init__(self, name=None):
         self.name = name
         self.rawpath = ""
-        self.description = "desc"
-        self.keepraw = False
+        self.has_raw = False
         self.path = ""
+        self.desc = ""
+        self.file_count = 0
+        d = date.today()
+        self.modify_date = d
+        self.create_date = d
         if name is not None:
             self.path = m.get_path(name)
 
-    # Static Methods
-    @staticmethod
-    def list():
-        sessions = m.iterate_sessions()
-        return sessions
-
     # Functions
-    def exist(self):
-        check = m.session_exist(self.name)
-        return check
 
     def setup(self, raw_path, desc, raw):
         self.rawpath = raw_path
-        self.description = desc
-        self.keepraw = raw
+        self.desc = desc
+        self.has_raw = raw
 
         self.path = m.structure(self.name)
         print(self.path)
@@ -41,38 +50,61 @@ class Session(object):
 
     def create(self, prog_callback):
         m.convert_raw(self.path, prog_callback)
-        if self.keepraw is not True:
+        if self.has_raw is not True:
             m.delete_raw(self.path)
         m.rename_files(self.path)
-        file_cnt = m.iterate_files(self.path, ".dng")
-        m.save_session(self.name, self.path, file_cnt, self.description, self.keepraw)
+        for img in os.listdir(self.path):
+            image = Image(self, img)
+            self.images.append(image)
+        self.file_count = len(self.images)
 
-    def info(self):
-        info = m.get_session(self.name)
-        return info
+    def add_image(self, img):
+        if img not in self.images:
+            self.images.append(img)
 
-    def delete(self):
-        name = self.name
-        m.delete_session(name)
-        
+    @staticmethod
+    def delete(inst):
+        m.delete_session(inst)
 
-class Thumb(Session):
+    def save(self):
+        m.save_session(self)
 
-    def generate(self, callback):
-        m.gen_thumbs(self.path, callback)
-
-    def get(self):
-        thumbs = m.get_thumbs(self.name)
-        return thumbs
-
-        
-        
+    def generate_thumbs(self, inst, callback, thumb_call):
+        m.gen_thumbs(inst, callback, thumb_call)
 
 
-        
 
+class Image(Base):
+    # Database Info
+    __tablename__ = "files"
+    id = Column(Integer, primary_key=True)
+    session_id = Column(Integer, ForeignKey('sessions.id'))
+    name = Column(String)
+    path = Column(String)
+    display = Column(String)
+    position = Column(String)
+    thumb = Column(String)
+    jpg = Column(String)
+    modify = Column(Date)
 
-       
-        
+    def __init__(self, session, name):
+        self.session = session.name
+        self.session_path = session.path
+        self.name = name
+        self.path = "%s/%s" % (self.session_path, self.name)
+        display = self.name.rstrip(".dng")
+        self.display = display
+        self.position = "RAW"
+        self.thumb = ""
+        self.jpg = ""
+        self.modify = date.today()
+        # session.commit()
+        # session.close()
 
-
+#
+# class RawImage(Image):
+#
+#     __mapper_args__ = {
+#         'polymorphic_identity':'rawimage'
+#     }
+#     super.position = "RAW"

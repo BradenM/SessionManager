@@ -7,15 +7,20 @@ import os
 import subprocess
 from shutil import copyfile, rmtree
 from utils import helpers as h, validate as v
-from data import data
+from data import data_old
 from definitions import ROOT, SESSIONS
 import multiprocessing as mp
 from rawkit.raw import Raw
+from data import data
+#from manage.image import Image
 
 cwd = os.getcwd()
 date = h.get_month_year()
 parent = "%s" % date
 DNG = "/Applications/Adobe\ DNG\ Converter.app/Contents/MacOS/Adobe\ DNG\ Converter"
+
+db = None
+
 
 # Structure Session
 def structure(name):
@@ -104,83 +109,48 @@ def rename_files(path):
 
 
 # Save session to database
-def save_session(name, path, count, desc, raw):
-    data.add_session(name, path, len(count), desc, raw)
-    for x in count:
-        f_name = x.strip(".dng")
-        f_path = path + "/%s" % x
-        data.add_files(name, f_name, "RAW", f_path)
+def save_session(session):
+    data.add_row(session)
 
 
 # Delete Session
-def delete_session(name):
-    path = data.retrieve_data("sessions", name, "Path", string=True)
-    data.delete_session(name)
-    rmtree(path)
+def delete_session(inst):
+    rmtree(inst.path)
+    data.del_row(inst)
 
 
 # Check if session name exist
-def session_exist(name):
-    check = data.retrieve_data("sessions", name=name, column="Name")
-    if len(check) <= 0:
-        return False
-    else:
-        return True
-
-
-# Iterate Sessions
-def iterate_sessions():
-    sessions = data.retrieve_data("sessions", column='Name', iterate=True)
-    return sessions
-
-
-# Get Session Info
-def get_session(name):
-    date = data.retrieve_data("sessions", name, column='CreationDate', string=True)
-    desc = data.retrieve_data("sessions", name, column="Description", string=True)
-    path = data.retrieve_data("sessions", name, column="Path", string=True)
-    count = data.retrieve_data("sessions", name, column="FileCount")
-    count = str(count[0])
-    raw = data.retrieve_data("sessions", name, column="HasRaw", string=True)
-    modify = data.retrieve_data("sessions", name, column="LastModified", string=True)
-    if raw is not '0':
-        raw = 'Yes'
-    else:
-        raw = 'No'
-
-    info = {
-        "name": name,
-        "create_date": date,
-        "desc": desc,
-        "path": path,
-        "count": count,
-        "raw": raw,
-        "modify_date": modify
-    }
-    return info
+def session_exist(inst, name):
+    ex = data.row_exists(inst, name)
+    return ex
 
 
 ''' ---- IMAGES ----'''
 
-
 # Get File Info
 
+
 # Generate Thumbs
-def gen_thumbs(path, prog_callback):
-    os.chdir(path)
+def gen_thumbs(inst, callback, thumb_call):
+    os.chdir(inst.path)
     if os.path.isdir('thumbs'):
         return False
     os.mkdir('thumbs')
-    files = h.get_dng(path)
+    files = h.get_dng(inst.path)
+    thumbs = {}
     for file in files:
         with Raw(file) as raw:
             name = file.replace(".dng", "_thumb.jpg")
             raw.save_thumb(name)
-        data.insert_thumb(file, "%s/thumbs/%s" % (path, name))
-        prog_callback.emit(1)
+            thumbs[file] = name
+        #data_a.insert_thumb(file, "%s/thumbs/%s" % (path, name))
+        callback.emit(1)
         os.rename(name, "thumbs/%s" % name)
+    thumb_call.emit(thumbs)
 
 
+# Get Thumb list
 def get_thumbs(session):
-    thumbs = data.retrieve_data("files", name=session, column="THUMB_Path")
+    thumbs = data_old.retrieve_data("files", name=session, column="THUMB_Path")
     return thumbs
+

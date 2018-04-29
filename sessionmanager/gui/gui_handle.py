@@ -3,16 +3,32 @@
 # Desc: Handles GUI updates
 # Author: Braden Mars
 
+from data import data_old
 from data import data
-from manage import handle
 from utils import process, helpers as h
-from gui.dialogs.popup import Popup
 from definitions import ROOT_DIR
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 import os
 from shutil import copy
 
+""" MAIN WINDOW """
+
+
+# Grabs UI info from session
+def session_info(cls, name):
+    s = data.get_row(cls, name)
+    if s.modify_date is s.create_date:
+        modify = "Never"
+    else:
+        modify = s.modify_date.strftime(f"%B %d, %Y")
+    create = s.create_date.strftime(f"%B %d, %Y")
+    if s.has_raw:
+        raw = "Yes"
+    else:
+        raw = "No"
+    info = [s.name, create, s.desc, str(s.file_count), raw, modify]
+    return info
 
 """ ---- CREATE WINDOW ---- """
 
@@ -35,6 +51,7 @@ def update_images(dir):
 
 """ ---- MANAGE WINDOW ---- """
 
+
 # Update Thumbs
 def get_thumbs(path):
     if os.path.isdir("%s/thumbs" % path) is False:
@@ -46,7 +63,7 @@ def get_thumbs(path):
     final = []
     for x in thumbs:
         file_name = h.strip_ext(x, thumb=True)
-        pos = data.retrieve_data("files", name=file_name, column='Position', string=True)
+        pos = data_old.retrieve_data("files", name=file_name, column='Position', string=True)
         if pos == 'RAW':
             item = QtWidgets.QListWidgetItem()
             icon = "%s/%s" % (t_path, x)
@@ -63,7 +80,7 @@ def get_thumbs(path):
             else:
                 icon = jpg_path
             item.setIcon(QtGui.QIcon(icon))
-            name = data.retrieve_data("files", name=file_name, column="DisplayName", string=True)
+            name = data_old.retrieve_data("files", name=file_name, column="DisplayName", string=True)
             item.setText(name)
             item.setTextAlignment(Qt.AlignCenter)
             proof.append(item)
@@ -72,7 +89,7 @@ def get_thumbs(path):
             jpg_path = h.has_jpg(file_name)
             icon = jpg_path
             item.setIcon(QtGui.QIcon(icon))
-            name = data.retrieve_data("files", name=file_name, column="DisplayName", string=True)
+            name = data_old.retrieve_data("files", name=file_name, column="DisplayName", string=True)
             item.setText(name)
             item.setTextAlignment(Qt.AlignCenter)
             final.append(item)
@@ -87,8 +104,8 @@ def get_preview(path, thumb, size):
 
 
 def get_proof_info(displayname):
-    file_name = data.get_realname(displayname)
-    mod_date = data.retrieve_data("files", name=file_name, column="LastModified", string=True)
+    file_name = data_old.get_realname(displayname)
+    mod_date = data_old.retrieve_data("files", name=file_name, column="LastModified", string=True)
     if mod_date is None:
         mod_date = "Never"
     return file_name, mod_date
@@ -98,18 +115,18 @@ def update_pos(path, thumb, pos, name=None):
     # file = thumb + ".dng"
     # image = "%s/%s" % (path, file)
     if name is not None and name is not "":
-        data.update_data("files", "DisplayName", name, "FileName", thumb)
-        data.update_data("files", "Position", pos, "FileName", thumb)
+        data_old.update_data("files", "DisplayName", name, "FileName", thumb)
+        data_old.update_data("files", "Position", pos, "FileName", thumb)
     else:
-        file_name = data.get_realname(thumb)
+        file_name = data_old.get_realname(thumb)
         print("HERE", file_name)
-        data.update_data("files", "DisplayName", file_name, "FileName", file_name)
-        data.update_data("files", "Position", pos, "FileName", file_name)
+        data_old.update_data("files", "DisplayName", file_name, "FileName", file_name)
+        data_old.update_data("files", "Position", pos, "FileName", file_name)
     print(name)
 
 
 def script_open_proof(path, image):
-    file_name = data.get_realname(image)
+    file_name = data_old.get_realname(image)
     jpg_path = h.has_jpg(file_name)
     if jpg_path is False:
         file_name = file_name + ".dng"
@@ -133,19 +150,19 @@ def update_proof(path):
         os.mkdir("%s/proofs" % head)
     jpg_path = "%s/proofs/%s" % (head, tail)
     os.rename(path, jpg_path)
-    data.update_data("files", "LastModified", date, "FileName", name)
-    data.update_data("files", "JPG_Path", jpg_path, "FileName", name)
+    data_old.update_data("files", "LastModified", date, "FileName", name)
+    data_old.update_data("files", "JPG_Path", jpg_path, "FileName", name)
 
 
 def finalize(path, thumb):
-    file = data.get_realname(thumb)
+    file = data_old.get_realname(thumb)
     file_name = file + ".jpg"
     if os.path.isdir("%s/finals" % path) is False:
         os.mkdir("%s/finals" % path)
     proof_path = "%s/proofs/%s" % (path, file_name)
     final_path = "%s/finals/%s" % (path, file_name)
     os.rename(proof_path, final_path)
-    data.update_data("files", "JPG_Path", final_path, "FileName", file)
+    data_old.update_data("files", "JPG_Path", final_path, "FileName", file)
 
 
 def export(path, items, ex_path):
@@ -157,7 +174,7 @@ def export(path, items, ex_path):
     os.mkdir(ex_folder)
     for x in items:
         print(x)
-        image = data.get_realname(x)
+        image = data_old.get_realname(x)
         image_path = final_path + "/%s.jpg" % image
         names.append(x)
         images.append(image_path)

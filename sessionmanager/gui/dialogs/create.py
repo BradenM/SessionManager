@@ -10,6 +10,7 @@ from manage.session import Session
 from gui.threads.create_session import CreateSession
 from gui.ui.createwindow_ui import Ui_MainWindow
 from definitions import ROOT_DIR
+from data import data
 import os
 
 
@@ -64,6 +65,7 @@ class CreateWindow(QtWidgets.QStackedWidget):
     def create(self):
         def done():
             self.ui.create_prog.setValue(100)
+            self.s.save()
             QtCore.QTimer().singleShot(2500, self.close)
 
         a = []
@@ -82,7 +84,7 @@ class CreateWindow(QtWidgets.QStackedWidget):
         raw = self.ui.keep_raw.checkState()
 
         if len(name) and len(desc) > 1:
-            if self.session(name).exist():
+            if data.row_exists(Session, name):
                 self.ui.error_info.show()
                 self.ui.error_info.setText("A session with the name '%s' already exist!" % name)
             else:
