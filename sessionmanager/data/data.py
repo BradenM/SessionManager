@@ -3,14 +3,11 @@
 # Desc: DB Engine, Session & Functions
 # Author: Braden Mars
 
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from data.base import Base
+from data.base import Base, engine
 
 # Engine and DBSession Creation
-engine = create_engine('sqlite:///alchdb.sqlite', echo=True)
 DatabaseSession = sessionmaker(bind=engine)
-Base.metadata.create_all(engine)
 dbs = DatabaseSession()
 
 
@@ -39,6 +36,8 @@ def add_row(inst):
 # Delete Row
 def del_row(inst):
     dbs.delete(inst)
+    dbs.commit()
+
 
 # Check if row exist
 def row_exists(cls, name):

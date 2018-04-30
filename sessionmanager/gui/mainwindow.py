@@ -59,11 +59,13 @@ class MainWindow(QtWidgets.QStackedWidget):
     def active_session(self):
         try:
             item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
+            self.ui.open_button.setEnabled(True)
         except AttributeError:
             return False
         return item
 
     def update_list(self):
+        self.ui.session_hint.hide()
         self.ui.sessionList.clear()
         sessions = data.iterate_table(self.session)
         for s in sessions:
@@ -80,8 +82,7 @@ class MainWindow(QtWidgets.QStackedWidget):
             print(item)
         count = len(sessions)
         self.ui.sessionlist_count.setText("(%s)" % count)
-        if self.ui.sessionList.count() >= 1:
-            self.ui.sessionList.setCurrentItem(self.ui.sessionList.item(0))
+        self.reset_info()
         self.search_list()
         self.update_info()
 
@@ -92,12 +93,14 @@ class MainWindow(QtWidgets.QStackedWidget):
             for i, elm in enumerate(self.info_elements):
                 elm.setText(s[i])
 
-    def reset_info(self, event):
-        #self.ui.sesName.clear()
-        self.ui.create_date.clear()
-        self.ui.desc_box.clear()
-        #self.ui.sesDelete.hide()
-        self.ui.open_button.setDisabled(True)
+    def reset_info(self):
+        if self.ui.sessionList.count() >= 1:
+            self.ui.sessionList.setCurrentItem(self.ui.sessionList.item(0))
+        else:
+            for el in self.info_elements:
+                el.clear()
+            self.ui.open_button.setDisabled(True)
+            self.ui.session_hint.show()
         
     def delete_session(self):
         name = self.active_session()
@@ -112,7 +115,6 @@ class MainWindow(QtWidgets.QStackedWidget):
             self.session.delete(session)
         self.ui.session_filter.clear()
         self.update_list()
-        self.reset_info(event=None)
 
     def search_list(self):
         filter = str(self.ui.session_filter.text()).lower()

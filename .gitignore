@@ -4,11 +4,11 @@
 */finalizeui.py
 */win.css
 */changes.txt
-sessions/
+*/sessions/
 *.bat
 */designer/
 .idea/
-*/database.sqlite
+*/*.sqlite*
 uitest/
 sessionmanager_og/
 *_old.py

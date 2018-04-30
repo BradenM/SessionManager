@@ -5,7 +5,7 @@
 
 
 from sqlalchemy import Column, String, Integer, Date, Boolean, Table, ForeignKey
-from data.base import Base
+from data.base import Base, engine
 from sqlalchemy.orm import relationship
 from datetime import date
 import manage.manage as m
@@ -22,7 +22,7 @@ class Session(Base):
     desc = Column(String)
     has_raw = Column(Boolean)
     modify_date = Column(Date)
-    images = relationship('Image', backref="sessions")
+    images = relationship('Image', backref="sessions", cascade="all, delete-orphan")
 
     def __init__(self, name=None):
         self.name = name
@@ -69,9 +69,9 @@ class Session(Base):
     def save(self):
         m.save_session(self)
 
-    def generate_thumbs(self, inst, callback, thumb_call):
+    @staticmethod
+    def generate_thumbs(inst, callback, thumb_call):
         m.gen_thumbs(inst, callback, thumb_call)
-
 
 
 class Image(Base):
@@ -108,3 +108,6 @@ class Image(Base):
 #         'polymorphic_identity':'rawimage'
 #     }
 #     super.position = "RAW"
+
+
+Base.metadata.create_all(engine)

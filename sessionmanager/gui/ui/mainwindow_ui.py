@@ -298,6 +298,12 @@ class Ui_MainWindow(object):
         self.sessionList.setUniformItemSizes(False)
         self.sessionList.setSelectionRectVisible(False)
         self.sessionList.setObjectName("sessionList")
+        self.session_hint = QtWidgets.QLabel(self.home)
+        self.session_hint.setGeometry(QtCore.QRect(10, 60, 471, 480))
+        self.session_hint.setStyleSheet("color:#696969;\n"
+"font:20pt \"Lato\";\n"
+"font-weight:900;")
+        self.session_hint.setObjectName("session_hint")
         MainWindow.addWidget(self.home)
 
         self.retranslateUi(MainWindow)
@@ -334,4 +340,5 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "Last Modified:"))
         self.open_button.setText(_translate("MainWindow", "Open"))
         self.close_button.setText(_translate("MainWindow", "Close"))
+        self.session_hint.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Click create or plug in your camera</p><p align=\"center\">memory card to create your first Session</p></body></html>"))
 

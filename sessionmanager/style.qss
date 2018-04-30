@@ -203,6 +203,7 @@ QPushButton#close_button{
 	border-radius:3px;
 	color:grey;
 	font-family:"Font Awesome 5 Free";
+	qproperty-textAlign:AlignCenter;
 }
 
 #info_frame_create #inputs QToolButton:hover{

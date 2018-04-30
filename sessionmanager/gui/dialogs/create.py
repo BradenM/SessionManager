@@ -66,6 +66,9 @@ class CreateWindow(QtWidgets.QStackedWidget):
         def done():
             self.ui.create_prog.setValue(100)
             self.s.save()
+            done_notif = QtWidgets.QSystemTrayIcon(QtGui.QIcon('icons/camera.png'))
+            done_notif.show()
+            done_notif.showMessage('Session Manager', f"Session '{name}' created successfully!")
             QtCore.QTimer().singleShot(2500, self.close)
 
         a = []

@@ -18,7 +18,7 @@ from shutil import copy
 # Grabs UI info from session
 def session_info(cls, name):
     s = data.get_row(cls, name)
-    if s.modify_date is s.create_date:
+    if s.modify_date == s.create_date:
         modify = "Never"
     else:
         modify = s.modify_date.strftime(f"%B %d, %Y")
