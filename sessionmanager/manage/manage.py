@@ -7,7 +7,6 @@ import os
 import subprocess
 from shutil import copyfile, rmtree
 from utils import helpers as h, validate as v
-from data import data_old
 from definitions import ROOT, SESSIONS
 import multiprocessing as mp
 from rawkit.raw import Raw
