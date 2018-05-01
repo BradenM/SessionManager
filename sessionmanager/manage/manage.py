@@ -60,7 +60,7 @@ def iterate_files(path, ext):
 # Copy Raw Files
 def copy_raw(raw_path, path):
     for file in os.listdir(raw_path):
-        if file.endswith(".CR2"):
+        if file.lower().endswith(".cr2"):
             copyfile("%s/%s" % (raw_path, file), "%s/%s" % (path, file))
 
 
@@ -77,7 +77,7 @@ def convert(chunk, path):
 def convert_raw(path, update):
     raw = []
     for file in os.listdir(path):
-        if file.endswith(".CR2"):
+        if file.lower().endswith(".cr2"):
             raw.append(file)
     workers = mp.cpu_count()
     chunk_f = h.chunk_factor(raw)
@@ -95,7 +95,7 @@ def convert_raw(path, update):
 # Delete CR2 files
 def delete_raw(path):
     for file in os.listdir(path):
-        if file.endswith(".CR2"):
+        if file.lower().endswith(".cr2"):
             os.remove("%s/%s" % (path, file))
 
 
@@ -143,14 +143,8 @@ def gen_thumbs(inst, callback, thumb_call):
             name = file.replace(".dng", "_thumb.jpg")
             raw.save_thumb(name)
             thumbs[file] = name
-        #data_a.insert_thumb(file, "%s/thumbs/%s" % (path, name))
         callback.emit(1)
         os.rename(name, "thumbs/%s" % name)
     thumb_call.emit(thumbs)
 
-
-# Get Thumb list
-def get_thumbs(session):
-    thumbs = data_old.retrieve_data("files", name=session, column="THUMB_Path")
-    return thumbs
 

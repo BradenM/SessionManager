@@ -13,3 +13,8 @@ SESSIONS = '%s/sessions' % ROOT_DIR
 UI = '%s/gui/ui' % ROOT_DIR
 
 DNG = "/Applications/Adobe\ DNG\ Converter.app/Contents/MacOS/Adobe\ DNG\ Converter"
+
+# App Definitions
+NAME = "Session Manager"
+VERSION = "1.0.0"
+DESC = "An application for photographers to easily manage their sessions"
