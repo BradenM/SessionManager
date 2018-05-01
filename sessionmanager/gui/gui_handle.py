@@ -3,7 +3,6 @@
 # Desc: Handles GUI updates
 # Author: Braden Mars
 
-from data import data_old
 from data import data
 from utils import process, helpers as h
 from definitions import ROOT_DIR

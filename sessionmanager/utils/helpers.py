@@ -6,7 +6,6 @@
 
 import time
 import os
-from data import data_old
 
 # Get Date (MonthYear)
 def get_month_year(num=False):
