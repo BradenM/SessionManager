@@ -203,6 +203,7 @@ QPushButton#close_button{
 	border-radius:3px;
 	color:grey;
 	font-family:"Font Awesome 5 Free";
+	qproperty-textAlign:AlignCenter;
 }
 
 #info_frame_create #inputs QToolButton:hover{
@@ -250,8 +251,13 @@ QPushButton#close_button{
 	color:white;
 }
 
-#proof_select{
+#photo_select{
 	border-top:1px solid #151515;
+	border-bottom:1px solid #151515;
+}
+
+#proof_select{
+	border-top: 1px solid #323232;
 	border-bottom:1px solid #151515;
 }
 

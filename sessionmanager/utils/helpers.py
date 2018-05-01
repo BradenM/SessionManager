@@ -6,7 +6,7 @@
 
 import time
 import os
-from data import data
+from data import data_old
 
 # Get Date (MonthYear)
 def get_month_year(num=False):
@@ -44,15 +44,6 @@ def strip_ext(filename, thumb=False, undo=False):
     return name
 
 
-# Check if image as a JPG
-def has_jpg(file_name):
-    path = data.retrieve_data("files", name=file_name, column="JPG_Path", string=True)
-    if path.__len__() < 5:
-        return False
-    else:
-        return path
-
-
 def get_dng(dir):
     files = []
     for file in os.listdir(dir):
@@ -74,3 +65,5 @@ def chunk_factor(files):
         return 2
     else:
         return False
+
+
