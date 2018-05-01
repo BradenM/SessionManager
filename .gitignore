@@ -4,11 +4,11 @@
 */finalizeui.py
 */win.css
 */changes.txt
-sessions/
+*/sessions/
 *.bat
 */designer/
 .idea/
-*/database.sqlite
+*/*.sqlite*
 uitest/
 sessionmanager_og/
 *_old.py
@@ -121,3 +121,5 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+\.DS_Store
