@@ -1,6 +1,6 @@
 # Program: Session Manager
-# File: utils/process.py
-# Desc: Process Images and AppleScript
+# File: utils/shop_bridge.py
+# Desc: Deal with photoshop
 # Author: Braden Mars
 
 import subprocess
@@ -17,8 +17,17 @@ def applescript(ascript):
     return osa.returncode, stdout, stderr
 
 
-def asquote(astr):
+def as_quote(astr):
 
     astr = astr.replace('"', '" & quote & "')
     return '"{}"'.format(astr)
 
+
+# Open Image in Photoshop
+def ps_open(path):
+    script = '''
+    tell application "Adobe Photoshop CC 2018"
+    set filePath to "{fp}"
+    open alias filePath as Camera RAW
+    end tell'''.format(fp=path)
+    applescript(script)

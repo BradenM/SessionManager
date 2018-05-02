@@ -68,12 +68,6 @@
 
 #sessionList::item{
 	background-color:#323232;
-	/*
-	padding-left:65px;
-	padding-right:65px;
-	padding-top:50px;
-	padding-bottom:50px;
-	*/
 	border:1px solid #151515;
 	border-radius: 10px;
 	color:#f2f2f2;
@@ -275,13 +269,16 @@ QPushButton#close_button{
 #shift_proof{
 	border-left: 1px solid #323232;
 	border-top:1px solid #323232;
+	border-bottom: 1px solid #1b1b1b;
+	color:gray;
+	background-color:rgba(27,27,27,0.4);
 }
 
 #add_proof,
 #remove_proof{
 	font: 16pt "Roboto";
 	font-weight:300;
-	color:#323232;
+	color:gray;
 }
 
 #add_proof:hover,
@@ -289,11 +286,26 @@ QPushButton#close_button{
 	color:#f2f2f2;
 }
 
-#proof_list{
+#photo_list{
 	background-color: rgba(0,0,0,0);
 	border-top:1px solid #323232;
 	border-bottom:1px solid #323232;
+	padding-left:2px;
+	padding-right:2px;
+	padding-top:2px;
 }
+
+#photo_list::item:hover{
+    background-color:rgba(50,50,50,0.5);
+    border-radius:10px;
+}
+
+#photo_list::item:selected{
+    background-color:rgba(50,50,50,0.8);
+    border-radius:10px;
+
+}
+
 
 #proof_info{
 	border-bottom:1px solid #323232;

@@ -98,16 +98,5 @@ class Image(Base):
         self.thumb = ""
         self.jpg = ""
         self.modify = date.today()
-        # session.commit()
-        # session.close()
-
-#
-# class RawImage(Image):
-#
-#     __mapper_args__ = {
-#         'polymorphic_identity':'rawimage'
-#     }
-#     super.position = "RAW"
-
 
 Base.metadata.create_all(engine)

@@ -4,12 +4,12 @@
 # Author: Braden Mars
 
 from data import data
-from utils import process, helpers as h
+from utils import shop_bridge, helpers as h
 from definitions import ROOT_DIR
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
+from datetime import date
 import os
-from shutil import copy
+
 
 """ MAIN WINDOW """
 
@@ -51,17 +51,22 @@ def update_images(dir):
 """ ---- MANAGE WINDOW ---- """
 
 
-def get_thumbs(inst, pos):
+def get_images(inst, pos):
     images = inst.images
-    thumbs = {}
+    imgs = []
     for img in images:
         if img.position == pos:
-            thumbs[img.name] = img.thumb
-    return thumbs
+            imgs.append(img)
+    return imgs
 
 
-def update_pos(inst, name, pos):
-    images = inst.images
-    cls = type(images[0])
-    img = data.get_row(cls, name)
-    data.update_row(img, "position", pos)
+def update_pos(inst, pos):
+    data.update_row(inst, "position", pos)
+
+
+def update_modify(inst):
+    data.update_row(inst, "modify", date.today())
+
+
+
+

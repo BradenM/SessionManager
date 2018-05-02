@@ -6,7 +6,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui.ui.image_preview_ui import Ui_ImagePreview
 from gui import gui_handle as handle
-import os
 
 
 class ImagePreviewOverlay(QtWidgets.QWidget):
@@ -18,7 +17,7 @@ class ImagePreviewOverlay(QtWidgets.QWidget):
         # Vars
         self.parent = parent
         self.session = session
-        self.raw_thumbs = handle.get_thumbs(self.session, "RAW")
+        self.hint = self.ui.preview_image.text()
 
         # Connections
         self.ui.close_overlay.clicked.connect(self.close)
@@ -26,37 +25,38 @@ class ImagePreviewOverlay(QtWidgets.QWidget):
         self.ui.add_image.clicked.connect(self.add_image)
 
         # Setup
+        shadow = QtWidgets.QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(8)
+        #self.setGraphicsEffect(shadow)
         self.slider()
 
-    def active(self, thumb=False):
-        image = self.ui.slider.currentItem().data
-        if thumb:
-            return image(QtCore.Qt.UserRole)
-        else:
-            p = image(QtCore.Qt.AccessibleDescriptionRole)
-            return os.path.basename(p)
+    def active(self):
+        active = self.ui.slider.currentItem().data(QtCore.Qt.UserRole)
+        return active
 
     def set_image(self):
         self.ui.add_image.setEnabled(True)
-        image = self.active("thumb")
-        name = self.active()
-        self.ui.file_name.setText(name)
-        self.ui.preview_image.setPixmap(QtGui.QPixmap(image).scaled(500, 500, QtCore.Qt.KeepAspectRatio))
+        img = self.active()
+        self.ui.file_name.setText(img.name)
+        self.ui.preview_image.setAlignment(QtCore.Qt.AlignCenter)
+        self.ui.preview_image.setPixmap(QtGui.QPixmap(img.thumb).scaled(600, 600, QtCore.Qt.KeepAspectRatio))
 
     def add_image(self):
-        image = self.ui.slider.currentItem().data(QtCore.Qt.AccessibleDescriptionRole)
-        print(image)
-        handle.update_pos(self.session, image, "PHOTO")
+        img = self.active()
+        handle.update_pos(img, "PHOTO")
+        self.ui.slider.clear()
+        self.ui.preview_image.setText(self.hint)
         self.slider()
 
     def slider(self):
+        self.ui.slider.clear()
         self.ui.slider.setIconSize(QtCore.QSize(128, 128))
-        for img, thumb in self.raw_thumbs.items():
-            item = QtWidgets.QListWidgetItem()
-            icon = QtGui.QIcon(thumb)
+        images = handle.get_images(self.session, "RAW")
+        for img in images:
+            item = QtWidgets.QListWidgetItem(self.ui.slider)
+            icon = QtGui.QIcon(img.thumb)
             item.setIcon(icon)
-            item.setData(QtCore.Qt.AccessibleDescriptionRole, img)
-            item.setData(QtCore.Qt.UserRole, thumb)
+            item.setData(QtCore.Qt.UserRole, img)
             self.ui.slider.addItem(item)
 
     def close(self):
