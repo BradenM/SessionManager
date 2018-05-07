@@ -60,4 +60,4 @@ class ImagePreviewOverlay(QtWidgets.QWidget):
             self.ui.slider.addItem(item)
 
     def close(self):
-        self.parent.close_overlay(self)
+        self.parent.close_preview(self)

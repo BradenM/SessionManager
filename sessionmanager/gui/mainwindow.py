@@ -127,17 +127,16 @@ class MainWindow(QtWidgets.QStackedWidget):
                 self.ui.sessionList.setRowHidden(row, True)
 
     def create_session(self):
-        self.addWidget(self.create_window)
+        self.insertWidget(1, self.create_window)
         self.setCurrentIndex(1)
 
     def open_session(self):
         item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
         session = data.get_row(self.session, item)
-        self.addWidget(manage.ManageWindow(self, session))
-        self.setCurrentIndex(1)
+        self.insertWidget(2, manage.ManageWindow(self, session))
+        self.setCurrentIndex(2)
 
-    def close_window(self, window):
-        self.removeWidget(window)
+    def close_window(self):
         self.update_list()
 
     def eventFilter(self, object, event):

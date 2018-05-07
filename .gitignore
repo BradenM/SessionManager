@@ -6,13 +6,12 @@
 */changes.txt
 */sessions/
 *.bat
-*/designer/
 .idea/
-*/*.sqlite*
+*.sqlite
 uitest/
-sessionmanager_og/
 *_old.py
 *_UIC.py
+*.sh
 
 
 # Python Ignores
@@ -123,3 +122,6 @@ venv.bak/
 .mypy_cache/
 
 \.DS_Store
+
+
+*.ffs_db

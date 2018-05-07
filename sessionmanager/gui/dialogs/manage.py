@@ -84,7 +84,7 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.ui.contents.setGraphicsEffect(blur)
         self.addWidget(self.overlay(self, self.session))
 
-    def close_overlay(self, widget):
+    def close_preview(self, widget):
         self.update()
         self.ui.contents.setGraphicsEffect(None)
         self.removeWidget(widget)
@@ -145,6 +145,8 @@ class ManageWindow(QtWidgets.QStackedWidget):
 
     def close(self):
         os.chdir(ROOT_DIR)
-        window = self.currentWidget()
+        self.parent.removeWidget(self)
         self.parent.setCurrentIndex(0)
-        self.parent.close_window(window)
+        self.parent.close_window()
+
+

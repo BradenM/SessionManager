@@ -113,6 +113,6 @@ class CreateWindow(QtWidgets.QStackedWidget):
     def close(self):
         self.clear()
         os.chdir(ROOT_DIR)
-        window = self.currentWidget()
+        self.parent.removeWidget(self)
         self.parent.setCurrentIndex(0)
-        self.parent.close_window(window)
+        self.parent.close_window()
