@@ -1,6 +1,6 @@
 # Program: Session Manager
 # File: utils/shop_bridge.py
-# Desc: Deal with photoshop
+# Desc: Photoshop Bridge
 # Author: Braden Mars
 
 import subprocess
@@ -31,3 +31,5 @@ def ps_open(path):
     open alias filePath as Camera RAW
     end tell'''.format(fp=path)
     applescript(script)
+
+

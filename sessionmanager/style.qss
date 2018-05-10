@@ -7,6 +7,11 @@
 	background-color:#323232;
 }
 
+QPushButton:disabled{
+    background-color:gray;
+    border-color:gray;
+}
+
 #navSep,
 #navSep_create,
 #navBar_create QPushButton,
@@ -303,7 +308,10 @@ QPushButton#close_button{
 #photo_list::item:selected{
     background-color:rgba(50,50,50,0.8);
     border-radius:10px;
+}
 
+#photo_list::item:selected[open="true"]{
+    background-color:red;
 }
 
 

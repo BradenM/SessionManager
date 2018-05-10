@@ -27,6 +27,17 @@ def get_row(cls, name, attr=None):
         return row
 
 
+# Gets Rows WHERE
+def get_rows(cls, name, attr=None):
+    rows = []
+    if attr is None:
+        attr = "name"
+    for row in dbs.query(cls).filter(getattr(cls, f"{attr}") == name).all():
+        rows.append(row)
+    print(rows)
+    return rows
+
+
 # Add row (Instance) to table
 def add_row(inst):
     dbs.add(inst)

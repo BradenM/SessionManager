@@ -9,7 +9,9 @@ from data.base import Base, engine
 from sqlalchemy.orm import relationship
 from datetime import date
 import manage.manage as m
+from data import data
 import os
+
 
 class Session(Base):
     # Database Information
@@ -85,6 +87,8 @@ class Image(Base):
     position = Column(String)
     thumb = Column(String)
     jpg = Column(String)
+    active = Column(Boolean)
+    active_file = Column(String)
     modify = Column(Date)
 
     def __init__(self, session, name):
@@ -98,5 +102,26 @@ class Image(Base):
         self.thumb = ""
         self.jpg = ""
         self.modify = date.today()
+        self.active_file = ""
+        self.active = False
+
+    def set_active(self, state):
+        data.update_row(self, "active", state)
+
+    def check(self, path):
+        img = m.check_jpg(self, path)
+        print("JPG LOCATE REPLY - %s" % img.name)
+        return img
+
+    def set_jpg(self, path):
+        data.update_row(self, "active_file", path)
+        print("SET JPG REPLY -- ")
+        print(self.active_file)
+
+    def finalize(self, session):
+        m.finalize_img(self, session)
+
+
+
 
 Base.metadata.create_all(engine)

@@ -9,11 +9,12 @@ from gui.ui.managewindow_ui import Ui_MainWindow
 from gui import gui_handle as handle
 from gui.threads.create_thumbs import CreateThumbs
 from gui.threads.watch_directory import WatchDirectory
-from utils import shop_bridge
+from utils import helpers as h, watch
 from gui.widgets.image_item import QImageItem
 from gui.widgets.image_preview import ImagePreviewOverlay
 from definitions import ROOT_DIR
 import os
+from shutil import rmtree
 
 
 class ManageWindow(QtWidgets.QStackedWidget):
@@ -37,7 +38,10 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.session = inst
         self.parent = parent
         self.lists = [self.ui.photo_list]
+        self.info_elms = [self.ui.img_name, self.ui.img_filename, self.ui.img_moddate]
         self.open_msg = "Currently Open"
+        self.watch = watch.watch
+        ManageWindow.active_images = []
 
         # Setup
         self.ui.session_name.setText(self.session.name)
@@ -46,11 +50,16 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.create_thumbs()
         self.overlay = ImagePreviewOverlay
         self.update_images()
+        self.watch_session(self.session.path)
 
     # Functions
     def active_image(self):
-        active = self.ui.photo_list.currentItem().data(QtCore.Qt.UserRole)
-        return active
+        try:
+            active = self.ui.photo_list.currentItem().data(QtCore.Qt.UserRole)
+            self.ui.create_button.setEnabled(True)
+            return active
+        except AttributeError:
+            self.clear()
 
     def create_thumbs(self):
         a = []
@@ -78,6 +87,32 @@ class ManageWindow(QtWidgets.QStackedWidget):
         worker.signals.thumbs.connect(thumb)
         self.threadpool.start(worker)
 
+    def watch_session(self, path):
+        def detect(file):
+            print("DETECT ----")
+            print(ManageWindow.active_images)
+            for img in ManageWindow.active_images:
+                print(img.name)
+                match = img.check(file)
+                if match is not False:
+                    print(f"{img.name} MATCHED {file}")
+                    match.set_jpg(file)
+                else:
+                    print('NO MATCH') #TODO: BACKUP METHODS
+            self.update_images()
+
+        worker = WatchDirectory(self.watch, path)
+        worker.signals.created.connect(detect)
+        self.threadpool.start(worker)
+
+    def purge_thumbs(self): # TODO: MOVE THIS TO WHEN AN IMAGE IS POST-EDITED
+        try:
+            path = f"{self.session.path}/thumbs"
+            rmtree(path)
+            self.update_images()
+        except FileNotFoundError:
+            pass
+
     def preview(self):
         blur = QtWidgets.QGraphicsBlurEffect(self)
         blur.setBlurRadius(6)
@@ -85,7 +120,6 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.addWidget(self.overlay(self, self.session))
 
     def close_preview(self, widget):
-        self.update()
         self.ui.contents.setGraphicsEffect(None)
         self.removeWidget(widget)
         self.update_images()
@@ -116,7 +150,8 @@ class ManageWindow(QtWidgets.QStackedWidget):
             self.ui.img_moddate.setText(self.open_msg)
             self.ui.create_button.setText("Finish")
         else:
-            self.ui.img_moddate.setText(str(img.modify))
+            date = h.translate_date(img.modify)
+            self.ui.img_moddate.setText(date)
             self.ui.create_button.setText("Edit")
 
     def update_name(self):
@@ -126,22 +161,41 @@ class ManageWindow(QtWidgets.QStackedWidget):
 
     def remove_image(self):
         img = self.active_image()
-        handle.update_pos(img, "RAW")
+        handle.update_img(img, "RAW")
         self.ui.photo_list.clear()
         self.update_images()
 
     def edit_photo(self):
         img = self.active_image()
-        overlay = QImageItem(img, True)
-        item = self.ui.photo_list.currentItem()
-        self.ui.photo_list.setItemWidget(item, overlay)
         if img.position == "PHOTO":
-            handle.update_pos(img, "OPEN")
-            handle.update_modify(img)
-            shop_bridge.ps_open(img.path)
+            item = self.ui.photo_list.currentItem()
+            overlay = QImageItem(img, True)
+            self.ui.photo_list.setItemWidget(item, overlay)
+            img.set_active(True)
+            ManageWindow.active_images = handle.get_actives(img)
+            handle.update_img(img, "OPEN")
+            handle.open_img(self.session, img)
+            self.update_info()
         else:
-            handle.update_pos(img, "FINAL")
-        self.update_info()
+            try:
+                img.finalize(self.session)
+            except FileNotFoundError as e:
+                err_info = QtWidgets.QMessageBox()
+                err_info.setWindowTitle('Session Manager')
+                err_info.setText('Cannot Finalize image yet.')
+                err_info.setInformativeText('You have not saved your image as a JPG yet. Please finish in Photoshop before finalizing.')
+                err_info.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                err_info.setDefaultButton(QtWidgets.QMessageBox.Ok)
+                err_info.setDetailedText(str(e))
+                err_info.setIcon(QtWidgets.QMessageBox.Warning)
+                err_info.exec_()
+            self.update_images()
+        self.clear()
+
+    def clear(self):
+        for elm in self.info_elms:
+            elm.clear()
+        self.ui.create_button.setEnabled(False)
 
     def close(self):
         os.chdir(ROOT_DIR)

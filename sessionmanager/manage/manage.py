@@ -11,7 +11,6 @@ from definitions import ROOT, SESSIONS
 import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
-#from manage.image import Image
 
 cwd = os.getcwd()
 date = h.get_month_year()
@@ -31,7 +30,9 @@ def structure(name):
     global session_name
     session_name = h.remove_whitespace(name)
     session_path = "%s/%s" % (parent, session_name)
+    final_path = f"{session_path}/final"
     os.mkdir(session_path)
+    os.mkdir(final_path)
     path = "%s/sessions/%s" % (cwd, session_path)
     return path
 
@@ -114,14 +115,15 @@ def save_session(session):
 
 # Delete Session
 def delete_session(inst):
-    rmtree(inst.path)
     data.del_row(inst)
+    rmtree(inst.path)
 
 
 # Check if session name exist
 def session_exist(inst, name):
     ex = data.row_exists(inst, name)
     return ex
+
 
 
 ''' ---- IMAGES ----'''
@@ -146,4 +148,28 @@ def gen_thumbs(inst, callback, thumb_call):
         os.rename(name, "thumbs/%s" % name)
     thumb_call.emit(thumbs)
 
+
+# Check JPG
+def check_jpg(img, path):
+    jpg_name = os.path.splitext(os.path.basename(path))[0]
+    active_imgs = data.get_rows(type(img), 1, "active")
+    for img in active_imgs:
+        img_name = os.path.splitext(img.name)[0]
+        print(f"COMPARE: {jpg_name} <===> {img_name}")
+        if jpg_name == img_name:
+            return img
+    return False
+
+
+# Add Image to finals
+def finalize_img(img, session):
+    final_path = f"{session.path}/final"
+    img_name = os.path.splitext(img.display)[0]
+    jpg_path = f'{final_path}/{img_name}.jpg'
+    os.rename(img.active_file, jpg_path)
+    data.update_row(img, "position", "FINAL")
+    data.update_row(img, "jpg", jpg_path)
+    data.update_row(img, "active", 0)
+    data.update_row(img, "active_file", "")
+    print(f"{img.name} finalized ===> {jpg_path}")
 

@@ -3,18 +3,28 @@
 # Desc: Thread for watching directories
 # Author: Braden Mars
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from utils import watch
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 
-class WatchDirectory(QtCore.QThread):
+class WorkerSignals(QObject):
+    created = pyqtSignal(str)
 
-    def __init__(self, path):
-        QtCore.QThread.__init__(self)
+class WatchDirectory(QRunnable):
+    def __init__(self, fn, path, *args, **kwargs):
+        super(WatchDirectory, self).__init__()
+        # Vars
+        self.signals = WorkerSignals()
+        kwargs['callback'] = self.signals.created
+        self.fn = fn
         self.path = path
+        self.args = args
+        self.kwargs = kwargs
 
-    def __del__(self):
-        self.wait()
-
+    @pyqtSlot()
     def run(self):
-        watch.watch(self.path)
+        try:
+            self.fn(self.path, *self.args, **self.kwargs)
+        finally:
+            print('complete')

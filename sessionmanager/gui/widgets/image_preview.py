@@ -27,7 +27,6 @@ class ImagePreviewOverlay(QtWidgets.QWidget):
         # Setup
         shadow = QtWidgets.QGraphicsDropShadowEffect(self)
         shadow.setBlurRadius(8)
-        #self.setGraphicsEffect(shadow)
         self.slider()
 
     def active(self):
@@ -43,9 +42,10 @@ class ImagePreviewOverlay(QtWidgets.QWidget):
 
     def add_image(self):
         img = self.active()
-        handle.update_pos(img, "PHOTO")
+        handle.update_img(img, "PHOTO")
         self.ui.slider.clear()
         self.ui.preview_image.setText(self.hint)
+        self.ui.add_image.setEnabled(False)
         self.slider()
 
     def slider(self):

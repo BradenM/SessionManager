@@ -1,6 +1,6 @@
 # Program: Session Manager
 # File: utils/watch,py
-# Desc: Watches directory for photoshop file save
+# Desc: Watches directory for jpg file save
 # Author: Braden Mars
 
 import time
@@ -10,6 +10,9 @@ from gui import gui_handle as handle
 
 
 class WatchExport(PatternMatchingEventHandler):
+    def __init__(self, callback):
+        super(WatchExport, self).__init__()
+        self.callback = callback
     patterns = ["*.jpg", "*.jpeg"]
 
     def process(self, event):
@@ -23,17 +26,16 @@ class WatchExport(PatternMatchingEventHandler):
         """
         if event.event_type == "created":
             print(event.src_path, event.event_type)
-            handle.update_proof(event.src_path)
-
+            self.callback.emit(event.src_path)
 
     def on_created(self, event):
         self.process(event)
 
 
-def watch(path):
+def watch(path, callback):
     observer = Observer()
     s_path = path
-    observer.schedule(WatchExport(), path=s_path)
+    observer.schedule(WatchExport(callback), path=s_path)
     observer.start()
     try:
         while True:
