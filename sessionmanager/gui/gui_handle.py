@@ -4,11 +4,10 @@
 # Author: Braden Mars
 
 from data import data
-from utils import shop_bridge, helpers as h
+from utils import image, helpers as h
 from definitions import ROOT_DIR
 from PyQt5 import QtCore, QtGui, QtWidgets
-from gui.threads.watch_directory import WatchDirectory
-from datetime import date
+from datetime import datetime
 import os
 
 
@@ -20,6 +19,8 @@ def session_info(cls, name):
     s = data.get_row(cls, name)
     if s.modify_date == s.create_date:
         modify = "Never"
+    elif s.modify_date.time() != s.create_date.time() and s.modify_date.date() == s.create_date.date():
+        modify = "Today"
     else:
         modify = h.translate_date(s.modify_date)
     create = s.create_date.strftime(f"%B %d, %Y")
@@ -30,6 +31,10 @@ def session_info(cls, name):
     info = [s.name, create, s.desc, str(s.file_count), raw, modify]
     return info
 
+
+def recent_session(cls):
+    sessions = data.iterate_table(cls)
+    return min(sessions, key=lambda x: abs(x.modify_date - datetime.now()))
 
 """ ---- CREATE WINDOW ---- """
 
@@ -53,6 +58,10 @@ def update_images(dir):
 """ ---- MANAGE WINDOW ---- """
 
 
+def session_modify(inst):
+    data.update_row(inst, "modify_date", datetime.now())
+
+
 def get_images(inst, pos):
     images = inst.images
     imgs = []
@@ -64,46 +73,15 @@ def get_images(inst, pos):
 
 def update_img(inst, pos):
     data.update_row(inst, "position", pos)
-    data.update_row(inst, "modify", date.today())
+    data.update_row(inst, "modify", datetime.now())
 
 
 def open_img(session, img):
-    shop_bridge.ps_open(img.path)
-
-
-def check_jpg(path, active_images):
-    file_name = os.path.basename(path)
-    file_name = os.path.splitext(file_name)[0]
-    for img in active_images:
-        img_name = os.path.splitext(img.name)[0]
-        if file_name == img_name:
-            return img
-        else:
-            return False
+    image.ps_open(img.path)
 
 
 def get_actives(img):
     active_imgs = data.get_rows(type(img), 1, "active")
     return active_imgs
 
-
-def set_jpg(session, img, path):
-    final_path = f"{session.path}/final"
-    if os.path.isdir(final_path) is False:
-        os.mkdir(final_path)
-    print('hi')
-    data.update_row(img, "active_file", path)
-    print(img.active_file)
-
-
-def finalize_img(session, img):
-    final_path = f"{session.path}/final"
-    img_name = os.path.splitext(img.name)[0]
-    ext = os.path.splitext(img.active_file)[1]
-    jpg_path = f'{final_path}/{img_name}.jpg'
-    if os.path.isdir(final_path) is False:
-        os.mkdir(final_path)
-    os.rename(img.active_file, jpg_path)
-    update_img(img, "FINAL")
-    data.update_row(img, "jpg", jpg_path)
 

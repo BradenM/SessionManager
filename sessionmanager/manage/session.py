@@ -4,10 +4,10 @@
 # Author: Braden Mars
 
 
-from sqlalchemy import Column, String, Integer, Date, Boolean, Table, ForeignKey
+from sqlalchemy import Column, String, Integer, Date, DateTime, Boolean, Table, ForeignKey
 from data.base import Base, engine
 from sqlalchemy.orm import relationship
-from datetime import date
+from datetime import datetime
 import manage.manage as m
 from data import data
 import os
@@ -19,11 +19,11 @@ class Session(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     path = Column(String)
-    create_date = Column(Date)
+    create_date = Column(DateTime)
     file_count = Column(Integer)
     desc = Column(String)
     has_raw = Column(Boolean)
-    modify_date = Column(Date)
+    modify_date = Column(DateTime)
     images = relationship('Image', backref="sessions", cascade="all, delete-orphan")
 
     def __init__(self, name=None):
@@ -33,7 +33,7 @@ class Session(Base):
         self.path = ""
         self.desc = ""
         self.file_count = 0
-        d = date.today()
+        d = datetime.now()
         self.modify_date = d
         self.create_date = d
         if name is not None:
@@ -101,7 +101,7 @@ class Image(Base):
         self.position = "RAW"
         self.thumb = ""
         self.jpg = ""
-        self.modify = date.today()
+        self.modify = datetime.now()
         self.active_file = ""
         self.active = False
 

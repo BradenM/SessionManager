@@ -7,10 +7,6 @@
 	background-color:#323232;
 }
 
-QPushButton:disabled{
-    background-color:gray;
-    border-color:gray;
-}
 
 #navSep,
 #navSep_create,
@@ -159,6 +155,11 @@ QPushButton#open_button{
 	transition: all 2s ease-in-out;
 }
 
+QPushButton#create_button:!enabled,
+QPushButton#open_button:!enabled{
+    background-color:gray !important;
+    border-color:gray !important;
+}
 
 QPushButton#close_button{
 	color:#D3D3D3;

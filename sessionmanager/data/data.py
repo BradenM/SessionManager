@@ -4,7 +4,7 @@
 # Author: Braden Mars
 
 from sqlalchemy.orm import sessionmaker
-from data.base import Base, engine
+from data.base import engine
 
 # Engine and DBSession Creation
 DatabaseSession = sessionmaker(bind=engine)

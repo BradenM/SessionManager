@@ -128,9 +128,6 @@ def session_exist(inst, name):
 
 ''' ---- IMAGES ----'''
 
-# Get File Info
-
-
 # Generate Thumbs
 def gen_thumbs(inst, callback, thumb_call):
     os.chdir(inst.path)
@@ -171,5 +168,6 @@ def finalize_img(img, session):
     data.update_row(img, "jpg", jpg_path)
     data.update_row(img, "active", 0)
     data.update_row(img, "active_file", "")
+    data.update_row(img, "thumb", img.jpg)
     print(f"{img.name} finalized ===> {jpg_path}")
 
