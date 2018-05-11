@@ -6,7 +6,7 @@
 import os
 import subprocess
 from shutil import copyfile, rmtree
-from utils import helpers as h, validate as v
+from utils import helpers as h, validate as v, image
 from definitions import ROOT, SESSIONS
 import multiprocessing as mp
 from rawkit.raw import Raw
@@ -31,8 +31,10 @@ def structure(name):
     session_name = h.remove_whitespace(name)
     session_path = "%s/%s" % (parent, session_name)
     final_path = f"{session_path}/final"
+    proof_path = f"{session_path}/proof"
     os.mkdir(session_path)
     os.mkdir(final_path)
+    os.mkdir(proof_path)
     path = "%s/sessions/%s" % (cwd, session_path)
     return path
 
@@ -108,9 +110,9 @@ def rename_files(path):
             os.rename(file, "%s_%s.dng" % (session_name, count))
 
 
-# Save session to database
-def save_session(session):
-    data.add_row(session)
+# Save instance to database
+def save(inst):
+    data.add_row(inst)
 
 
 # Delete Session
@@ -127,6 +129,7 @@ def session_exist(inst, name):
 
 
 ''' ---- IMAGES ----'''
+
 
 # Generate Thumbs
 def gen_thumbs(inst, callback, thumb_call):
@@ -171,3 +174,14 @@ def finalize_img(img, session):
     data.update_row(img, "thumb", img.jpg)
     print(f"{img.name} finalized ===> {jpg_path}")
 
+
+# Create Proof
+def make_proof(img, session, size=None, shop=False):
+    proof_dir = f"{session.path}/proof/{img.name}"
+    if os.path.isdir(proof_dir) is False:
+        os.mkdir(f"{session.path}/proof/{img.name}")
+    path = image.crop_image(img.jpg, size)
+    name = os.path.basename(path)
+    proof_path = f"{session.path}/proof/{img.name}/{name}"
+    os.rename(path, proof_path)
+    return name, proof_path

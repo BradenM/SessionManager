@@ -57,6 +57,8 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.update_images()
         self.watch_session(self.session.path)
         self.ui.create_button.setEnabled(False)
+        self.ui.crop_combo.setHidden(True)
+        self.ui.crop_title.setHidden(True)
         handle.session_modify(self.session)
 
     # Functions
@@ -152,17 +154,21 @@ class ManageWindow(QtWidgets.QStackedWidget):
 
     def update_info(self):
         img = self.active_image()
+        date = h.translate_date(img.modify)
         self.ui.img_name.setText(img.display)
         self.ui.img_filename.setText(img.name)
+        jpg_name = os.path.basename(img.jpg)
         if img.position != "PHOTO":
-            img_name = os.path.basename(img.jpg)
-            self.ui.img_filename.setText(img_name)
+            self.ui.img_filename.setText(jpg_name)
         if img.position == "OPEN":
             self.ui.img_filename.setText(img.name)
             self.ui.img_moddate.setText(self.open_msg)
             self.ui.create_button.setText("Finish")
+        elif img.position == "FINAL":
+            self.ui.img_filename.setText(jpg_name)
+            self.ui.img_moddate.setText(date)
+            self.ui.create_button.setText("Proof")
         else:
-            date = h.translate_date(img.modify)
             self.ui.img_moddate.setText(date)
             self.ui.create_button.setText("Edit")
 
@@ -188,6 +194,10 @@ class ManageWindow(QtWidgets.QStackedWidget):
             handle.update_img(img, "OPEN")
             handle.open_img(self.session, img)
             self.update_info()
+        elif img.position == "FINAL":
+            crop = self.ui.crop_combo.currentText()
+            if crop != "Photoshop" or crop != "None":
+                img.proof(self.session, crop)
         else:
             try:
                 img.finalize(self.session)
@@ -225,12 +235,16 @@ class ManageWindow(QtWidgets.QStackedWidget):
         if btn == self.ui.final_select:
             self.ui.title.setText('FINALS')
             self.current_window = "FINAL"
+            self.ui.crop_combo.setHidden(False)
+            self.ui.crop_title.setHidden(False)
             self.update_images()
 
     def clear(self):
         for elm in self.info_elms:
             elm.clear()
         self.ui.create_button.setEnabled(False)
+        self.ui.crop_combo.setHidden(True)
+        self.ui.crop_title.setHidden(True)
 
     def close(self):
         os.chdir(ROOT_DIR)

@@ -56,20 +56,17 @@ class Session(Base):
             m.delete_raw(self.path)
         m.rename_files(self.path)
         for img in os.listdir(self.path):
-            image = Image(self, img)
-            self.images.append(image)
+            if img.endswith(".dng"):
+                image = Image(self, img)
+                self.images.append(image)
         self.file_count = len(self.images)
-
-    def add_image(self, img):
-        if img not in self.images:
-            self.images.append(img)
 
     @staticmethod
     def delete(inst):
         m.delete_session(inst)
 
     def save(self):
-        m.save_session(self)
+        m.save(self)
 
     @staticmethod
     def generate_thumbs(inst, callback, thumb_call):
@@ -90,6 +87,7 @@ class Image(Base):
     active = Column(Boolean)
     active_file = Column(String)
     modify = Column(Date)
+    proofs = relationship('Proof', backref="proofs", cascade="all, delete-orphan")
 
     def __init__(self, session, name):
         self.session = session.name
@@ -121,7 +119,28 @@ class Image(Base):
     def finalize(self, session):
         m.finalize_img(self, session)
 
+    def proof(self, session, size, loose=False):
+        proof = m.make_proof(self, session, size)
+        p = Proof(self, proof[0], proof[1], loose)
+        self.proofs.append(p)
+        m.save(self)
 
+
+class Proof(Base):
+    # Database Info
+    __tablename__ = "proofs"
+    id = Column(Integer, primary_key=True)
+    image_id = Column(Integer, ForeignKey('files.id'))
+    name = Column(String)
+    path = Column(String)
+    loose = Column(Boolean)
+    modify = Column(Date)
+
+    def __init__(self, image, name, path, loose):
+        self.name = name
+        self.path = path
+        self.loose = loose
+        self.modify = datetime.now()
 
 
 Base.metadata.create_all(engine)

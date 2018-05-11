@@ -71,6 +71,22 @@ class Ui_MainWindow(object):
         self.create_button.setDefault(False)
         self.create_button.setFlat(False)
         self.create_button.setObjectName("create_button")
+
+        self.crop_title = QtWidgets.QLabel(self.proofs)
+        self.crop_title.setObjectName("crop_title")
+        self.crop_title.setGeometry(QtCore.QRect(305, 476, 30, 16))
+        self.crop_combo = QtWidgets.QComboBox(self.proofs)
+        self.crop_combo.setGeometry(QtCore.QRect(305, 500, 50, 32))
+        self.crop_title.setMaximumSize(QtCore.QSize(30, 16))
+        self.crop_title.setMinimumSize(QtCore.QSize(30, 16))
+        self.crop_combo.setMaximumSize(QtCore.QSize(171, 32))
+        self.crop_combo.setMinimumSize(QtCore.QSize(171, 32))
+        self.crop_combo.setObjectName("crop_combo")
+        self.crop_combo.addItem("")
+        self.crop_combo.addItem("")
+        self.crop_combo.addItem("")
+
+
         self.shift_proof = QtWidgets.QWidget(self.proofs)
         self.shift_proof.setGeometry(QtCore.QRect(572, 386, 68, 25))
         self.shift_proof.setObjectName("shift_proof")
@@ -281,4 +297,8 @@ class Ui_MainWindow(object):
         self.navBar_create.setAccessibleName(_translate("MainWindow", "navBar"))
         self.home_button.setText(_translate("MainWindow", "Home"))
         self.session_name.setText(_translate("MainWindow", "Session Name"))
+        self.crop_title.setText(_translate("MainWindow", "Crop"))
+        self.crop_combo.setItemText(0, _translate("MainWindow", "5x7"))
+        self.crop_combo.setItemText(1, _translate("MainWindow", "Photoshop"))
+        self.crop_combo.setItemText(2, _translate("MainWindow", "None"))
 

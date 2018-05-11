@@ -61,4 +61,6 @@ def crop_image(path, size):
             height + pixels[1],
         )
     )
-    crop.save(f"{img_path[0]}/{img_name[0]}_{size}{img_name[1]}")
+    output = f"{img_path[0]}/{img_name[0]}_{size}{img_name[1]}"
+    crop.save(output)
+    return output
