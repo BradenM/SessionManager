@@ -31,14 +31,15 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.ui.session_filter.textChanged.connect(self.search_list)
         self.ui.create_tab.clicked.connect(self.create_session)
         self.ui.open_button.clicked.connect(self.open_session)
+        self.ui.recent_button.clicked.connect(self.open_recent)
         # TODO: add completer to session_filter
         # Event Filters
         self.ui.create_tab.installEventFilter(self)
         self.ui.create_tab.setProperty("action", "color_fade")
-        self.ui.pushButton_4.installEventFilter(self)
-        self.ui.pushButton_4.setProperty("action", "color_fade")
-        self.ui.pushButton_2.installEventFilter(self)
-        self.ui.pushButton_2.setProperty("action", "color_fade")
+        self.ui.recent_button.installEventFilter(self)
+        self.ui.recent_button.setProperty("action", "color_fade")
+        self.ui.edit_button.installEventFilter(self)
+        self.ui.edit_button.setProperty("action", "color_fade")
         self.ui.close_button.installEventFilter(self)
         self.ui.close_button.setProperty("action", "color_mirror")
         self.ui.sessionList.installEventFilter(self)
@@ -53,7 +54,6 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.create_window = create.CreateWindow(self)
         self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
         self.update_list()
-
 
     # Functions
     def active_session(self):
@@ -134,6 +134,11 @@ class MainWindow(QtWidgets.QStackedWidget):
         item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
         session = data.get_row(self.session, item)
         self.insertWidget(2, manage.ManageWindow(self, session))
+        self.setCurrentIndex(2)
+
+    def open_recent(self):
+        recent = handle.recent_session(self.session)
+        self.insertWidget(2, manage.ManageWindow(self, recent))
         self.setCurrentIndex(2)
 
     def close_window(self):

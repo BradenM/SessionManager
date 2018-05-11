@@ -14,6 +14,7 @@ from gui.widgets.image_item import QImageItem
 from gui.widgets.image_preview import ImagePreviewOverlay
 from definitions import ROOT_DIR
 import os
+from functools import partial
 from shutil import rmtree
 
 
@@ -23,6 +24,17 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # Vars
+        self.session = inst
+        self.parent = parent
+        self.lists = [self.ui.photo_list]
+        self.info_elms = [self.ui.img_name, self.ui.img_filename, self.ui.img_moddate]
+        self.windows = [self.ui.photo_select, self.ui.proof_select, self.ui.final_select]
+        self.open_msg = "Currently Open"
+        self.watch = watch.watch
+        ManageWindow.active_images = []
+        self.current_window = "PHOTO"
+
         # Connections
         self.ui.home_button.clicked.connect(self.close)
         self.ui.photo_list.itemClicked.connect(self.update_info)
@@ -30,18 +42,11 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.ui.remove_proof.clicked.connect(self.remove_image)
         self.ui.img_name.returnPressed.connect(self.update_name)
         self.ui.create_button.clicked.connect(self.edit_photo)
+        for el in self.windows:
+            el.clicked.connect(partial(self.switch, el))
 
         # Thread
         self.threadpool = QtCore.QThreadPool()
-
-        # Vars
-        self.session = inst
-        self.parent = parent
-        self.lists = [self.ui.photo_list]
-        self.info_elms = [self.ui.img_name, self.ui.img_filename, self.ui.img_moddate]
-        self.open_msg = "Currently Open"
-        self.watch = watch.watch
-        ManageWindow.active_images = []
 
         # Setup
         self.ui.session_name.setText(self.session.name)
@@ -51,6 +56,8 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.overlay = ImagePreviewOverlay
         self.update_images()
         self.watch_session(self.session.path)
+        self.ui.create_button.setEnabled(False)
+        handle.session_modify(self.session)
 
     # Functions
     def active_image(self):
@@ -125,8 +132,9 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.update_images()
 
     def update_images(self):
+        print(self.current_window)
         self.ui.photo_list.clear()
-        images = handle.get_images(self.session, "PHOTO")
+        images = handle.get_images(self.session, self.current_window)
         open_images = handle.get_images(self.session, "OPEN")
         images.extend(open_images)
         self.ui.photo_list.setIconSize(QtCore.QSize(200, 200))
@@ -146,7 +154,11 @@ class ManageWindow(QtWidgets.QStackedWidget):
         img = self.active_image()
         self.ui.img_name.setText(img.display)
         self.ui.img_filename.setText(img.name)
+        if img.position != "PHOTO":
+            img_name = os.path.basename(img.jpg)
+            self.ui.img_filename.setText(img_name)
         if img.position == "OPEN":
+            self.ui.img_filename.setText(img.name)
             self.ui.img_moddate.setText(self.open_msg)
             self.ui.create_button.setText("Finish")
         else:
@@ -184,13 +196,36 @@ class ManageWindow(QtWidgets.QStackedWidget):
                 err_info.setWindowTitle('Session Manager')
                 err_info.setText('Cannot Finalize image yet.')
                 err_info.setInformativeText('You have not saved your image as a JPG yet. Please finish in Photoshop before finalizing.')
-                err_info.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                err_info.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Retry)
+                err_info_retry = err_info.button(QtWidgets.QMessageBox.Retry)
+                err_info_retry.setText('Reopen')
                 err_info.setDefaultButton(QtWidgets.QMessageBox.Ok)
                 err_info.setDetailedText(str(e))
                 err_info.setIcon(QtWidgets.QMessageBox.Warning)
                 err_info.exec_()
+                if err_info.clickedButton() == err_info_retry:
+                    handle.open_img(self.session, img)
             self.update_images()
         self.clear()
+
+    def switch(self, btn):
+        self.clear()
+        for el in self.windows:
+            if el.isChecked():
+                el.setChecked(False)
+        btn.setChecked(True)
+        if btn == self.ui.photo_select:
+            self.ui.title.setText('PHOTOS')
+            self.current_window = "PHOTO"
+            self.update_images()
+        if btn == self.ui.proof_select:
+            self.ui.title.setText('PROOFS')
+            self.current_window = "PROOF"
+            self.update_images()
+        if btn == self.ui.final_select:
+            self.ui.title.setText('FINALS')
+            self.current_window = "FINAL"
+            self.update_images()
 
     def clear(self):
         for elm in self.info_elms:

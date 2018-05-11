@@ -36,7 +36,7 @@ class ImagePreviewOverlay(QtWidgets.QWidget):
     def set_image(self):
         self.ui.add_image.setEnabled(True)
         img = self.active()
-        self.ui.file_name.setText(img.name)
+        self.ui.file_name.setText(img.display)
         self.ui.preview_image.setAlignment(QtCore.Qt.AlignCenter)
         self.ui.preview_image.setPixmap(QtGui.QPixmap(img.thumb).scaled(600, 600, QtCore.Qt.KeepAspectRatio))
 

@@ -167,7 +167,7 @@ class Ui_ImagePreview(object):
         ImagePreview.setWindowTitle(_translate("ImagePreview", "Form"))
         self.preview_image.setText(_translate("ImagePreview", "Select a Photo to Preview"))
         self.close_overlay.setText(_translate("ImagePreview", "X"))
-        self.label.setText(_translate("ImagePreview", "<html><head/><body><p><span style=\" font-family:\'Verdana,sans-serif\'; font-size:22px;\">⇦</span></p></body></html>"))
-        self.label_2.setText(_translate("ImagePreview", "<html><head/><body><p><span style=\" font-family:\'Verdana,sans-serif\'; font-size:22px;\">⇨</span></p></body></html>"))
+        #self.label.setText(_translate("ImagePreview", "<html><head/><body><p><span style=\" font-family:\'Verdana,sans-serif\'; font-size:22px;\">⇦</span></p></body></html>"))
+        #self.label_2.setText(_translate("ImagePreview", "<html><head/><body><p><span style=\" font-family:\'Verdana,sans-serif\'; font-size:22px;\">⇨</span></p></body></html>"))
         self.add_image.setText(_translate("ImagePreview", "Add Image"))
 
