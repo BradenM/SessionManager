@@ -1,5 +1,5 @@
 # Program: Session Manager
-# File: manage/handle.py
+# File: manage/manage.py
 # Desc: Backend for sessions
 # Author: Braden Mars
 
@@ -127,6 +127,20 @@ def session_exist(inst, name):
     return ex
 
 
+# Create Settings
+def setup_settings(setting):
+    options = {
+        'Logos': 'Logos for proof editing',
+    }
+    for o in options.items():
+        o = setting(o[0], o[1])
+        o.save()
+
+
+def add_logo(inst):
+
+    inst.setting.add(inst)
+
 
 ''' ---- IMAGES ----'''
 
@@ -161,6 +175,21 @@ def check_jpg(img, path):
     return False
 
 
+# Update Thumb
+def update_thumb(img):
+    os.remove(img.thumb)
+    image.thumb_jpg(img.jpg, img.thumb)
+
+
+def thumb(inst, proof):
+    name = os.path.split(inst.path)
+    thumb_name = f"{name[0]}/thumb_{name[1]}"
+    if os.path.isfile(thumb_name):
+        os.remove(thumb_name)
+    image.thumb_jpg(inst.path, thumb_name, proof.scale)
+    return thumb_name
+
+
 # Add Image to finals
 def finalize_img(img, session):
     final_path = f"{session.path}/final"
@@ -171,17 +200,40 @@ def finalize_img(img, session):
     data.update_row(img, "jpg", jpg_path)
     data.update_row(img, "active", 0)
     data.update_row(img, "active_file", "")
-    data.update_row(img, "thumb", img.jpg)
     print(f"{img.name} finalized ===> {jpg_path}")
+    img.proof(session)
+
+
+# Setup Proof
+def setup_proof(img, session):
+    proof_dir = f"{session.path}/proof/{img.name}"
+    if os.path.isdir(proof_dir) is False:
+        os.mkdir(proof_dir)
+    else:
+        print("Proof Folder Already Created")
 
 
 # Create Proof
-def make_proof(img, session, size=None, shop=False):
-    proof_dir = f"{session.path}/proof/{img.name}"
-    if os.path.isdir(proof_dir) is False:
-        os.mkdir(f"{session.path}/proof/{img.name}")
+def make_proof(img, session, size, loose):
     path = image.crop_image(img.jpg, size)
-    name = os.path.basename(path)
+    name = os.path.basename(path[0])
+    thumb_name = os.path.basename(path[1])
     proof_path = f"{session.path}/proof/{img.name}/{name}"
-    os.rename(path, proof_path)
-    return name, proof_path
+    thumb_path = f"{session.path}/proof/{img.name}/{thumb_name}"
+    if loose is not True:
+        proof_path = f"{session.path}/proof/{img.name}/proof_{name}"
+        thumb_path = f"{session.path}/proof/{img.name}/proof_{thumb_name}"
+    for p in path:
+        p_name = os.path.basename(p)
+        p_path = f"{session.path}/proof/{img.name}/{p_name}"
+        if loose is not True:
+            p_path = f"{session.path}/proof/{img.name}/proof_{p_name}"
+        os.rename(p, p_path)
+    return name, proof_path, thumb_path
+
+
+# Delete Image/Proof
+def delete_img(img):
+    os.remove(img.path)
+    os.remove(img.thumb)
+    data.del_row(img)

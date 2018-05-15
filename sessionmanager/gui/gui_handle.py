@@ -5,9 +5,10 @@
 
 from data import data
 from utils import image, helpers as h
-from definitions import ROOT_DIR
+from definitions import ROOT_DIR, SESSIONS
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import datetime
+from shutil import copy
 import os
 
 
@@ -65,9 +66,23 @@ def session_modify(inst):
 def get_images(inst, pos):
     images = inst.images
     imgs = []
+    if pos == "PROOF":
+        pos = "FINAL"
     for img in images:
         if img.position == pos:
             imgs.append(img)
+    return imgs
+
+
+def get_proofs(img, loose):
+    proofs = img.proofs
+    imgs = []
+    print(proofs)
+    for p in proofs:
+        imgs.append(p)
+
+    print('GET PROOFS')
+    print(imgs)
     return imgs
 
 
@@ -85,4 +100,28 @@ def get_actives(img):
     return active_imgs
 
 
+def view_img(img):
+    image.view_external(img.path)
 
+
+def preview_proof(proof):
+    path = os.path.split(proof.path)
+    out = f"{path[0]}/prev_{path[1]}"
+    if os.path.isfile(out):
+        os.remove(out)
+    scale = image.jpg_preview(proof.path, out, "edit")
+    data.update_row(proof, "scale", str(scale))
+    return out
+
+
+def setup_logo(parent):
+    dialog = QtWidgets.QFileDialog.getOpenFileName(parent, "Select a Logo")
+    path = str(dialog[0])
+    print(f"HERE -- {path}")
+    logo_dir = f"{SESSIONS}/logo"
+    name = os.path.split(path)[1]
+    if os.path.isdir(logo_dir) is False:
+        os.mkdir(logo_dir)
+    logo = f"{logo_dir}/{name}"
+    copy(path, logo)
+    return name, logo

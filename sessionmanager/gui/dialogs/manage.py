@@ -12,6 +12,8 @@ from gui.threads.watch_directory import WatchDirectory
 from utils import helpers as h, watch
 from gui.widgets.image_item import QImageItem
 from gui.widgets.image_preview import ImagePreviewOverlay
+from gui.widgets.proof_overlay import ProofOverlay
+from gui.widgets.edit_overlay import EditOverlay
 from definitions import ROOT_DIR
 import os
 from functools import partial
@@ -54,6 +56,8 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.ui.progress.hide()
         self.create_thumbs()
         self.overlay = ImagePreviewOverlay
+        self.proofs = ProofOverlay
+        self.edit_overlay = EditOverlay
         self.update_images()
         self.watch_session(self.session.path)
         self.ui.create_button.setEnabled(False)
@@ -133,18 +137,42 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.removeWidget(widget)
         self.update_images()
 
-    def update_images(self):
+    def view_proofs(self, img):
+        blur = QtWidgets.QGraphicsBlurEffect(self)
+        blur.setBlurRadius(6)
+        self.ui.contents.setGraphicsEffect(blur)
+        self.addWidget(self.proofs(self, img))
+
+    def edit_proofs(self, parent_widget, img):
+        self.close_preview(parent_widget)
+        self.parent.resize(1200, 700)
+        self.resize(1200, 700)
+        print(self.parent.size())
+        # blur = QtWidgets.QGraphicsBlurEffect(self)
+        # blur.setBlurRadius(6)
+        # self.ui.contents.setGraphicsEffect(blur)
+        self.addWidget(self.edit_overlay(self, img))
+
+    def update_images(self, imgs=None):
         print(self.current_window)
         self.ui.photo_list.clear()
-        images = handle.get_images(self.session, self.current_window)
-        open_images = handle.get_images(self.session, "OPEN")
-        images.extend(open_images)
+        if imgs is not None:
+            images = imgs
+        else:
+            images = handle.get_images(self.session, self.current_window)
+        if self.current_window == "PHOTO":
+            open_images = handle.get_images(self.session, "OPEN")
+            images.extend(open_images)
         self.ui.photo_list.setIconSize(QtCore.QSize(200, 200))
         for img in images:
-            if img.position == "OPEN":
-                widget = QImageItem(img, True)
-            else:
+            try:
+                if img.position == "OPEN":
+                    widget = QImageItem(img, True)
+                else:
+                    widget = QImageItem(img)
+            except AttributeError:
                 widget = QImageItem(img)
+                print('No Position in Proof')
             print(widget.size())
             item = QtWidgets.QListWidgetItem(self.ui.photo_list)
             item.setData(QtCore.Qt.UserRole, img)
@@ -194,10 +222,12 @@ class ManageWindow(QtWidgets.QStackedWidget):
             handle.update_img(img, "OPEN")
             handle.open_img(self.session, img)
             self.update_info()
-        elif img.position == "FINAL":
-            crop = self.ui.crop_combo.currentText()
-            if crop != "Photoshop" or crop != "None":
-                img.proof(self.session, crop)
+        elif img.position == "FINAL" and self.current_window != "PROOF":
+            self.view_proofs(img)
+        elif img.position == "FINAL" and self.current_window == "PROOF":
+            print("LOAD PROOFS")
+            imgs = handle.get_proofs(img, 1)
+            self.update_images(imgs)
         else:
             try:
                 img.finalize(self.session)
@@ -235,8 +265,8 @@ class ManageWindow(QtWidgets.QStackedWidget):
         if btn == self.ui.final_select:
             self.ui.title.setText('FINALS')
             self.current_window = "FINAL"
-            self.ui.crop_combo.setHidden(False)
-            self.ui.crop_title.setHidden(False)
+            self.ui.crop_combo.setHidden(True)
+            self.ui.crop_title.setHidden(True)
             self.update_images()
 
     def clear(self):

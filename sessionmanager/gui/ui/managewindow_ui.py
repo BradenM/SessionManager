@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(800, 600))
-        MainWindow.setMaximumSize(QtCore.QSize(800, 600))
+        MainWindow.setMaximumSize(QtCore.QSize(1200, 700))
         MainWindow.setStyleSheet("#contents{\n"
 "background:rgba(0,0,0,0);\n"
 "}")

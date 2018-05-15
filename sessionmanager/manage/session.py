@@ -77,6 +77,7 @@ class Image(Base):
     # Database Info
     __tablename__ = "files"
     id = Column(Integer, primary_key=True)
+    session = relationship('Session')
     session_id = Column(Integer, ForeignKey('sessions.id'))
     name = Column(String)
     path = Column(String)
@@ -90,7 +91,7 @@ class Image(Base):
     proofs = relationship('Proof', backref="proofs", cascade="all, delete-orphan")
 
     def __init__(self, session, name):
-        self.session = session.name
+        self.session = session
         self.session_path = session.path
         self.name = name
         self.path = "%s/%s" % (self.session_path, self.name)
@@ -117,13 +118,22 @@ class Image(Base):
         print(self.active_file)
 
     def finalize(self, session):
+        m.setup_proof(self, session)
         m.finalize_img(self, session)
+        m.update_thumb(self)
 
-    def proof(self, session, size, loose=False):
-        proof = m.make_proof(self, session, size)
-        p = Proof(self, proof[0], proof[1], loose)
+    def proof(self, session, size="5x7", loose=True):
+        proof = m.make_proof(self, session, size, loose)
+        if loose is not True:
+            p = Proof(self, f"proof_{proof[0]}", proof[1], size, loose, proof[2])
+        else:
+            p = Proof(self, proof[0], proof[1], size, loose, proof[2])
         self.proofs.append(p)
         m.save(self)
+
+    def edit_loose(self, loose, size):
+        m.delete_img(loose)
+        self.proof(self.session, size)
 
 
 class Proof(Base):
@@ -135,12 +145,21 @@ class Proof(Base):
     path = Column(String)
     loose = Column(Boolean)
     modify = Column(Date)
+    thumb = Column(String)
+    size = Column(String)
+    scale = Column(String)
 
-    def __init__(self, image, name, path, loose):
+    def __init__(self, image, name, path, size, loose, thumb):
         self.name = name
         self.path = path
         self.loose = loose
         self.modify = datetime.now()
+        self.thumb = thumb
+        self.size = size
+        self.scale = ""
+
+    def delete(self):
+        m.delete_img(self)
 
 
 Base.metadata.create_all(engine)

@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(800, 0))
-        MainWindow.setMaximumSize(QtCore.QSize(1000, 600))
+        MainWindow.setMaximumSize(QtCore.QSize(1200, 700))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setKerning(True)

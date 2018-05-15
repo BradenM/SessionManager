@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditOverlay</class>
+ <widget class="QWidget" name="EditOverlay">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1200</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1200</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#QFrame{
+	border:none;
+}
+
+#main_frame{
+	background-color:rgba(96,96,96,1);
+}
+
+#logo_frame{
+	background-color:rgba(27,27,27,0.4);
+	border-left: 1px solid #323232;
+}
+
+#logo_list{
+	background-color:rgba(0,0,0,0);
+}
+
+#edit_view{
+	background-color:rgba(0,0,0,0);
+}
+
+QLabel[title=true]{
+	font: 20px &quot;Montserrat&quot;;
+}
+
+QLabel{
+	color:white;
+	background-color:rgba(0,0,0,0);
+	font:16px &quot;Lato&quot;;
+}
+
+QLabel[Image=true]{
+	padding:3px;
+}
+
+QLabel[Image=true]:hover{
+	border: 3px outset rgba(255,255,255,0.6);
+	border-radius:5px;
+}
+
+QLabel[Image=false]{
+	border: 3px outset rgba(255,255,255,0.3);
+	border-radius: 5px;
+	font: 30px;
+	color: rgba(255,255,255,0.3);
+}
+
+QLabel[Image=false]:hover{
+	border: 3px outset rgba(255,255,255,0.9);
+	color: white;
+}
+
+QGroupBox[img_edit=true]{
+	border: 1px solid rgba(255,255,255,0.3);
+	border-radius:4px;
+}
+
+QPushButton[primary=true]{
+	color:white;
+	background-color:#1473e6;
+	border-style:solid;
+	border-width:2px;
+	border-radius:14px;
+	border-color:#1473e6;
+	padding:6 18 6 18px;
+	font:16pt &quot;Roboto&quot;;
+}
+</string>
+  </property>
+  <widget class="QFrame" name="main_frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1200</width>
+     <height>700</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QPhotoView" name="edit_view">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1010</width>
+      <height>700</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>1010</width>
+      <height>700</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>600</width>
+      <height>600</height>
+     </size>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="dragMode">
+     <enum>QGraphicsView::NoDrag</enum>
+    </property>
+   </widget>
+   <widget class="QFrame" name="logo_frame">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>0</y>
+      <width>190</width>
+      <height>700</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QListWidget" name="logo_list">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>50</y>
+       <width>185</width>
+       <height>645</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>185</width>
+       <height>645</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>185</width>
+       <height>645</height>
+      </size>
+     </property>
+     <property name="cursor" stdset="0">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::DragOnly</enum>
+     </property>
+     <property name="textElideMode">
+      <enum>Qt::ElideMiddle</enum>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="gridSize">
+      <size>
+       <width>140</width>
+       <height>150</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>35</x>
+       <y>0</y>
+       <width>120</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Logos</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="title" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <zorder>label</zorder>
+    <zorder>logo_list</zorder>
+   </widget>
+   <zorder>logo_frame</zorder>
+   <zorder>edit_view</zorder>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QPhotoView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">qphotoview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

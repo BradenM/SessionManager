@@ -12,6 +12,7 @@ from gui.dialogs import manage
 from gui.dialogs.popup import Popup
 from gui.animate import Animate
 from gui.widgets.sessionitem import QSessionItem
+from gui.widgets.event_filter import EventFilter
 import qtawesome as fa
 
 from data import data
@@ -24,6 +25,15 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # Vars
+        self.session = Session
+        self.animate = Animate(self)
+        self.filter = EventFilter(self)
+        self.delete_icon = fa.icon('fa.ban', color='red')
+        self.create_window = create.CreateWindow(self)
+        self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
+        self.update_list()
+
         # Connections
         self.ui.sessionList.clicked.connect(self.update_info)
         #self.ui.centralwidget.mouseReleaseEvent=self.reset_info
@@ -34,26 +44,18 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.ui.recent_button.clicked.connect(self.open_recent)
         # TODO: add completer to session_filter
         # Event Filters
-        self.ui.create_tab.installEventFilter(self)
+        self.ui.create_tab.installEventFilter(self.filter)
         self.ui.create_tab.setProperty("action", "color_fade")
-        self.ui.recent_button.installEventFilter(self)
+        self.ui.recent_button.installEventFilter(self.filter)
         self.ui.recent_button.setProperty("action", "color_fade")
-        self.ui.edit_button.installEventFilter(self)
+        self.ui.edit_button.installEventFilter(self.filter)
         self.ui.edit_button.setProperty("action", "color_fade")
-        self.ui.close_button.installEventFilter(self)
+        self.ui.close_button.installEventFilter(self.filter)
         self.ui.close_button.setProperty("action", "color_mirror")
-        self.ui.sessionList.installEventFilter(self)
+        self.ui.sessionList.installEventFilter(self.filter)
         self.ui.sessionList.setProperty("action", "context")
         #self.ui.session_filter.installEventFilter(self.ui.search_ico)
         #self.ui.search_ico.setProperty("animate", "color_fade")
-
-        # Vars
-        self.session = Session
-        self.animate = Animate(self)
-        self.delete_icon = fa.icon('fa.ban', color='red')
-        self.create_window = create.CreateWindow(self)
-        self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
-        self.update_list()
 
     # Functions
     def active_session(self):
@@ -144,36 +146,43 @@ class MainWindow(QtWidgets.QStackedWidget):
     def close_window(self):
         self.update_list()
 
+    # def eventFilter(self, object, event):
+    #     action = str(object.property("action"))
+    #     if action == "color_fade":
+    #         if event.type() == QtCore.QEvent.HoverEnter:
+    #             self.animate.color_fade(object, "#736F6E", "#f2f2f2")
+    #             return True
+    #         if event.type() == QtCore.QEvent.HoverLeave:
+    #             self.animate.color_fade(object, "#f2f2f2", "#736F6E")
+    #             return True
+    #
+    #     elif action == "color_mirror":
+    #         if event.type() == QtCore.QEvent.HoverEnter:
+    #             #self.animate.color_mirror(object, "rgba(0,0,0,0)", "#D3D3D3")
+    #             return True
+    #         if event.type() == QtCore.QEvent.HoverLeave:
+    #             #self.animate.color_mirror(object, "#D3D3D3", "rgba(0,0,0,0)")
+    #             return True
+    #
+    #     elif action == "item_text":
+    #         if event.type() == QtCore.QEvent.HoverEnter:
+    #             object.setStyleSheet("color:red;")
+    #             return True
+    #
+    #     elif action == "context":
+    #         if event.type() == QtCore.QEvent.ContextMenu:
+    #             menu = QtWidgets.QMenu(self)
+    #             menu.addAction(self.delete_icon, "Delete")
+    #
+    #             if menu.exec_(event.globalPos()):
+    #                 self.delete_session()
+    #             return True
+    #
+    #     return False
+
     def eventFilter(self, object, event):
-        action = str(object.property("action"))
-        if action == "color_fade":
-            if event.type() == QtCore.QEvent.HoverEnter:
-                self.animate.color_fade(object, "#736F6E", "#f2f2f2")
-                return True
-            if event.type() == QtCore.QEvent.HoverLeave:
-                self.animate.color_fade(object, "#f2f2f2", "#736F6E")
-                return True
-
-        elif action == "color_mirror":
-            if event.type() == QtCore.QEvent.HoverEnter:
-                #self.animate.color_mirror(object, "rgba(0,0,0,0)", "#D3D3D3")
-                return True
-            if event.type() == QtCore.QEvent.HoverLeave:
-                #self.animate.color_mirror(object, "#D3D3D3", "rgba(0,0,0,0)")
-                return True
-
-        elif action == "item_text":
-            if event.type() == QtCore.QEvent.HoverEnter:
-                object.setStyleSheet("color:red;")
-                return True
-
-        elif action == "context":
-            if event.type() == QtCore.QEvent.ContextMenu:
-                menu = QtWidgets.QMenu(self)
-                menu.addAction(self.delete_icon, "Delete")
-
-                if menu.exec_(event.globalPos()):
-                    self.delete_session()
-                return True
-
-        return False
+        try:
+            EventFilter(self, object, event)
+        except:
+            print("Exception")
+            return False
