@@ -9,6 +9,9 @@ from gui import gui_handle as handle
 from functools import partial
 from gui.widgets.event_filter import EventFilter
 from gui.widgets.edit_overlay import EditOverlay
+from gui.threads.watch_directory import WatchDirectory
+import os
+from utils import watch
 import qtawesome as fa
 
 
@@ -27,11 +30,19 @@ class ProofOverlay(QtWidgets.QWidget):
         self.loose = self.load_proofs()[0]
         self.proof = self.load_proofs()[1]
         self.selection = None
+        self.threadpool = QtCore.QThreadPool()
+        try:
+            self.dir = os.path.split(self.proof.path)[0]
+            print(self.dir)
+        except AttributeError:
+            pass
+        self.watch = watch.watch
         self.edit_overlay = EditOverlay
         self.filter = EventFilter(self)
         self.preview_icon = fa.icon('fa.search', color='black')
         self.delete_icon = fa.icon('fa.ban', color='red')
         self.logo_icon = fa.icon('fa.image', color="black")
+        ProofOverlay.active_proofs = []
 
         # Connections
         self.ui.loose_proof.mousePressEvent = (partial(self.select, self.loose))
@@ -107,7 +118,10 @@ class ProofOverlay(QtWidgets.QWidget):
             self.image.proof(self.session, size, loose=False)
         self.ui.crop_box.setHidden(True)
         self.proof = self.load_proofs()[1]
+        self.dir = os.path.split(self.proof.path)[0]
         self.ui.proof.setProperty("action", "proof_context")
+        self.ui.proof.installEventFilter(self.filter)
+        self.ui.proof.update()
 
     def delete_proof(self):
         self.ui.proof.setProperty("action", "none")
@@ -120,9 +134,23 @@ class ProofOverlay(QtWidgets.QWidget):
         self.ui.crop_box.setHidden(True)
         self.loose = self.load_proofs()[0]
 
+    def watch_proof(self):
+        def detect():
+            print("DETECT ----")
+            print(self.proof.name)
+            self.proof.update()
+            self.load_proofs()
+
+        worker = WatchDirectory(self.watch, self.dir, quit=True)
+        worker.signals.created.connect(detect)
+        self.threadpool.start(worker)
+
     def edit_proof(self):
-        #self.parent.setGeometry(QtCore.QRect(0, 0, 1200, 1200))
-        self.parent.edit_proofs(self, self.proof)
+        # self.parent.edit_proofs(self, self.proof) TODO: In Program Image editor
+        handle.open_img(self.session, self.proof)
+        self.ui.proof.setProperty("action", "none")
+        print('test')
+        self.watch_proof()
 
     def close(self):
         self.parent.close_preview(self)

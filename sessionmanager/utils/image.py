@@ -41,7 +41,8 @@ def translate_size(size):
         '4x4': (1200, 1200),
         'edit': (595, 595),
         'item': (200, 200),
-        'logo': (130, 130)
+        'logo': (130, 130),
+        'proof': (350, 350)
     }
     if size in sizes.keys():
         return sizes[size]
@@ -71,6 +72,25 @@ def crop_image(path, size):
     crop.save(output)
     thumb.save(thumb_output)
     return output, thumb_output
+
+
+def crop_proof(path, size, output):
+    pixels = translate_size(size)
+    thumb_size = translate_size('proof')
+    img = Image.open(path)
+    width = img.size[0]/2
+    height = img.size[1]/2
+    crop = img.crop(
+        (
+            width - pixels[0],
+            height - pixels[1],
+            width + pixels[0],
+            height + pixels[1],
+        )
+    )
+    thumb = ImageOps.fit(crop, thumb_size, Image.ANTIALIAS)
+    os.remove(output)
+    thumb.save(output)
 
 
 # View Image

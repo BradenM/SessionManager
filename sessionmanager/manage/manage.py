@@ -7,7 +7,7 @@ import os
 import subprocess
 from shutil import copyfile, rmtree
 from utils import helpers as h, validate as v, image
-from definitions import ROOT, SESSIONS
+from definitions import ROOT, SESSIONS, SETTINGS
 import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
@@ -129,12 +129,16 @@ def session_exist(inst, name):
 
 # Create Settings
 def setup_settings(setting):
-    options = {
-        'Logos': 'Logos for proof editing',
-    }
-    for o in options.items():
-        o = setting(o[0], o[1])
-        o.save()
+    # options = {
+    #     'Sessions Directory': 'Directory for storing sessions',
+    # }
+    # for o in options.items():
+    #     o = setting(o[0], o[1])
+    #     o.save()
+    for sec in SETTINGS:
+        for name, desc in SETTINGS[sec].items():
+            o = setting[name, desc]
+
 
 
 def add_logo(inst):
@@ -179,6 +183,8 @@ def check_jpg(img, path):
 def update_thumb(img):
     os.remove(img.thumb)
     image.thumb_jpg(img.jpg, img.thumb)
+    print(f'Thumb failed, image must be a proof: {img.name}')
+    image.thumb_jpg(img.path, img.thumb)
 
 
 def thumb(inst, proof):
@@ -230,6 +236,13 @@ def make_proof(img, session, size, loose):
             p_path = f"{session.path}/proof/{img.name}/proof_{p_name}"
         os.rename(p, p_path)
     return name, proof_path, thumb_path
+
+
+# Update Proof
+def update_proof(proof):
+    size = proof.size
+    print(f"PRROOOOFFF SIIIZE - {size}")
+    image.crop_proof(proof.path, size, proof.thumb)
 
 
 # Delete Image/Proof

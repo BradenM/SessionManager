@@ -59,7 +59,7 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.proofs = ProofOverlay
         self.edit_overlay = EditOverlay
         self.update_images()
-        self.watch_session(self.session.path)
+        self.watch_session()
         self.ui.create_button.setEnabled(False)
         self.ui.crop_combo.setHidden(True)
         self.ui.crop_title.setHidden(True)
@@ -100,7 +100,7 @@ class ManageWindow(QtWidgets.QStackedWidget):
         worker.signals.thumbs.connect(thumb)
         self.threadpool.start(worker)
 
-    def watch_session(self, path):
+    def watch_session(self):
         def detect(file):
             print("DETECT ----")
             print(ManageWindow.active_images)
@@ -114,17 +114,9 @@ class ManageWindow(QtWidgets.QStackedWidget):
                     print('NO MATCH') #TODO: BACKUP METHODS
             self.update_images()
 
-        worker = WatchDirectory(self.watch, path)
+        worker = WatchDirectory(self.watch, self.session.path)
         worker.signals.created.connect(detect)
         self.threadpool.start(worker)
-
-    def purge_thumbs(self): # TODO: MOVE THIS TO WHEN AN IMAGE IS POST-EDITED
-        try:
-            path = f"{self.session.path}/thumbs"
-            rmtree(path)
-            self.update_images()
-        except FileNotFoundError:
-            pass
 
     def preview(self):
         blur = QtWidgets.QGraphicsBlurEffect(self)

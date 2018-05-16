@@ -7,7 +7,7 @@
 */sessions/
 *.bat
 .idea/
-*.sqlite
+*.sqlite*
 uitest/
 *_old.py
 *_UIC.py

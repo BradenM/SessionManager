@@ -60,9 +60,9 @@ class EventFilter(QtCore.QObject):
                 else:
                     open = menu.addAction(self.parent.preview_icon, "Open Preview")
                     delete = menu.addAction(self.parent.delete_icon, "Delete")
-                    logo = menu.addAction(self.parent.logo_icon, "Add Logo")
+                    logo = menu.addAction(self.parent.logo_icon, "Edit Proof")
                 action = menu.exec_(event.globalPos())
-                if action is not None :
+                if action is not None:
                     if action == open:
                         self.parent.view()
                     elif action == delete:

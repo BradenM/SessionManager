@@ -3,9 +3,8 @@
 # Desc: Setting Classes
 # Author: Braden Mars
 
-from sqlalchemy import Column, String, Integer, Date, DateTime, Boolean, Table, ForeignKey, ARRAY
+from sqlalchemy import Column, String, Integer, ForeignKey
 from data.base import Base, engine
-from sqlalchemy.orm import relationship
 import manage.manage as m
 from data import data
 
@@ -16,7 +15,8 @@ class Setting(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     desc = Column(String)
-    logos = relationship('Logo', backref="options", cascade="all, delete-orphan")
+    discriminator = Column('type', String)
+    __mapper_args__ = {'polymorphic_on': discriminator}
 
     def __init__(self, name, desc):
         self.name = name
@@ -34,19 +34,24 @@ class Setting(Base):
         m.save(self)
 
 
-class Logo(Base):
+class Storage(Setting):
     # Database Info
-    __tablename__ = "options"
-    id = Column(Integer, primary_key=True)
-    setting_id = Column(Integer, ForeignKey('settings.id'))
-    setting = relationship('Setting')
-    name = Column(String)
+    __tablename__ = 'storage'
+    __mapper_args__ = {'polymorphic_identity': 'storage'}
+    id = Column(Integer, ForeignKey('settings.id'), primary_key=True)
+    path = Column(String)
+
+
+class Logo(Setting):
+    # Database Info
+    __tablename__ = "logo"
+    __mapper_args__ = {'polymorphic_identity': 'logo'}
+    id = Column(Integer, ForeignKey('settings.id'), primary_key=True)
     path = Column(String)
     thumb = Column(String)
 
-    def __init__(self, setting, name, path, proof):
-        self.setting = setting
-        self.name = name
+    def __init__(self, name, desc, path, proof):
+        super(Logo, self).__init__(name, desc)
         self.path = path
         self.thumb = self.make_thumb(proof)
 
@@ -57,5 +62,5 @@ class Logo(Base):
 
 Base.metadata.create_all(engine)
 
-if len(data.iterate_table(Setting)) < 1:
-    m.setup_settings(Setting)
+# if len(data.iterate_table(Setting)) < 1:
+#     m.setup_settings(Setting)

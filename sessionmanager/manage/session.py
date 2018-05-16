@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 import manage.manage as m
 from data import data
-import os
+import os, shutil
 
 
 class Session(Base):
@@ -157,9 +157,13 @@ class Proof(Base):
         self.thumb = thumb
         self.size = size
         self.scale = ""
+        self.active = False
 
     def delete(self):
         m.delete_img(self)
+
+    def update(self):
+        m.update_proof(self)
 
 
 Base.metadata.create_all(engine)
