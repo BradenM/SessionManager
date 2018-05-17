@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0" idbasedtr="false">
+ <class>SettingsModule</class>
+ <widget class="QWidget" name="SettingsModule">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#SettingsModule{
+	background-color:black;
+}
+
+QLabel[title=true]{
+	color:white;
+	font: 24px &quot;Roboto&quot;;
+	font-weight:300;
+}
+
+#module{
+	background-color:#464646;
+	border-color:2px solid black;
+}
+
+#setting_tab{
+	background-color:rgba(0,0,0,0);
+	border-right:1px solid #151515;
+}
+
+#setting_list,
+#setting_view{
+	background-color:rgba(0,0,0,0);
+	border:none !important;
+	
+}
+</string>
+  </property>
+  <widget class="QFrame" name="module">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>65</y>
+     <width>700</width>
+     <height>500</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QListView" name="setting_tab">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>190</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="setting_view" native="true">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>0</y>
+      <width>510</width>
+      <height>500</height>
+     </rect>
+    </property>
+    <widget class="QListWidget" name="setting_list">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>510</width>
+       <height>500</height>
+      </rect>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

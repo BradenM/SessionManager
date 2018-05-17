@@ -122,7 +122,7 @@ class Image(Base):
         m.finalize_img(self, session)
         m.update_thumb(self)
 
-    def proof(self, session, size="5x7", loose=True):
+    def gen_proof(self, session, size="5x7", loose=True):
         proof = m.make_proof(self, session, size, loose)
         if loose is not True:
             p = Proof(self, f"proof_{proof[0]}", proof[1], size, loose, proof[2])
@@ -133,7 +133,7 @@ class Image(Base):
 
     def edit_loose(self, loose, size):
         m.delete_img(loose)
-        self.proof(self.session, size)
+        self.gen_proof(self.session, size)
 
 
 class Proof(Base):

@@ -48,6 +48,7 @@ class ProofOverlay(QtWidgets.QWidget):
         self.ui.loose_proof.mousePressEvent = (partial(self.select, self.loose))
         self.ui.proof.mousePressEvent = (partial(self.select, self.proof))
         self.ui.create.clicked.connect(self.func_control)
+        self.ui.close_button.mousePressEvent = self.close
 
         # Event Filter
         self.ui.loose_proof.setProperty("action", "proof_context")
@@ -115,7 +116,7 @@ class ProofOverlay(QtWidgets.QWidget):
     def create_proof(self):
         size = self.ui.crop.currentText()
         if size != "Photoshop" and size != "None":
-            self.image.proof(self.session, size, loose=False)
+            self.image.gen_proof(self.session, size, loose=False)
         self.ui.crop_box.setHidden(True)
         self.proof = self.load_proofs()[1]
         self.dir = os.path.split(self.proof.path)[0]
@@ -152,5 +153,5 @@ class ProofOverlay(QtWidgets.QWidget):
         print('test')
         self.watch_proof()
 
-    def close(self):
+    def close(self, e):
         self.parent.close_preview(self)

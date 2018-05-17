@@ -19,15 +19,5 @@ NAME = "Session Manager"
 VERSION = "1.0.0"
 DESC = "An application for photographers to easily manage their sessions"
 
-# Settings
-SETTINGS = {
-    "Storage": {
-        "Session Directory": "Path to store Session files in",
-        "Test Directory": "A Test Directory",
-    },
-    "Logos": {
-        "Logo": "Logo Settings"
-    }
-}
 
 

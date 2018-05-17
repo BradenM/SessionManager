@@ -7,7 +7,7 @@ import os
 import subprocess
 from shutil import copyfile, rmtree
 from utils import helpers as h, validate as v, image
-from definitions import ROOT, SESSIONS, SETTINGS
+from definitions import ROOT, SESSIONS
 import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
@@ -128,21 +128,14 @@ def session_exist(inst, name):
 
 
 # Create Settings
-def setup_settings(setting):
-    # options = {
-    #     'Sessions Directory': 'Directory for storing sessions',
-    # }
-    # for o in options.items():
-    #     o = setting(o[0], o[1])
-    #     o.save()
-    for sec in SETTINGS:
-        for name, desc in SETTINGS[sec].items():
-            o = setting[name, desc]
-
+def setup_settings(settings):
+    for cls in settings:
+        for args in settings[cls]:
+            s = cls(*args)
+            s.save()
 
 
 def add_logo(inst):
-
     inst.setting.add(inst)
 
 
@@ -207,7 +200,7 @@ def finalize_img(img, session):
     data.update_row(img, "active", 0)
     data.update_row(img, "active_file", "")
     print(f"{img.name} finalized ===> {jpg_path}")
-    img.proof(session)
+    img.gen_proof(session)
 
 
 # Setup Proof
@@ -241,7 +234,6 @@ def make_proof(img, session, size, loose):
 # Update Proof
 def update_proof(proof):
     size = proof.size
-    print(f"PRROOOOFFF SIIIZE - {size}")
     image.crop_proof(proof.path, size, proof.thumb)
 
 

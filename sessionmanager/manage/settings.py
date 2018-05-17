@@ -1,11 +1,12 @@
 # Program: Session Manager
-# File: manage/settings.py
+# File: manage/settings_mod.py
 # Desc: Setting Classes
 # Author: Braden Mars
 
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, String, Integer, ForeignKey, Boolean
 from data.base import Base, engine
 import manage.manage as m
+from definitions import SESSIONS
 from data import data
 
 
@@ -15,8 +16,8 @@ class Setting(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     desc = Column(String)
-    discriminator = Column('type', String)
-    __mapper_args__ = {'polymorphic_on': discriminator}
+    type = Column(String)
+    __mapper_args__ = {'polymorphic_on': type}
 
     def __init__(self, name, desc):
         self.name = name
@@ -34,12 +35,28 @@ class Setting(Base):
         m.save(self)
 
 
+class General(Setting):
+    # Database Info
+    __tablename__ = 'general'
+    __mapper_args__ = {'polymorphic_identity': 'general'}
+    id = Column(Integer, ForeignKey('settings.id'), primary_key=True)
+    state = Column(Boolean)
+
+    def __init__(self, name, desc, state):
+        super(General, self).__init__(name, desc)
+        self.state = state
+
+
 class Storage(Setting):
     # Database Info
     __tablename__ = 'storage'
     __mapper_args__ = {'polymorphic_identity': 'storage'}
     id = Column(Integer, ForeignKey('settings.id'), primary_key=True)
     path = Column(String)
+
+    def __init__(self, name, desc, path):
+        super(Storage, self).__init__(name, desc)
+        self.path = path
 
 
 class Logo(Setting):
@@ -62,5 +79,16 @@ class Logo(Setting):
 
 Base.metadata.create_all(engine)
 
-# if len(data.iterate_table(Setting)) < 1:
-#     m.setup_settings(Setting)
+DEFAULT = {
+    Storage:
+        {
+            ("Session Directory", "A Path to Store Session files in", SESSIONS),
+        },
+    General:
+        {
+            ("Auto Detect", "Enable/Disable Automatic Detection of Camera memory card", True),
+        }
+}
+
+if len(data.iterate_table(Setting)) < 1:
+    m.setup_settings(DEFAULT)

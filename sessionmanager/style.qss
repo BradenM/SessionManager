@@ -78,7 +78,6 @@
 #sessionList::item:hover{
 	color:#1473e6;
 	background-color:#282828;
-	cursor:pointer;
 	outline:none;
 }
 
