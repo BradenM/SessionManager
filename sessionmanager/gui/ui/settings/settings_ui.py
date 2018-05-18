@@ -15,8 +15,14 @@ class Ui_SettingsModule(object):
         SettingsModule.resize(800, 600)
         SettingsModule.setMinimumSize(QtCore.QSize(800, 600))
         SettingsModule.setMaximumSize(QtCore.QSize(800, 600))
-        SettingsModule.setStyleSheet("#SettingsModule{\n"
-"    background-color:black;\n"
+        SettingsModule.setStyleSheet("QAbstractItemView:selected{\n"
+"    outline:none;\n"
+"    color:none;\n"
+"}\n"
+"\n"
+"QListWidget::item:selected{\n"
+"    outline:none;\n"
+"    border:none;\n"
 "}\n"
 "\n"
 "QLabel[title=true]{\n"
@@ -38,7 +44,6 @@ class Ui_SettingsModule(object):
 "#setting_list,\n"
 "#setting_view{\n"
 "    background-color:rgba(0,0,0,0);\n"
-"    border:none !important;\n"
 "    \n"
 "}\n"
 "")
@@ -47,7 +52,7 @@ class Ui_SettingsModule(object):
         self.module.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.module.setFrameShadow(QtWidgets.QFrame.Raised)
         self.module.setObjectName("module")
-        self.setting_tab = QtWidgets.QListView(self.module)
+        self.setting_tab = QtWidgets.QListWidget(self.module)
         self.setting_tab.setGeometry(QtCore.QRect(0, 0, 190, 501))
         self.setting_tab.setObjectName("setting_tab")
         self.setting_view = QtWidgets.QWidget(self.module)
@@ -55,7 +60,11 @@ class Ui_SettingsModule(object):
         self.setting_view.setObjectName("setting_view")
         self.setting_list = QtWidgets.QListWidget(self.setting_view)
         self.setting_list.setGeometry(QtCore.QRect(0, 0, 510, 500))
-        self.setting_list.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.setting_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setting_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setting_list.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.setting_list.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.setting_list.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.setting_list.setObjectName("setting_list")
 
         self.retranslateUi(SettingsModule)

@@ -16,28 +16,29 @@ class Ui_TitleItem(object):
 "    background-color:rgba(0,0,0,0);\n"
 "}\n"
 "\n"
-"QLabel[title=true]{\n"
-"    color:white;\n"
-"    font: 24px \"Roboto\";\n"
-"    font-weight:300;\n"
+"QLabel[stitle=true]{\n"
+"    color:#f2f2f2;\n"
+"    font: 32px \"Lato\";\n"
+"    font-weight:900;\n"
 "}")
-        self.widget = QtWidgets.QWidget(TitleItem)
-        self.widget.setGeometry(QtCore.QRect(2, 2, 511, 70))
-        self.widget.setObjectName("widget")
-        self.gridLayout = QtWidgets.QGridLayout(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(TitleItem)
+        self.layoutWidget.setGeometry(QtCore.QRect(2, 2, 420, 70))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.layoutWidget)
         self.gridLayout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName("gridLayout")
-        self.title = QtWidgets.QLabel(self.widget)
-        self.title.setMinimumSize(QtCore.QSize(311, 61))
-        self.title.setMaximumSize(QtCore.QSize(311, 61))
-        self.title.setProperty("title", True)
-        self.title.setObjectName("title")
-        self.gridLayout.addWidget(self.title, 0, 1, 1, 1)
-        self.logo = QtWidgets.QLabel(self.widget)
-        self.logo.setMinimumSize(QtCore.QSize(24, 24))
-        self.logo.setMaximumSize(QtCore.QSize(24, 24))
+        self.setting_title = QtWidgets.QLabel(self.layoutWidget)
+        self.setting_title.setMinimumSize(QtCore.QSize(311, 61))
+        self.setting_title.setMaximumSize(QtCore.QSize(311, 61))
+        self.setting_title.setProperty("stitle", True)
+        self.setting_title.setObjectName("setting_title")
+        self.gridLayout.addWidget(self.setting_title, 0, 1, 1, 1)
+        self.logo = QtWidgets.QLabel(self.layoutWidget)
+        self.logo.setMinimumSize(QtCore.QSize(32, 32))
+        self.logo.setMaximumSize(QtCore.QSize(32, 32))
+        self.logo.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.logo.setObjectName("logo")
         self.gridLayout.addWidget(self.logo, 0, 0, 1, 1)
 
@@ -47,6 +48,6 @@ class Ui_TitleItem(object):
     def retranslateUi(self, TitleItem):
         _translate = QtCore.QCoreApplication.translate
         TitleItem.setWindowTitle(_translate("TitleItem", "Form"))
-        self.title.setText(_translate("TitleItem", "TextLabel"))
+        self.setting_title.setText(_translate("TitleItem", "TextLabel"))
         self.logo.setText(_translate("TitleItem", "logo"))
 

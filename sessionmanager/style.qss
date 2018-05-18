@@ -50,7 +50,7 @@
 #sessionlist_header #label{
 	color:#f2f2f2;
 	font: 16pt "Montserrat";
-	text-transform: uppercase;
+	transform: uppercase;
 	padding-right:1px;
 
 }
@@ -87,7 +87,7 @@
 	outline:none;
 }
 
-
+QAbstractItemView[list=true],
 QAbstractItemView:selected{
 	outline:none;
 	color:none;
@@ -194,7 +194,7 @@ QPushButton#close_button{
 #info_frame_create #inputs QLineEdit:focus{
 	border-color:#0E50A1;
 }
-
+QToolButton[dirOp=true],
 #info_frame_create #inputs QToolButton{
 	background-color:rgba(0,0,0,0);
 	border:1px solid #151515;
@@ -204,6 +204,7 @@ QPushButton#close_button{
 	qproperty-textAlign:AlignCenter;
 }
 
+QToolButton[dirOp=true]:hover,
 #info_frame_create #inputs QToolButton:hover{
 	border-color:grey;
 }
@@ -348,6 +349,26 @@ QPushButton#close_button{
 }
 
 #logo_list::item:selected{
+    outline:none;
+    border:none;
+}
+
+QListWidget{
+    outline:none;
+    border:none;
+}
+
+QAbstractItemView{
+    outline:none;
+    border:none;
+}
+
+﻿QAbstractItemView:selected{
+	outline:none;
+	color:none;
+}
+
+QListWidget::item:selected{
     outline:none;
     border:none;
 }

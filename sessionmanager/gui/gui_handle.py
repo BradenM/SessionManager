@@ -125,3 +125,10 @@ def setup_logo(parent):
     logo = f"{logo_dir}/{name}"
     copy(path, logo)
     return name, logo
+
+
+def get_settings(cls):
+    general = [x for x in data.get_rows(cls, "general", "type")]
+    storage = [x for x in data.get_rows(cls, "storage", "type")]
+    tabs = [x for x in data.iterate_table(cls)]
+    return general, storage, tabs

@@ -6,7 +6,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Boolean
 from data.base import Base, engine
 import manage.manage as m
-from definitions import SESSIONS
+from definitions import SESSIONS, DNG
 from data import data
 
 
@@ -53,10 +53,12 @@ class Storage(Setting):
     __mapper_args__ = {'polymorphic_identity': 'storage'}
     id = Column(Integer, ForeignKey('settings.id'), primary_key=True)
     path = Column(String)
+    default = Column(String)
 
     def __init__(self, name, desc, path):
         super(Storage, self).__init__(name, desc)
         self.path = path
+        self.default = path
 
 
 class Logo(Setting):
@@ -82,7 +84,8 @@ Base.metadata.create_all(engine)
 DEFAULT = {
     Storage:
         {
-            ("Session Directory", "A Path to Store Session files in", SESSIONS),
+            ("Session Directory", "A Path to Store Session files in\nDefault: In App Directory", SESSIONS),
+            ("DNG Converter", "Path to the Adobe DNG Converter", DNG)
         },
     General:
         {
