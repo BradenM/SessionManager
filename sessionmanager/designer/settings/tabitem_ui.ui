@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>185</width>
+    <width>160</width>
     <height>60</height>
    </rect>
   </property>
@@ -15,6 +15,9 @@
     <width>189</width>
     <height>60</height>
    </size>
+  </property>
+  <property name="cursor">
+   <cursorShape>PointingHandCursor</cursorShape>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -26,15 +29,15 @@
 
 #tab_title{
 	font: 20px &quot;Lato&quot;;
-	color:#f2f2f2;
+	color:#C0C0C0;
 }</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>4</x>
      <y>3</y>
-     <width>170</width>
+     <width>150</width>
      <height>52</height>
     </rect>
    </property>
@@ -65,13 +68,13 @@
      <widget class="QLabel" name="tab_title">
       <property name="minimumSize">
        <size>
-        <width>120</width>
+        <width>105</width>
         <height>50</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>120</width>
+        <width>105</width>
         <height>50</height>
        </size>
       </property>

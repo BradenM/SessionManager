@@ -149,6 +149,7 @@ class MainWindow(QtWidgets.QStackedWidget):
 
     def open_settings(self):
         self.setting_window.setVisible(True)
+        self.setting_window.raise_()
 
     def close_window(self):
         self.update_list()

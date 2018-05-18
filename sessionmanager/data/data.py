@@ -27,6 +27,12 @@ def get_row(cls, name, attr=None):
         return row
 
 
+# Grab First Row where
+def first_row(cls):
+    for row in dbs.query(cls).first():
+        return row
+
+
 # Gets Rows WHERE
 def get_rows(cls, name, attr=None):
     rows = []

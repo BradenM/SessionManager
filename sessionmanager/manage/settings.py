@@ -6,7 +6,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Boolean
 from data.base import Base, engine
 import manage.manage as m
-from definitions import SESSIONS, DNG
+from definitions import SESSIONS, DNG, ICONS
 from data import data
 
 
@@ -38,6 +38,9 @@ class Setting(Base):
 class General(Setting):
     # Database Info
     __tablename__ = 'general'
+    __tab__ = "General"
+    __icon__  = f"{ICONS}/settings/gen.png"
+    __winicon__ = f"{ICONS}/settings/gen_title.png"
     __mapper_args__ = {'polymorphic_identity': 'general'}
     id = Column(Integer, ForeignKey('settings.id'), primary_key=True)
     state = Column(Boolean)
@@ -50,6 +53,9 @@ class General(Setting):
 class Storage(Setting):
     # Database Info
     __tablename__ = 'storage'
+    __tab__ = "Storage"
+    __icon__ = f"{ICONS}/settings/stor.png"
+    __winicon__ = f"{ICONS}/settings/stor_title.png"
     __mapper_args__ = {'polymorphic_identity': 'storage'}
     id = Column(Integer, ForeignKey('settings.id'), primary_key=True)
     path = Column(String)
@@ -59,6 +65,10 @@ class Storage(Setting):
         super(Storage, self).__init__(name, desc)
         self.path = path
         self.default = path
+
+    def migrate(self, session_dir, path):
+        result = m.migrate_sessions(self, session_dir, path)
+        return result
 
 
 class Logo(Setting):

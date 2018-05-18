@@ -159,6 +159,7 @@ QPushButton#open_button:!enabled{
     border-color:gray !important;
 }
 
+QPushButton[close_button=true],
 QPushButton#close_button{
 	color:#D3D3D3;
 	background-color:rgba(0,0,0,0);
@@ -201,7 +202,6 @@ QToolButton[dirOp=true],
 	border-radius:3px;
 	color:grey;
 	font-family:"Font Awesome 5 Free";
-	qproperty-textAlign:AlignCenter;
 }
 
 QToolButton[dirOp=true]:hover,
@@ -371,4 +371,26 @@ QAbstractItemView{
 QListWidget::item:selected{
     outline:none;
     border:none;
+}
+
+QListWidget[tab_list=true]::item:selected{
+    background-color: #6A6A6A;
+    color:white !important;
+}
+
+QListWidget[tab_list=true]::item:hover{
+    background-color: #585858;
+    color:white !important;
+}
+
+QLabel[close_button=true]{
+    color:#f2f2f2;
+    font:15pt "Lato";
+    font-weight:900;
+}
+
+QLabel[close_button=true]:hover{
+    color:white;
+    font:15pt "Lato";
+    font-weight:900;
 }

@@ -77,22 +77,28 @@ QLabel[title=true]{
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
+   <property name="tab_list" stdset="0">
+    <bool>true</bool>
+   </property>
    <widget class="QListWidget" name="setting_tab">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>190</width>
+      <width>170</width>
       <height>501</height>
      </rect>
+    </property>
+    <property name="tab_list" stdset="0">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QWidget" name="setting_view" native="true">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>180</x>
       <y>0</y>
-      <width>510</width>
+      <width>520</width>
       <height>500</height>
      </rect>
     </property>
@@ -101,7 +107,7 @@ QLabel[title=true]{
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>510</width>
+       <width>520</width>
        <height>500</height>
       </rect>
      </property>

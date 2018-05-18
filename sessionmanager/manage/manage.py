@@ -5,9 +5,8 @@
 
 import os
 import subprocess
-from shutil import copyfile, rmtree
+from shutil import copyfile, rmtree, copytree
 from utils import helpers as h, validate as v, image
-from definitions import ROOT, SESSIONS
 import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
@@ -16,38 +15,29 @@ cwd = os.getcwd()
 date = h.get_month_year()
 parent = "%s" % date
 DNG = "/Applications/Adobe\ DNG\ Converter.app/Contents/MacOS/Adobe\ DNG\ Converter"
-
 db = None
 
 
 # Structure Session
-def structure(name):
-    if v.check_sessions() is False:
-        os.mkdir(SESSIONS)
-    os.chdir(SESSIONS)
-    if v.check_parent(parent) is False:
+def structure(inst):
+    session_dir = inst.__dir__
+    print(f"SESSIONS DIRECTORY - {session_dir}")
+    if os.path.exists(session_dir) is False:
+        os.makedirs(session_dir)
+    os.chdir(session_dir)
+    if os.path.exists(parent) is False:
         os.mkdir("%s" % date)
     global session_name
-    session_name = h.remove_whitespace(name)
+    session_name = h.remove_whitespace(inst.name)
     session_path = "%s/%s" % (parent, session_name)
     final_path = f"{session_path}/final"
     proof_path = f"{session_path}/proof"
     os.mkdir(session_path)
     os.mkdir(final_path)
     os.mkdir(proof_path)
-    path = "%s/sessions/%s" % (cwd, session_path)
+    os.path.abspath(session_path)
+    path = "%s" % os.path.abspath(session_path)
     return path
-
-
-# Get Path
-def get_path(name):
-    session_name_path = h.remove_whitespace(name)
-    session_path = "%s/%s" % (parent, session_name_path)
-    path = "%s/sessions/%s" % (cwd, session_path)
-    if os.path.isdir(path):
-        return path
-    else:
-        return False
 
 
 # Iterate Files
@@ -127,6 +117,9 @@ def session_exist(inst, name):
     return ex
 
 
+''' SETTINGS  '''
+
+
 # Create Settings
 def setup_settings(settings):
     for cls in settings:
@@ -138,6 +131,51 @@ def setup_settings(settings):
 def add_logo(inst):
     inst.setting.add(inst)
 
+
+def check_dir(path):
+    if os.path.exists(path):
+        return False
+    else:
+        return True
+
+
+def migrate_sessions(inst, session_dir, path):
+    if os.path.exists(session_dir):
+        try:
+            copytree(session_dir, path)
+        except Exception as e:
+            print(f"Failed to copy directories - {e}")
+            return False
+    else:
+        if check_dir(path):
+            data.update_row(inst, "path", path)
+            inst.save()
+            return True
+        else:
+            return False
+    return True
+
+
+def migrate_update(origin, new_p, rows):
+    for cls in rows:
+        for inst in cls:
+            parent = os.path.dirname(inst.path)
+            head = f"{os.path.split(os.path.split(parent)[0])[1]}/{os.path.basename(parent)}"
+            new_path = f"{new_p}/{head}/{inst.name}"
+            print(new_path)
+            data.update_row(inst, "path", new_path)
+            try:
+                thead = f"{os.path.split(os.path.split(inst.thumb)[0])[1]}/{os.path.basename(inst.thumb)}"
+                tpath = f"{new_p}/{thead}"
+                data.update_row(inst, "thumb", tpath)
+            except AttributeError:
+                print(f'No Thumbs Found for {inst.name}')
+    try:
+        rmtree(origin)
+    except Exception as e:
+        print(f"Could not remove origin directory - {e}")
+
+    return True
 
 ''' ---- IMAGES ----'''
 

@@ -10,12 +10,14 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 import manage.manage as m
 from data import data
+from manage.settings import Setting
 import os, shutil
 
 
 class Session(Base):
     # Database Information
     __tablename__ = "sessions"
+    __dir__ = (Setting.get('Session Directory')).path
     id = Column(Integer, primary_key=True)
     name = Column(String)
     path = Column(String)
@@ -36,8 +38,6 @@ class Session(Base):
         d = datetime.now()
         self.modify_date = d
         self.create_date = d
-        if name is not None:
-            self.path = m.get_path(name)
 
     # Functions
 
@@ -45,8 +45,7 @@ class Session(Base):
         self.rawpath = raw_path
         self.desc = desc
         self.has_raw = raw
-
-        self.path = m.structure(self.name)
+        self.path = m.structure(self)
         print(self.path)
         m.copy_raw(self.rawpath, self.path)
 
@@ -72,10 +71,18 @@ class Session(Base):
     def generate_thumbs(inst, callback, thumb_call):
         m.gen_thumbs(inst, callback, thumb_call)
 
+    def update_migration(self, origin, path):
+        sessions = data.iterate_table(Session)
+        images = data.iterate_table(Image)
+        proofs = data.iterate_table(Proof)
+        all = [sessions, images, proofs]
+        m.migrate_update(origin, path, all)
+
 
 class Image(Base):
     # Database Info
     __tablename__ = "files"
+    __dir__ = Session.__dir__
     id = Column(Integer, primary_key=True)
     session = relationship('Session')
     session_id = Column(Integer, ForeignKey('sessions.id'))

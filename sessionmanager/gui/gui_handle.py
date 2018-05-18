@@ -37,6 +37,7 @@ def recent_session(cls):
     sessions = data.iterate_table(cls)
     return min(sessions, key=lambda x: abs(x.modify_date - datetime.now()))
 
+
 """ ---- CREATE WINDOW ---- """
 
 
@@ -92,7 +93,7 @@ def update_img(inst, pos):
 
 
 def open_img(session, img):
-    image.ps_open(img.path)
+    image.ps_open(img)
 
 
 def get_actives(img):
@@ -130,5 +131,4 @@ def setup_logo(parent):
 def get_settings(cls):
     general = [x for x in data.get_rows(cls, "general", "type")]
     storage = [x for x in data.get_rows(cls, "storage", "type")]
-    tabs = [x for x in data.iterate_table(cls)]
-    return general, storage, tabs
+    return general, storage
