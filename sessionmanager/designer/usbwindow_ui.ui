@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0" idbasedtr="false">
+ <class>USBWindow</class>
+ <widget class="QWidget" name="USBWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>250</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>500</width>
+    <height>250</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame{
+	background-color: #323232;
+}
+
+QLabel[title=true]{
+	font: 28px &quot;Montserrat&quot;;
+	color:#f2f2f2;
+	font-weight:900;
+}
+
+QLabel{
+	font:16px &quot;Lato&quot;;
+	color:#f2f2f2;
+	font-weight:300;
+}
+
+QPushButton{
+	color:white;
+	background-color:#1473e6;
+	border-style:solid;
+	border-width:2px;
+	border-radius:14px;
+	border-color:#1473e6;
+	padding:6 18 6 18px;
+	font:16pt &quot;Roboto&quot;;
+}
+
+QPushButton:hover{
+	color:white;
+	background-color:#2b81e8;
+	border-style:solid;
+	border-width:2px;
+	border-radius:14px;
+	border-color:#2b81e8;
+	padding:6 18 6 18px;
+	font:16pt &quot;Roboto&quot;;
+}
+
+QPushButton[no=true]:hover{
+	color:white;
+	border-color:white;
+	background-color:rgba(211,211,211, 0.1);
+}
+
+QPushButton[no=true]{
+	color:#D3D3D3;
+	background-color:rgba(0,0,0,0);
+	border-style:solid;
+	border-width:2px;
+	border-radius:14px;
+	border-color:#D3D3D3;
+	padding:6 18 6 18px;
+	font:16pt &quot;Roboto&quot;;
+}</string>
+  </property>
+  <widget class="QFrame" name="main_frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>500</width>
+     <height>250</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>141</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../icons/usb.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>3</y>
+      <width>500</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Session Manager</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="title" stdset="0">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>86</y>
+      <width>201</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>A USB with RAW images has been inserted. Would you like to create a session?</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>200</y>
+      <width>216</width>
+      <height>42</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>14</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>Create</string>
+       </property>
+       <property name="yes" stdset="0">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>No</string>
+       </property>
+       <property name="no" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

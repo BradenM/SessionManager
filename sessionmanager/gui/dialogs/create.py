@@ -15,10 +15,14 @@ import os
 
 
 class CreateWindow(QtWidgets.QStackedWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, path=None):
         super(CreateWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        # Vars
+        self.session = Session
+        self.parent = parent
+        self.usb = path
 
         # Connections
         self.ui.open_path.clicked.connect(self.update_list)
@@ -30,13 +34,13 @@ class CreateWindow(QtWidgets.QStackedWidget):
         self.ui.error_info.hide()
         self.ui.create_prog.hide()
         self.clear()
+        if self.usb is not None:
+            self.ui.path_text.setText(self.usb)
+            print(self.usb)
 
         # Thread
         self.threadpool = QtCore.QThreadPool()
 
-        # Vars
-        self.session = Session
-        self.parent = parent
 
     # Functions
     def update_list(self):

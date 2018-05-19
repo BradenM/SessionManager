@@ -15,12 +15,12 @@ from gui.widgets.sessionitem import QSessionItem
 from gui.widgets.event_filter import EventFilter
 from gui.dialogs.settings_mod import SettingsModule
 import qtawesome as fa
-
 from data import data
+from functools import partial
 
 
 class MainWindow(QtWidgets.QStackedWidget):
-    def __init__(self):
+    def __init__(self, usb=None):
         super(MainWindow, self).__init__()
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint | QtCore.Qt.MacWindowToolBarButtonHint | QtCore.Qt.CustomizeWindowHint)
         self.ui = Ui_MainWindow()
@@ -33,7 +33,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.setting_window = SettingsModule(self)
         self.setting_window.setVisible(False)
         self.delete_icon = fa.icon('fa.ban', color='red')
-        self.create_window = create.CreateWindow(self)
+        self.create_window = create.CreateWindow
         self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
         self.update_list()
 
@@ -60,6 +60,10 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.ui.sessionList.setProperty("action", "context")
         #self.ui.session_filter.installEventFilter(self.ui.search_ico)
         #self.ui.search_ico.setProperty("animate", "color_fade")
+
+        # Setup
+        if usb is not None:
+            self.create_session(path=usb)
 
     # Functions
     def active_session(self):
@@ -132,8 +136,11 @@ class MainWindow(QtWidgets.QStackedWidget):
             else:
                 self.ui.sessionList.setRowHidden(row, True)
 
-    def create_session(self):
-        self.insertWidget(1, self.create_window)
+    def create_session(self, path=None):
+        if path is not None:
+            self.insertWidget(1, self.create_window(self, path=path))
+        else:
+            self.insertWidget(1, self.create_window(self))
         self.setCurrentIndex(1)
 
     def open_session(self):

@@ -11,7 +11,7 @@ from datetime import datetime
 import manage.manage as m
 from data import data
 from manage.settings import Setting
-import os, shutil
+import os
 
 
 class Session(Base):
