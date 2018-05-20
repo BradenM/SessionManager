@@ -35,6 +35,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.delete_icon = fa.icon('fa.ban', color='red')
         self.create_window = create.CreateWindow
         self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
+        self.usb = usb
         self.update_list()
 
         # Connections
@@ -62,8 +63,8 @@ class MainWindow(QtWidgets.QStackedWidget):
         #self.ui.search_ico.setProperty("animate", "color_fade")
 
         # Setup
-        if usb is not None:
-            self.create_session(path=usb)
+        if self.usb is not None:
+            self.create_session(path=self.usb)
 
     # Functions
     def active_session(self):

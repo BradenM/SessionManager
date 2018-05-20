@@ -5,16 +5,21 @@
 
 from gui import app
 from manage.usb import USB
+import time
 
 
 def main():
-    detect = USB()
-    if detect.watch():
-        start(detect.path)
+    detect = USB(thread=True)
+    while True:
+        time.sleep(1)
+        if detect.found:
+            print(detect.path)
+            print(detect.files)
+            start(detect)
 
 
-def start(path):
-    app.start_usb(path)
+def start(inst):
+    app.start_usb(inst)
 
 
 if __name__ == '__main__':

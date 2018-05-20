@@ -44,12 +44,13 @@ class WatchMount(PatternMatchingEventHandler):
             self.skip = False
 
     def on_created(self, event):
-        if self.skip:
-            self.process(event)
-        else:
-            self.process(event)
-            print('STOPPING')
-            self.observer.stop()
+        # if self.skip:
+        #     self.process(event)
+        # else:
+        #     self.process(event)
+        #     print('STOPPING')
+        #     self.observer.stop()
+        self.process(event)
 
 
 def watch(path, single, callback):

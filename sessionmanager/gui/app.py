@@ -16,17 +16,17 @@ def main():
     return QtWidgets.qApp.exec_()
 
 
-def usb(path):
+def usb(inst):
     QtWidgets.QApplication.setStyle('Fusion')
-    ui = USBWindow(path)
+    ui = USBWindow(inst)
     ui.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     ui.show()
     return QtWidgets.qApp.exec_()
 
 
-def start_usb(path):
+def start_usb(inst):
     app = QtWidgets.QApplication(sys.argv)
-    sys.exit(usb(path))
+    sys.exit(usb(inst))
 
 
 def start():

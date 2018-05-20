@@ -9,6 +9,7 @@ from gui import gui_handle as handle
 from manage.session import Session
 from gui.threads.create_session import CreateSession
 from gui.ui.createwindow_ui import Ui_MainWindow
+from manage.usb import USB
 from definitions import ROOT_DIR
 from data import data
 import os
@@ -23,6 +24,7 @@ class CreateWindow(QtWidgets.QStackedWidget):
         self.session = Session
         self.parent = parent
         self.usb = path
+        self.raw = ""
 
         # Connections
         self.ui.open_path.clicked.connect(self.update_list)
@@ -34,27 +36,30 @@ class CreateWindow(QtWidgets.QStackedWidget):
         self.ui.error_info.hide()
         self.ui.create_prog.hide()
         self.clear()
-        if self.usb is not None:
-            self.ui.path_text.setText(self.usb)
-            print(self.usb)
+        try:
+            if self.usb is not None:
+                self.ui.path_text.setText(self.usb)
+                self.raw = self.usb
+                self.update_image()
+        except TypeError:
+            pass
 
         # Thread
         self.threadpool = QtCore.QThreadPool()
 
-
     # Functions
     def update_list(self):
-        global dialog
         dialog = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select a Directory"))
+        self.raw = dialog
         self.ui.path_text.setText(dialog)
         self.ui.image_list.clear()
         self.update_image()
 
     def update_image(self):
         self.ui.error_info.clear()
-        if os.path.isdir(dialog):
+        if os.path.isdir(self.raw):
             global images
-            images, items = handle.update_images(dialog)
+            images, items = handle.update_images(self.raw)
             if len(images) < 1:
                 self.ui.error_info.show()
                 self.ui.error_info.setText("This directory holds no RAW images.")
