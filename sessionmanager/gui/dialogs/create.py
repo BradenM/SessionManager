@@ -9,7 +9,6 @@ from gui import gui_handle as handle
 from manage.session import Session
 from gui.threads.create_session import CreateSession
 from gui.ui.createwindow_ui import Ui_MainWindow
-from manage.usb import USB
 from definitions import ROOT_DIR
 from data import data
 import os

@@ -16,8 +16,7 @@ import os
 
 
 # Grabs UI info from session
-def session_info(cls, name):
-    s = data.get_row(cls, name)
+def session_info(s):
     if s.modify_date == s.create_date:
         modify = "Never"
     elif s.modify_date.time() != s.create_date.time() and s.modify_date.date() == s.create_date.date():

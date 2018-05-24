@@ -17,7 +17,6 @@ from gui.widgets.edit_overlay import EditOverlay
 from definitions import ROOT_DIR
 import os
 from functools import partial
-from shutil import rmtree
 
 
 class ManageWindow(QtWidgets.QStackedWidget):
@@ -31,7 +30,7 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.parent = parent
         self.lists = [self.ui.photo_list]
         self.info_elms = [self.ui.img_name, self.ui.img_filename, self.ui.img_moddate]
-        self.windows = [self.ui.photo_select, self.ui.proof_select, self.ui.final_select]
+        self.windows = [self.ui.photo_select, self.ui.final_select]
         self.open_msg = "Currently Open"
         self.watch = watch.watch
         ManageWindow.active_images = []
@@ -187,7 +186,7 @@ class ManageWindow(QtWidgets.QStackedWidget):
         elif img.position == "FINAL":
             self.ui.img_filename.setText(jpg_name)
             self.ui.img_moddate.setText(date)
-            self.ui.create_button.setText("Proof")
+            self.ui.create_button.setText("Proofs")
         else:
             self.ui.img_moddate.setText(date)
             self.ui.create_button.setText("Edit")
@@ -250,10 +249,10 @@ class ManageWindow(QtWidgets.QStackedWidget):
             self.ui.title.setText('PHOTOS')
             self.current_window = "PHOTO"
             self.update_images()
-        if btn == self.ui.proof_select:
-            self.ui.title.setText('PROOFS')
-            self.current_window = "PROOF"
-            self.update_images()
+        # if btn == self.ui.proof_select:
+        #     self.ui.title.setText('PROOFS')
+        #     self.current_window = "PROOF"
+        #     self.update_images()
         if btn == self.ui.final_select:
             self.ui.title.setText('FINALS')
             self.current_window = "FINAL"

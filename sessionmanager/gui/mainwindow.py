@@ -16,7 +16,6 @@ from gui.widgets.event_filter import EventFilter
 from gui.dialogs.settings_mod import SettingsModule
 import qtawesome as fa
 from data import data
-from functools import partial
 
 
 class MainWindow(QtWidgets.QStackedWidget):
@@ -34,6 +33,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.setting_window.setVisible(False)
         self.delete_icon = fa.icon('fa.ban', color='red')
         self.create_window = create.CreateWindow
+        self.manage_window = manage.ManageWindow
         self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
         self.usb = usb
         self.update_list()
@@ -86,7 +86,7 @@ class MainWindow(QtWidgets.QStackedWidget):
             self.ui.sessionList.setGridSize(QtCore.QSize(200, 200))
             print(session_item.size())
             item = QtWidgets.QListWidgetItem(self.ui.sessionList)
-            item.setData(QtCore.Qt.UserRole, s.name)
+            item.setData(QtCore.Qt.UserRole, s)
             item.setSizeHint(session_item.size())
             self.ui.sessionList.addItem(item)
             self.ui.sessionList.setItemWidget(item, session_item)
@@ -100,13 +100,14 @@ class MainWindow(QtWidgets.QStackedWidget):
     def update_info(self):
         item = self.active_session()
         if item is not False:
-            s = handle.session_info(self.session, item)
+            s = handle.session_info(item)
             for i, elm in enumerate(self.info_elements):
                 elm.setText(s[i])
 
     def reset_info(self):
         if self.ui.sessionList.count() >= 1:
             self.ui.sessionList.setCurrentItem(self.ui.sessionList.item(0))
+            self.active_session()
         else:
             for el in self.info_elements:
                 el.clear()
@@ -114,13 +115,12 @@ class MainWindow(QtWidgets.QStackedWidget):
             self.ui.session_hint.show()
         
     def delete_session(self):
-        name = self.active_session()
-        session = data.get_row(self.session, name)
+        session = self.active_session()
         pop = Popup()
-        delete = "Delete '%s'?" % name
+        delete = "Delete '%s'?" % session.name
         pop.setWindowTitle(delete)
         pop.ui.info.setText("WARNING:")
-        pop.ui.desc.setText("Are you sure you want to delete '%s' ?" % name)
+        pop.ui.desc.setText("Are you sure you want to delete '%s' ?" % session.name)
         check = pop.exec_()
         if check is 1:
             self.session.delete(session)
@@ -131,7 +131,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         filter = str(self.ui.session_filter.text()).lower()
         row_count = self.ui.sessionList.count()
         for row in range(row_count):
-            item = self.ui.sessionList.item(row).data(QtCore.Qt.UserRole).lower()
+            item = self.ui.sessionList.item(row).data(QtCore.Qt.UserRole).name.lower()
             if filter in str(item):
                 self.ui.sessionList.setRowHidden(row, False)
             else:
@@ -145,15 +145,19 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.setCurrentIndex(1)
 
     def open_session(self):
-        item = self.ui.sessionList.currentItem().data(QtCore.Qt.UserRole)
-        session = data.get_row(self.session, item)
-        self.insertWidget(2, manage.ManageWindow(self, session))
-        self.setCurrentIndex(2)
+        session = self.active_session()
+        self.insertWidget(1, self.manage_window(self, session))
+        self.setCurrentIndex(1)
+        print('HERE')
+        print(self.currentIndex())
 
     def open_recent(self):
-        recent = handle.recent_session(self.session)
-        self.insertWidget(2, manage.ManageWindow(self, recent))
-        self.setCurrentIndex(2)
+        try:
+            recent = handle.recent_session(self.session)
+            self.insertWidget(1, self.manage_window(self, recent))
+            self.setCurrentIndex(1)
+        except ValueError:
+            pass
 
     def open_settings(self):
         self.setting_window.setVisible(True)
