@@ -141,6 +141,7 @@ QAbstractItemView:selected{
 	font-weight:300;
 }
 
+QPushButton[style-class='primary'],
 QPushButton#create_button,
 QPushButton#open_button{
 	color:white;
@@ -153,10 +154,11 @@ QPushButton#open_button{
 	font:16pt "Roboto";
 }
 
+QPushButton[style-class='primary']:!enabled,
 QPushButton#create_button:!enabled,
 QPushButton#open_button:!enabled{
-    background-color:gray !important;
-    border-color:gray !important;
+    background-color:gray;
+    border-color:gray;
 }
 
 QPushButton[close_button=true],

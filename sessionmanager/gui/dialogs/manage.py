@@ -14,6 +14,7 @@ from gui.widgets.image_item import QImageItem
 from gui.widgets.image_preview import ImagePreviewOverlay
 from gui.widgets.proof_overlay import ProofOverlay
 from gui.widgets.edit_overlay import EditOverlay
+from gui.widgets.popup import PopupMsg
 from definitions import ROOT_DIR
 import os
 from functools import partial
@@ -43,6 +44,7 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.ui.remove_proof.clicked.connect(self.remove_image)
         self.ui.img_name.returnPressed.connect(self.update_name)
         self.ui.create_button.clicked.connect(self.edit_photo)
+        self.ui.export.clicked.connect(self.export_proofs)
         for el in self.windows:
             el.clicked.connect(partial(self.switch, el))
 
@@ -62,6 +64,8 @@ class ManageWindow(QtWidgets.QStackedWidget):
         self.ui.create_button.setEnabled(False)
         self.ui.crop_combo.setHidden(True)
         self.ui.crop_title.setHidden(True)
+        self.ui.export.setHidden(True)
+        self.ui.export.setEnabled(False)
         handle.session_modify(self.session)
 
     # Functions
@@ -151,6 +155,9 @@ class ManageWindow(QtWidgets.QStackedWidget):
             images = imgs
         else:
             images = handle.get_images(self.session, self.current_window)
+            if len(images) > 1:
+                self.ui.export.setEnabled(True)
+                print("EXPORT ENABLED")
         if self.current_window == "PHOTO":
             open_images = handle.get_images(self.session, "OPEN")
             images.extend(open_images)
@@ -168,6 +175,7 @@ class ManageWindow(QtWidgets.QStackedWidget):
             item = QtWidgets.QListWidgetItem(self.ui.photo_list)
             item.setData(QtCore.Qt.UserRole, img)
             item.setSizeHint(widget.size())
+            self.ui.photo_list.setGridSize(widget.size())
             self.ui.photo_list.addItem(item)
             self.ui.photo_list.setItemWidget(item, widget)
 
@@ -223,21 +231,17 @@ class ManageWindow(QtWidgets.QStackedWidget):
             try:
                 img.finalize(self.session)
             except FileNotFoundError as e:
-                err_info = QtWidgets.QMessageBox()
-                err_info.setWindowTitle('Session Manager')
-                err_info.setText('Cannot Finalize image yet.')
-                err_info.setInformativeText('You have not saved your image as a JPG yet. Please finish in Photoshop before finalizing.')
-                err_info.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Retry)
-                err_info_retry = err_info.button(QtWidgets.QMessageBox.Retry)
-                err_info_retry.setText('Reopen')
-                err_info.setDefaultButton(QtWidgets.QMessageBox.Ok)
-                err_info.setDetailedText(str(e))
-                err_info.setIcon(QtWidgets.QMessageBox.Warning)
-                err_info.exec_()
-                if err_info.clickedButton() == err_info_retry:
+                pop = PopupMsg(self, PopupMsg.F_ERROR, e)
+                if pop:
                     handle.open_img(self.session, img)
             self.update_images()
         self.clear()
+
+    def export_proofs(self):
+        dialog = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select a Directory"))
+        for img in self.session.images:
+            ex_path = img.export_proof(dialog)
+        h.open_dir(ex_path)
 
     def switch(self, btn):
         self.clear()
@@ -248,16 +252,14 @@ class ManageWindow(QtWidgets.QStackedWidget):
         if btn == self.ui.photo_select:
             self.ui.title.setText('PHOTOS')
             self.current_window = "PHOTO"
+            self.ui.export.setHidden(True)
             self.update_images()
-        # if btn == self.ui.proof_select:
-        #     self.ui.title.setText('PROOFS')
-        #     self.current_window = "PROOF"
-        #     self.update_images()
         if btn == self.ui.final_select:
             self.ui.title.setText('FINALS')
             self.current_window = "FINAL"
             self.ui.crop_combo.setHidden(True)
             self.ui.crop_title.setHidden(True)
+            self.ui.export.setHidden(False)
             self.update_images()
 
     def clear(self):

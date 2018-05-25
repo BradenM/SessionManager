@@ -12,6 +12,7 @@ import manage.manage as m
 from data import data
 from manage.settings import Setting
 import os
+from shutil import copyfile
 
 
 class Session(Base):
@@ -142,6 +143,21 @@ class Image(Base):
         m.delete_img(loose)
         self.gen_proof(self.session, size)
 
+    def export_proof(self, path):
+        export_path = os.path.join(path, self.session.name)
+        proof_path = os.path.join(export_path, "Proofs")
+        loose_path = os.path.join(export_path, "Loose Proofs")
+        if not os.path.exists(export_path):
+            os.mkdir(export_path)
+            os.mkdir(proof_path)
+            os.mkdir(loose_path)
+        for p in self.proofs:
+            if p.loose:
+                p.export(loose_path)
+            else:
+                p.export(proof_path)
+        return export_path
+
 
 class Proof(Base):
     # Database Info
@@ -171,6 +187,10 @@ class Proof(Base):
 
     def update(self):
         m.update_proof(self)
+
+    def export(self, path):
+        export_path = os.path.join(path, self.name)
+        copyfile(self.path, export_path)
 
 
 Base.metadata.create_all(engine)

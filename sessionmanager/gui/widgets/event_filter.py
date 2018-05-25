@@ -59,8 +59,9 @@ class EventFilter(QtCore.QObject):
                     open = menu.addAction(self.parent.preview_icon, "Open Preview")
                 else:
                     open = menu.addAction(self.parent.preview_icon, "Open Preview")
-                    delete = menu.addAction(self.parent.delete_icon, "Delete")
                     logo = menu.addAction(self.parent.logo_icon, "Edit Proof")
+                    export = menu.addAction(self.parent.export_icon, "Export Proof")
+                    delete = menu.addAction(self.parent.delete_icon, "Delete")
                 action = menu.exec_(event.globalPos())
                 if action is not None:
                     if action == open:
@@ -69,6 +70,8 @@ class EventFilter(QtCore.QObject):
                         self.parent.delete_proof()
                     elif action == logo:
                         self.parent.edit_proof()
+                    elif action == export:
+                        self.parent.export_proof()
                 return True
 
             elif action == "mime":

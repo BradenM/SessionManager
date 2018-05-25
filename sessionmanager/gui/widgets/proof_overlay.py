@@ -42,6 +42,7 @@ class ProofOverlay(QtWidgets.QWidget):
         self.preview_icon = fa.icon('fa.search', color='black')
         self.delete_icon = fa.icon('fa.ban', color='red')
         self.logo_icon = fa.icon('fa.image', color="black")
+        self.export_icon = fa.icon('fa.download', color='black')
         ProofOverlay.active_proofs = []
 
         # Connections
@@ -152,6 +153,10 @@ class ProofOverlay(QtWidgets.QWidget):
         self.ui.proof.setProperty("action", "none")
         print('test')
         self.watch_proof()
+
+    def export_proof(self):
+        dialog = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select a Directory"))
+        self.proof.export(dialog)
 
     def close(self, e):
         self.parent.close_preview(self)

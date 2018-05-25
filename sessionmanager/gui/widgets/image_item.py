@@ -18,8 +18,8 @@ class QImageItem(QtWidgets.QWidget):
         self.ui.overlay.hide()
         self.ui.image.setStyleSheet('''
             background-color:rgba(0,0,0,0);
-            border-left:4px solid rgba(0,0,0,0);
-            border-right:4px solid rgba(0,0,0,0);
+            border-left:6px solid rgba(0,0,0,0);
+            border-right:6px solid rgba(0,0,0,0);
         ''')
         self.set_image()
         if overlay:

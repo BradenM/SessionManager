@@ -6,6 +6,7 @@
 
 import time
 import os
+import subprocess
 
 # Get Date (MonthYear) TODO: REMOVE THIS FUNCTION AND USAGES AND THE ONE BELOW IT
 def get_month_year(num=False):
@@ -49,6 +50,7 @@ def strip_ext(filename, thumb=False, undo=False):
     return name
 
 
+# Get all DNG files
 def get_dng(dir):
     files = []
     for file in os.listdir(dir):
@@ -70,5 +72,10 @@ def chunk_factor(files):
         return 2
     else:
         return False
+
+
+# Open a directory (macOS)
+def open_dir(path):
+    subprocess.check_call(['open', '--', path])
 
 

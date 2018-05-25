@@ -9,6 +9,7 @@ from definitions import ROOT_DIR, SESSIONS
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import datetime
 from shutil import copy
+import debug
 import os
 
 
@@ -92,7 +93,12 @@ def update_img(inst, pos):
 
 
 def open_img(session, img):
-    image.ps_open(img)
+    if not debug.PHOTOSHOP:
+        path = os.path.dirname(img.path)
+        debug_jpg = os.path.join(path, f"{img.display}.jpg")
+        copy(img.path, debug_jpg)
+    else:
+        image.ps_open(img)
 
 
 def get_actives(img):
