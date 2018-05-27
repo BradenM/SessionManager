@@ -9,7 +9,7 @@ import time
 
 
 def main():
-    detect = USB(thread=True)
+    detect = USB(self_thread=True)
     while True:
         time.sleep(1)
         if detect.found:

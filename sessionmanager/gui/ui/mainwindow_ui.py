@@ -9,6 +9,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui.ui.assets import resource_rc
 import qtawesome as fa
+from definitions import STYLE
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -34,11 +36,10 @@ class Ui_MainWindow(object):
         QtGui.QFontDatabase.addApplicationFont("gui/ui/assets/fonts/Lato-Regular.ttf")
         QtGui.QFontDatabase.addApplicationFont("gui/ui/assets/fonts/Roboto-Light.ttf")
         QtGui.QFontDatabase.addApplicationFont("gui/ui/assets/fonts/Roboto-Medium.ttf")
-        qss = open('style.qss', "r").read()
         search_icon = fa.icon('fa.search', color='grey')
         recent_icon = fa.icon('fa.clock-o', color='grey')
         settings_icon = fa.icon('fa.cog', color='grey')
-        MainWindow.setStyleSheet(qss)
+        MainWindow.setStyleSheet(STYLE)
         self.home = QtWidgets.QWidget()
         self.home.setStyleSheet("")
         self.home.setObjectName("home")

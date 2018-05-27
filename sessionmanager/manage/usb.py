@@ -12,9 +12,14 @@ from utils import watch
 import usb.core
 import usb.util
 import threading
+from PyQt5.QtCore import *
 
 
-class USB(Base):
+class Signals(QObject):
+    usb_detected = pyqtSignal(str)
+
+
+class USB(QRunnable):
     # Database info
     __tablename__ = "usb"
     id = Column(Integer, primary_key=True)
@@ -22,22 +27,28 @@ class USB(Base):
     path = Column(String)
     active = Column(Boolean)
 
-    def __init__(self, interval=1, thread=False):
+    def __init__(self, interval=1, self_thread=False, *args, **kwargs):
+        super(USB, self).__init__()
         self.files = ""
         self.interval = interval
         self.found = False
-        if thread:
+        self.signals = Signals()
+        kwargs['detect_callback'] = self.signals.usb_detected
+        self.kwargs = kwargs
+        if self_thread:
             thread = threading.Thread(target=self.run, args=())
             thread.daemon = True
             thread.start()
 
     def watch(self):
-        watch.watch_mount(callback=self.scan)
+        watch.watch_mount(**self.kwargs)
         return True
 
+    @pyqtSlot()
     def run(self):
-        result = self.watch()
-        self.found = result
+        # result = self.watch()
+        # self.found = result
+        self.watch()
 
     def stop(self):
         return True
@@ -49,13 +60,12 @@ class USB(Base):
             return False
         else:
             print("Contains RAW files:")
-            #print(files)
             print(len(files))
             parent = os.path.dirname(files[0])
             self.path = parent
             self.files = files
             self.found = True
-            return True
+            return parent
 
     def save(self):
         m.save(self)

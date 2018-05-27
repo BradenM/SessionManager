@@ -6,6 +6,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui.ui.mainwindow_ui import Ui_MainWindow
 from manage.session import Session
+from manage.usb import USB
 from gui import gui_handle as handle
 from gui.dialogs import create
 from gui.dialogs import manage
@@ -36,6 +37,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         self.manage_window = manage.ManageWindow
         self.info_elements = [self.ui.session_name, self.ui.create_date, self.ui.desc_box, self.ui.image_count, self.ui.has_raw, self.ui.modify_date]
         self.usb = usb
+        self.threadpool = QtCore.QThreadPool()
         self.update_list()
 
         # Connections
@@ -65,6 +67,7 @@ class MainWindow(QtWidgets.QStackedWidget):
         # Setup
         if self.usb is not None:
             self.create_session(path=self.usb)
+        self.watch_usb()
 
     # Functions
     def active_session(self):
@@ -136,6 +139,16 @@ class MainWindow(QtWidgets.QStackedWidget):
                 self.ui.sessionList.setRowHidden(row, False)
             else:
                 self.ui.sessionList.setRowHidden(row, True)
+
+    def watch_usb(self):
+        def test(path):
+            scan_result = USB().scan(path)
+            if scan_result is not False:
+                print("CAMERA MEMORY CARD DETECTED")
+                self.create_session(path=scan_result)
+        worker = USB()
+        worker.signals.usb_detected.connect(test)
+        self.threadpool.start(worker)
 
     def create_session(self, path=None):
         if path is not None:

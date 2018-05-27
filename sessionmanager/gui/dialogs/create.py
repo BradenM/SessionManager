@@ -99,7 +99,9 @@ class CreateWindow(QtWidgets.QStackedWidget):
                 self.ui.error_info.show()
                 self.ui.error_info.setText("A session with the name '%s' already exist!" % name)
             else:
-                self.ui.create_prog.setFormat("Processing...")
+                self.ui.create_prog.setFormat("Copying Files...")
+                self.ui.create_prog.setTextVisible(True)
+                self.ui.create_prog.setWindowIconText("Copying Files...")
                 self.ui.create_prog.show()
                 self.ui.create_button.setDisabled(True)
                 self.s = self.session(name)

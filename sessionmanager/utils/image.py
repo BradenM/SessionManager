@@ -28,7 +28,7 @@ def as_quote(astr):
 # Open Image in Photoshop
 def ps_open(img):
     script = '''
-    tell application "Adobe Photoshop CC 2018"
+    tell application "Adobe Photoshop CS6"
     set filePath to "{fp}"
     open alias filePath as Camera RAW
     end tell'''.format(fp=img.path)

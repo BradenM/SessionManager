@@ -9,7 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui.ui.assets import resource_rc
 import qtawesome as fa
-from definitions import ROOT_DIR
+from definitions import STYLE
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -35,10 +35,9 @@ class Ui_MainWindow(object):
         QtGui.QFontDatabase.addApplicationFont("gui/ui/assets/fonts/Lato-Regular.ttf")
         QtGui.QFontDatabase.addApplicationFont("gui/ui/assets/fonts/Roboto-Light.ttf")
         QtGui.QFontDatabase.addApplicationFont("gui/ui/assets/fonts/Roboto-Medium.ttf")
-        qss = open('%s/style.qss' % ROOT_DIR, "r").read()
         home_icon = fa.icon('fa.home', color='grey')
         path_icon = fa.icon('fa.folder-open', color='grey')
-        MainWindow.setStyleSheet(qss)
+        MainWindow.setStyleSheet(STYLE)
         self.create = QtWidgets.QWidget()
         self.create.setObjectName("create")
         self.info_frame_create = QtWidgets.QFrame(self.create)

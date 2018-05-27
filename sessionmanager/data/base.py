@@ -5,8 +5,9 @@
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
+from definitions import DATABASE
 
 
-engine = create_engine('sqlite:///database.sqlite', echo=False)
+engine = create_engine(f'sqlite:///{DATABASE}', echo=False)
 Base = declarative_base()
 

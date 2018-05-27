@@ -6,7 +6,7 @@
 import time
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
-
+import os
 
 # Watch for PhotoShop Export
 class WatchExport(PatternMatchingEventHandler):
@@ -30,18 +30,17 @@ class WatchExport(PatternMatchingEventHandler):
 
 # Watch for device mounts
 class WatchMount(PatternMatchingEventHandler):
-    def __init__(self, observer, callback):
+    def __init__(self, observer, detect_callback):
         super(WatchMount, self).__init__()
         self.observer = observer
-        self.callback = callback
-        self.skip = True
+        self.callback = detect_callback
     patterns = ["*"]
 
     def process(self, event):
         if event.event_type == 'created':
             print(event.src_path, event.event_type, event.is_directory)
-            self.callback(event.src_path)
-            self.skip = False
+            if os.path.ismount(event.src_path):
+                self.callback.emit(str(event.src_path))
 
     def on_created(self, event):
         # if self.skip:
@@ -66,10 +65,10 @@ def watch(path, single, callback):
     observer.join()
 
 
-def watch_mount(callback=None):
+def watch_mount(detect_callback):
     observer = Observer()
     path = "/Volumes"
-    observer.schedule(WatchMount(observer, callback), path=path)
+    observer.schedule(WatchMount(observer, detect_callback), path=path)
     observer.start()
     try:
         while observer.isAlive():

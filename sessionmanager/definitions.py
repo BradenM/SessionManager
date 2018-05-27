@@ -4,14 +4,26 @@
 # Author: Braden Mars
 
 import os
+import sys
+import style
+import debug
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.join(ROOT_DIR, 'sessionmanager.py')
+if debug.LIVE is False:
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    ROOT = os.path.join(ROOT_DIR, 'sessionmanager.py')
+else:
+    ROOT_DIR = os.path.expanduser('~/.sessionmanager')
+    ROOT = os.path.join(ROOT_DIR, 'sessionmanager.py')
 
-DATABASE = '%s/database.sqlite' % ROOT_DIR
+try:
+    STYLE = open('style.qss', 'r').read()
+except FileNotFoundError:
+    STYLE = style.stylesheet
+
+DATABASE = os.path.join(ROOT_DIR, "database.sqlite")
 UI = '%s/gui/ui' % ROOT_DIR
-ICONS = "%s/icons" % ROOT_DIR
-SESSIONS = "%s/sessions" % ROOT_DIR
+ICONS = os.path.join(ROOT_DIR, "icons")
+SESSIONS = os.path.join(ROOT_DIR, "sessions")
 DNG = "/Applications/Adobe\ DNG\ Converter.app/Contents/MacOS/Adobe\ DNG\ Converter"
 
 # App Definitions

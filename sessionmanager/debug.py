@@ -4,4 +4,7 @@
 # Author: Braden Mars
 
 # Debug Vars
-PHOTOSHOP = False
+PHOTOSHOP = True
+
+# Live
+LIVE = True
