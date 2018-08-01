@@ -1,0 +1,31 @@
+{
+  "name": "sessionmanager",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/electron-start.js",
+  "homepage": "./",
+  "dependencies": {
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-scripts": "1.1.4",
+    "jquery": "^3.3.1",
+    "zerorpc": "fyears/zerorpc-node"
+  },
+  "scripts": {
+    "start": "nf start -p 3000",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-start": "node src/electron-wait-react",
+    "react-start": "react-scripts start",
+    "css-build": "node-sass --omit-source-map-url src/style/sass/main.scss src/style/main.css",
+    "start-sass": "npm run css-build -- --watch"
+  },
+  "devDependencies": {
+    "bulma": "^0.7.1",
+    "electron": "^2.0.6",
+    "foreman": "^3.0.1",
+    "node-sass": "^4.9.2"
+  }
+}

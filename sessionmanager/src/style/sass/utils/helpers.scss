@@ -1,0 +1,57 @@
+/*
+    Helper classes
+    
+*/
+
+// Background Colors
+.has-background- {
+  &dark- {
+    &primary {
+      background-color: $dark-primary;
+    }
+    &secondary {
+      background-color: $dark-secondary;
+    }
+  }
+}
+
+// Position
+.has-space- {
+  &all {
+    @include padding(1.5rem, 1.5rem);
+  }
+  &top {
+    @include padding(1.5rem, false);
+  }
+}
+
+// Size
+.has-height- {
+  &full {
+    height: 100vh;
+  }
+  &two-third {
+    height: 67vh;
+  }
+}
+
+// Flex
+.is-wrapping {
+  flex-wrap: wrap;
+}
+
+// Border
+.has-border {
+  &.bd-top {
+    border-top: $dark-border-thin;
+  }
+  &.bd-right {
+    border-right: $dark-border-thin;
+  }
+  &.bd-left {
+    border-left: $dark-border-thin;
+  }
+  &.bd-bottom {
+    border-bottom: $dark-border-thin;
+  }
+}
