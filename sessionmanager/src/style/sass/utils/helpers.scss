@@ -3,18 +3,6 @@
     
 */
 
-// Background Colors
-.has-background- {
-  &dark- {
-    &primary {
-      background-color: $dark-primary;
-    }
-    &secondary {
-      background-color: $dark-secondary;
-    }
-  }
-}
-
 // Position
 .has-space- {
   &all {
@@ -43,15 +31,30 @@
 // Border
 .has-border {
   &.bd-top {
-    border-top: $dark-border-thin;
+    border-top: 1px solid $dark;
   }
   &.bd-right {
-    border-right: $dark-border-thin;
+    border-right: 1px solid $dark;
   }
   &.bd-left {
-    border-left: $dark-border-thin;
+    border-left: 1px solid $dark;
   }
   &.bd-bottom {
-    border-bottom: $dark-border-thin;
+    border-bottom: 1px solid $dark;
+  }
+}
+
+// Shapes
+
+.is-square {
+  width: $navbar-height;
+  height: $navbar-height;
+  color: $light;
+  background-color: #ef7f5a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  i {
+    font-size: 2.4rem;
   }
 }
