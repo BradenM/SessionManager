@@ -6,12 +6,15 @@ $primary: #262d32;
 $dark: #1a1f23;
 $info: #655492;
 $link: #ef7f5a;
+// $grey: #908e86;
+$light: #f5f7f9;
+$grey: #ced0d2;
 $background: $dark;
 // Fonts
 $family-sans-serif: 'Nunito', sans-serif;
 @import 'css/fontello.css';
 // Responsive Adjustments
-$gap: 32px;
+$gap: 16px;
 $tablet: 568px;
 $desktop: 896px + (2 * $gap);
 $widescreen: 1152px + (2 * $gap);

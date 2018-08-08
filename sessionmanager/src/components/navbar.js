@@ -1,45 +1,24 @@
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Icon } from './icons';
 
 class NavMenu extends Component {
-  renderIconButton(icon) {
+  renderButton(icon, size, color) {
     return (
-      <span className="icon is-large">
-        <i>{icon}</i>
-      </span>
+      <li>
+        <a href="" className="button is-dark">
+          <span className="icon is-large">
+            <i>{Icon(icon, size, color)}</i>
+          </span>
+        </a>
+      </li>
     );
   }
 
   render() {
     return (
       <div>
-        <li>
-          <a className="button is-dark">
-            <span className="icon is-large">
-              <i>
-                <FontAwesomeIcon size="lg" icon="cog" aria-hidden="true" />
-              </i>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a className="button is-dark">
-            <span className="icon is-large">
-              <i>
-                <FontAwesomeIcon size="lg" icon="cog" aria-hidden="true" />
-              </i>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a className="button is-dark">
-            <span className="icon is-large">
-              <i>
-                <FontAwesomeIcon size="lg" icon="cog" aria-hidden="true" />
-              </i>
-            </span>
-          </a>
-        </li>
+        {this.renderButton('th')}
+        {this.renderButton('plus')}
       </div>
     );
   }
@@ -48,7 +27,7 @@ class NavMenu extends Component {
 class NavBar extends Component {
   render() {
     return (
-      <aside id='nav_menu' className="menu has-background-dark">
+      <aside id="nav_menu" className="menu has-background-dark">
         <ul className="menu-list">
           <NavMenu />
         </ul>

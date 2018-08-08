@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-// // Font Awesome
-// import { library } from '@fortawesome/fontawesome-svg-core';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faCog } from '@fortawesome/free-solid-svg-icons';
-// library.add(faCog);
-// My Imports
 import StatusBar from './components/statusbar';
 import NavBar from './components/navbar';
+import Carousel from './components/image_carousel';
+import SessionList from './components/sessions';
+import image1 from './imgs/bg.jpg';
+import image2 from './imgs/ol.jpg';
 
 class App extends Component {
   render() {
@@ -14,13 +12,23 @@ class App extends Component {
       <div>
         <StatusBar />
         <div className="columns is-gapless">
-          <div className="column is-1">
+          <div className="column is-narrow">
             <NavBar />
           </div>
-          <div className="column">
+          <div className="column is-3 has-height-full">
             <h1>Hello</h1>
           </div>
-          
+          <div className="column is-content-window has-height-full">
+            <Carousel
+              images={[image1, image2]}
+              slideDelay={2000}
+              content={
+                <div>
+                  <SessionList />
+                </div>
+              }
+            />
+          </div>
         </div>
       </div>
     );

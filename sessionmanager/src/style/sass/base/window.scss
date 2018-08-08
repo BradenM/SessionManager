@@ -28,3 +28,6 @@ body {
   overflow: hidden;
   background-color: $primary;
 }
+::-webkit-scrollbar {
+  display: none;
+}

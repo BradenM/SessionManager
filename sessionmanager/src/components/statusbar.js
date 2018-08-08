@@ -1,15 +1,5 @@
 import React, { Component } from 'react';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCog,
-  faPlus,
-  faCameraRetro,
-  faCamera
-} from '@fortawesome/free-solid-svg-icons';
-
-// Font Awesome
-library.add(faCog, faPlus, faCameraRetro, faCamera);
+import { Icon } from './icons';
 
 function StatusItem(props) {
   return (
@@ -22,7 +12,7 @@ function StatusItem(props) {
 class StatusMenu extends Component {
   renderButton(value) {
     return (
-      <a className="button is-dark">
+      <a className="button is-light has-text-dark">
         <span className="icon is-large">
           <i>{value}</i>
         </span>
@@ -35,9 +25,7 @@ class StatusMenu extends Component {
         <div className="navbar-start" />
         <div className="navbar-end">
           <StatusItem
-            value={this.renderButton(
-              <FontAwesomeIcon size="lg" icon="cog" aria-hidden="true" />
-            )}
+            value={this.renderButton(Icon('cog', 'lg', 'grey-darker'))}
           />
         </div>
       </div>
@@ -62,7 +50,9 @@ class StatusBar extends Component {
             </div>
           </div>
           <div className="navbar-item">
-            <h1 className="title is-4">Session Manager</h1>
+            <h1 className="title is-4 has-text-weight-light">
+              Session Manager
+            </h1>
           </div>
         </div>
         <StatusMenu />
