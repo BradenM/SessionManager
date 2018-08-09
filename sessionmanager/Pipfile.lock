@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4aca823ab4729c01c47cffc4f01a25c18c92c6d06dcab130800a470b6304377c"
+            "sha256": "4210f933734b81e5257d6a045520422782d554fe5cdcc08e265ac83a13c06298"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -110,6 +110,22 @@
                 "sha256:fdced6cf08aaa5b0dacfa4562e518ffb562bb09a90483f920cf6c4ecabd3f379"
             ],
             "version": "==17.1.0"
+        },
+        "rawkit": {
+            "hashes": [
+                "sha256:67441c3fbfdb90ca7da1e6c8b5bf694514ebf2fb1a39423a329769c6bc60a81d",
+                "sha256:a62293e3912b51e9a38b21633a7c81beb47a5d8ee453b445bcadcca327439117",
+                "sha256:da1c07b4099b26837f2a4fa01970702e8d127a20636a5f70f1c14470f2cd306f"
+            ],
+            "index": "pypi",
+            "version": "==0.6.0"
+        },
+        "sqlalchemy": {
+            "hashes": [
+                "sha256:72325e67fb85f6e9ad304c603d83626d1df684fdf0c7ab1f0352e71feeab69d8"
+            ],
+            "index": "pypi",
+            "version": "==1.2.10"
         },
         "zerorpc": {
             "hashes": [

@@ -74,7 +74,7 @@ const selectPort = () => {
 
 const createPyProc = () => {
   let port = '' + selectPort();
-  let script = path.join(__dirname, 'backend/api/main.py');
+  let script = path.join(__dirname, 'python/api/main.py');
   console.log(script);
   pyProc = require('child_process').spawn('python', [script, port]);
   if (pyProc != null) {

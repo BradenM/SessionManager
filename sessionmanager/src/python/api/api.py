@@ -4,10 +4,11 @@ import zerorpc
 
 
 class Api(object):
-
     def echo(self, text):
         """echo any text"""
         return text
+
+    
 
 
 def parse_port():
@@ -19,13 +20,9 @@ def parse_port():
     return '{}'.format(port)
 
 
-def main():
+def start():
     addr = 'tcp://127.0.0.1:' + parse_port()
     s = zerorpc.Server(Api())
     s.bind(addr)
     print('start running on {}'.format(addr))
     s.run()
-
-
-if __name__ == '__main__':
-    main()
