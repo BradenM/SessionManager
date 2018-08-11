@@ -11,34 +11,23 @@ import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
 from definitions import DNG
-
-cwd = os.getcwd()
-date = h.get_month_year()
-parent = "%s" % date
-# DNG = "/Applications/Adobe\ DNG\ Converter.app/Contents/MacOS/Adobe\ DNG\ Converter"
-db = None
+from pathlib import Path
 
 
 # Structure Session
 def structure(inst):
-    session_dir = inst.__dir__
-    print(f"SESSIONS DIRECTORY - {session_dir}")
-    if os.path.exists(session_dir) is False:
-        os.makedirs(session_dir)
-    os.chdir(session_dir)
-    if os.path.exists(parent) is False:
-        os.mkdir("%s" % date)
-    global session_name
-    session_name = h.remove_whitespace(inst.name)
-    session_path = "%s/%s" % (parent, session_name)
-    final_path = f"{session_path}/final"
-    proof_path = f"{session_path}/proof"
-    os.mkdir(session_path)
-    os.mkdir(final_path)
-    os.mkdir(proof_path)
-    os.path.abspath(session_path)
-    path = "%s" % os.path.abspath(session_path)
-    return path
+    # Base - (Session Dir, Date, Name)
+    session_path = Path(inst.__dir__) / h.get_month_year() / \
+        h.remove_whitespace(inst.name)
+    paths = [
+        session_path,
+        session_path / 'final',
+        session_path / 'proof',
+        session_path / 'thumb'
+    ]
+    for p in paths:
+        os.makedirs(p, exist_ok=True)
+    return session_path
 
 
 # Iterate Files
@@ -54,24 +43,23 @@ def iterate_files(path, ext):
 def copy_raw(raw_path, path):
     for file in os.listdir(raw_path):
         if file.lower().endswith(".cr2"):
-            copyfile("%s/%s" % (raw_path, file), "%s/%s" % (path, file))
+            copyfile("%s/%s" % (raw_path, file), "%s/%s" %
+                     (path, file.lower()))
 
 
 # Convert RAW to DNG MP
 def convert(chunk, path):
-    os.chdir(path)
+    os.chdir(path)  # os.walk ?
     for file in chunk:
-        p = subprocess.Popen("%s %s" % (DNG, file), shell=True)
+        p = subprocess.Popen(f"{DNG} -c {file}", shell=True)
         p.wait()
     return chunk
 
 
 # Convert RAW to DNG
 def convert_raw(path, update):
-    raw = []
-    for file in os.listdir(path):
-        if file.lower().endswith(".cr2"):
-            raw.append(file)
+    raw = [file for file in os.listdir(
+        path) if file.lower().endswith('.cr2')]
     workers = mp.cpu_count()
     chunk_f = h.chunk_factor(raw)
     if chunk_f is False:
@@ -87,18 +75,16 @@ def convert_raw(path, update):
 
 # Delete CR2 files
 def delete_raw(path):
-    for file in os.listdir(path):
-        if file.lower().endswith(".cr2"):
-            os.remove("%s/%s" % (path, file))
+    for file in list(path.glob('*.cr2')):
+        os.remove("%s/%s" % (path, file.name))
 
 
 # Rename Files
-def rename_files(path):
-    os.chdir(path)
-    files = iterate_files(path, ".dng")
+def rename_files(path, name):
+    files = [file for file in list(path.glob('*.dng'))]
     for count, file in enumerate(files):
-        if file.endswith(".dng"):
-            os.rename(file, "%s_%s.dng" % (session_name, count))
+        new = str(path / (f'{h.remove_whitespace(name)}_{count}.dng'))
+        os.rename(str(file), new)
 
 
 # Save instance to database
@@ -182,22 +168,14 @@ def migrate_update(origin, new_p, rows):
 ''' ---- IMAGES ----'''
 
 
-# Generate Thumbs
-def gen_thumbs(inst, callback, thumb_call):
-    os.chdir(inst.path)
-    if os.path.isdir('thumbs'):
-        return False
-    os.mkdir('thumbs')
-    files = h.get_dng(inst.path)
-    thumbs = {}
-    for file in files:
-        with Raw(file) as raw:
-            name = file.replace(".dng", "_thumb.jpg")
-            raw.save_thumb(name)
-            thumbs[file] = name
-        callback.emit(1)
-        os.rename(name, "thumbs/%s" % name)
-    thumb_call.emit(thumbs)
+# Generate thumb from raw file
+def raw_thumbify(path):
+    with Raw(path) as raw:
+        path = Path(path)
+        export = path.parent / 'thumb'
+        thumb = str(export / path.name.replace('.dng', '_thumb.jpg'))
+        raw.save_thumb(thumb)
+    return thumb
 
 
 # Check JPG

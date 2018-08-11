@@ -13,6 +13,8 @@ from data import data
 from manage.settings import Setting
 import os
 from shutil import copyfile
+from utils import helpers
+from pathlib import Path
 
 
 class Session(Base):
@@ -30,48 +32,50 @@ class Session(Base):
     images = relationship('Image', backref="sessions",
                           cascade="all, delete-orphan")
 
-    def __init__(self, name=None):
+    def __init__(self, name, raw_path, desc='', keep_raw=False, auto_create=True):
         self.name = name
-        self.rawpath = ""
-        self.has_raw = False
+        self.rawpath = raw_path
+        self.has_raw = keep_raw
         self.path = ""
         self.desc = ""
         self.file_count = 0
         d = datetime.now()
         self.modify_date = d
         self.create_date = d
+        self.setup(auto_create)
 
     # Functions
 
-    def setup(self, raw_path, desc, raw):
-        self.rawpath = raw_path
-        self.desc = desc
-        self.has_raw = raw
+    def setup(self, auto_create):
         self.path = m.structure(self)
-        print(self.path)
         m.copy_raw(self.rawpath, self.path)
+        if auto_create:
+            self.create(None)
 
     def create(self, prog_callback):
         m.convert_raw(self.path, prog_callback)
-        if self.has_raw is not True:
+        if not self.has_raw:
             m.delete_raw(self.path)
-        m.rename_files(self.path)
-        for img in os.listdir(self.path):
-            if img.endswith(".dng"):
-                image = Image(self, img)
-                self.images.append(image)
+        m.rename_files(self.path, self.name)
+        for img in list(self.path.glob('*.dng')):
+            image = Image(self, img.name)
+            self.images.append(image)
         self.file_count = len(self.images)
+        self.generate_thumbs()
+        self.save()
 
     @staticmethod
     def delete(inst):
         m.delete_session(inst)
 
     def save(self):
+        self.path = str(self.path)
         m.save(self)
 
-    @staticmethod
-    def generate_thumbs(inst, callback, thumb_call):
-        m.gen_thumbs(inst, callback, thumb_call)
+    def generate_thumbs(self):
+        for img in self.images:
+            tpath = m.raw_thumbify(img.path)
+            img.thumb = tpath
 
     def update_migration(self, origin, path):
         sessions = data.iterate_table(Session)
@@ -80,9 +84,28 @@ class Session(Base):
         all = [sessions, images, proofs]
         m.migrate_update(origin, path, all)
 
-    @property
-    def sessions(self):
+    def to_dict(self):
+        data = {
+            'name': self.name,
+            'raw_path': self.has_raw,
+            'path': self.path,
+            'desc': self.desc,
+            'file_count': self.file_count,
+            'create_date': helpers.translate_date(self.create_date),
+            'modify_date': helpers.translate_date(self.modify_date),
+            'cover_img': Path(self.images[0].thumb).name
+        }
+        return data
+
+    @classmethod
+    def all(self):
         return data.iterate_table(Session)
+
+    def __str__(self):
+        return f"Session: {self.name} - {self.desc} - {self.create_date}"
+
+    def __repr__(self):
+        return f"Session: {self.name} - {self.desc} - {self.create_date}"
 
 
 class Image(Base):

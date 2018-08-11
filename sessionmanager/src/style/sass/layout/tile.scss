@@ -18,7 +18,12 @@
 .is-session-tile {
   .card {
     @include padding(1rem, 1rem);
-    border-radius: .75rem;
-    @extend %left-right-shadow
+    border-radius: 0.75rem;
+    @extend %left-right-shadow;
   }
+}
+
+// Wrapping Tile
+.tile.is-wrapping {
+  flex-wrap: wrap !important;
 }

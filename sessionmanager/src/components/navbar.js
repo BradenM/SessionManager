@@ -17,8 +17,8 @@ class NavMenu extends Component {
   render() {
     return (
       <div>
-        {this.renderButton('th')}
-        {this.renderButton('plus')}
+        {this.renderButton('th', 'lg')}
+        {this.renderButton('plus', 'lg')}
       </div>
     );
   }

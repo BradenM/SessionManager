@@ -7,8 +7,14 @@ name = "pypi"
 zerorpc = "*"
 sqlalchemy = "*"
 rawkit = "*"
+greenlet = "*"
+pillow = "*"
+requests = "*"
 
 [dev-packages]
+"autopep8" = "*"
+pylint = "*"
+rope = "*"
 
 [requires]
 python_version = "3.6"

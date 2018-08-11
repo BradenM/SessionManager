@@ -8,3 +8,4 @@ PHOTOSHOP = True
 
 # Live
 LIVE = False
+NATIVE = True
