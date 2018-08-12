@@ -1,6 +1,36 @@
 .window {
+  // Windows
+  &.main-window {
+    @include transition(filter, 0.3s);
+  }
+  &.create-window {
+    .frame {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      height: 100%;
+      opacity: 0;
+      @include transition(opacity, 0.3s);
+    }
+    & h1.title {
+      font-size: ($size-1 * 1.5);
+      text-shadow: 2px 4px 3px transparentize($dark, 0);
+    }
+    .exit-window {
+      div {
+        text-shadow: 2px 4px 3px transparentize($dark, 0);
+      }
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 5rem;
+    }
+  }
+
+  // States
   &.is-blurred {
-    filter: blur(7px);
+    filter: blur(5px);
   }
   &.overlay {
     position: absolute;
@@ -13,5 +43,8 @@
   }
   &.is-active {
     display: block;
+    .frame {
+      opacity: 1;
+    }
   }
 }

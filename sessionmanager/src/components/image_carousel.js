@@ -29,6 +29,12 @@ class Carousel extends Component {
       currentImageIndex: index,
       isActive: true
     });
+    if (this.props.slideOn === false) {
+      this.setState({
+        currentImageIndex: index,
+        isActive: null
+      });
+    }
   }
 
   onEntered() {
@@ -45,6 +51,18 @@ class Carousel extends Component {
   }
 
   render() {
+    if (this.props.slideOn === false) {
+      return (
+        <div className="image-carousel">
+          <div className="is-carousel-content">{this.props.content}</div>
+          <ImageSlide
+            url={this.props.images[this.state.currentImageIndex]}
+            opacity={'1'}
+          />
+        </div>
+      );
+    }
+
     return (
       <div className="image-carousel">
         <div className="is-carousel-content">{this.props.content}</div>

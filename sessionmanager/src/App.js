@@ -3,7 +3,7 @@ import StatusBar from './components/statusbar';
 import NavBar from './components/navbar';
 import Carousel from './components/image_carousel';
 import SessionList from './components/sessions';
-import CreateSession from './components/create/create_window';
+import CreateFrame from './components/create/create_window';
 import image1 from './imgs/bg.jpg';
 import image2 from './imgs/ol.jpg';
 
@@ -22,6 +22,7 @@ class MainWindow extends Component {
           </div>
           <div className="column is-content-window has-height-full">
             <Carousel
+              slideOn={this.props.active}
               images={[image1, image2]}
               slideDelay={2000}
               content={
@@ -41,8 +42,8 @@ class CreateWindow extends Component {
   render() {
     let active = this.props.active ? 'is-active' : '';
     return (
-      <div className={'window overlay ' + active}>
-        <CreateSession toggleCreate={this.props.toggleCreate} />
+      <div className={'window create-window overlay ' + active}>
+        <CreateFrame toggleCreate={this.props.toggleCreate} />
       </div>
     );
   }

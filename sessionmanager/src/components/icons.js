@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faPlus, faList, faTh } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCog,
+  faPlus,
+  faList,
+  faTh,
+  faTimes
+} from '@fortawesome/free-solid-svg-icons';
 
 // Font Awesome
-library.add(faCog, faPlus, faList, faTh);
+library.add(faCog, faPlus, faList, faTh, faTimes);
 
 export const Icon = (icon, size = '1x', color = 'grey') => (
   <div className={'has-text-' + color}>
