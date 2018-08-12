@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Icon } from './icons';
 
 class NavMenu extends Component {
-  renderButton(icon, size, color) {
+  renderButton(onClick, icon, size, color) {
     return (
       <li>
-        <a href="" className="button is-dark">
+        <a href="#" className="button is-dark" onClick={onClick}>
           <span className="icon is-large">
             <i>{Icon(icon, size, color)}</i>
           </span>
@@ -17,8 +17,8 @@ class NavMenu extends Component {
   render() {
     return (
       <div>
-        {this.renderButton('th', 'lg')}
-        {this.renderButton('plus', 'lg')}
+        {this.renderButton(null, 'th', 'lg')}
+        {this.renderButton(this.props.toggleCreate, 'plus', 'lg')}
       </div>
     );
   }
@@ -29,7 +29,7 @@ class NavBar extends Component {
     return (
       <aside id="nav_menu" className="menu has-background-dark">
         <ul className="menu-list">
-          <NavMenu />
+          <NavMenu toggleCreate={this.props.toggleCreate} />
         </ul>
       </aside>
     );
