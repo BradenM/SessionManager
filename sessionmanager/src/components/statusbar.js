@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Icon } from './icons';
+import { Icon } from './elements/icons';
 
 function StatusItem(props) {
   return (

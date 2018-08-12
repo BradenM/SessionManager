@@ -1,5 +1,20 @@
 import React, { Component } from 'react';
-import { Icon } from '../icons';
+import { Icon } from '../elements/icons';
+import Input, { RequiredValidator } from '../elements/input';
+const path = require('path');
+const electron = window.require('electron');
+const { dialog } = electron.remote;
+
+const trimPath = string => {
+  console.log('TRIM PATH', string);
+  let str = string.constructor === Array ? string[0] : string;
+  if (str.includes(path.sep)) {
+    var trim = str.split('/');
+    str = path.sep + trim[trim.length - 2] + path.sep + trim[trim.length - 1];
+    console.log(trim);
+  }
+  return str;
+};
 
 const StepItem = props => {
   let active = props.active ? ' is-active' : '';
@@ -9,12 +24,13 @@ const StepItem = props => {
       <div className="step-marker" />
       <div className="step-details">
         <p className="step-title">{props.title}</p>
+        <p>{trimPath(props.help)}</p>
       </div>
     </div>
   );
 };
 
-class Steps extends Component {
+class StepTimeline extends Component {
   renderSteps(steps, current) {
     let render = [];
     for (var key in steps) {
@@ -24,7 +40,13 @@ class Steps extends Component {
       let active = curStep == item;
       let complete = itemIndex < current;
       render.push(
-        <StepItem active={active} complete={complete} title={item.title} />
+        <StepItem
+          key={'step_marker_' + item.title}
+          active={active}
+          complete={complete}
+          title={item.title}
+          help={item.value}
+        />
       );
     }
     return render;
@@ -38,17 +60,49 @@ class Steps extends Component {
   }
 }
 
+class StepPage extends Component {
+  renderInput(step) {
+    return (
+      <Input
+        class="fancy-step"
+        label={step.title}
+        handleChange={e => this.props.handleChange(e)}
+        handleSubmit={() => {
+          this.props.handleSubmit();
+        }}
+        handleClick={e => this.props.handleClick(e)}
+        value={step.value}
+        helpText={step.helpText}
+      />
+    );
+  }
+
+  render() {
+    return (
+      <div className="column is-one-fifth">
+        {this.renderInput(this.props.step)}
+      </div>
+    );
+  }
+}
+
 class CreateFrame extends Component {
   constructor(props) {
     super(props);
     const steps = [
       {
         title: 'Name',
-        content: this.renderName()
+        value: '',
+        helpText: 'Enter a name for your new session',
+        has_click: false,
+        type: 'input'
       },
       {
         title: 'Path',
-        content: this.renderPath()
+        value: '',
+        helpText: 'Open your Raw images',
+        has_click: true,
+        type: 'input'
       }
     ];
     this.state = {
@@ -57,60 +111,50 @@ class CreateFrame extends Component {
     };
   }
 
-  renderName() {
-    return (
-      <div className="column is-one-fifth">
-        <div className="control input-control">
-          <input
-            type="text"
-            className="input bottom-border"
-            placeholder=""
-            required
-          />
-          <span className="focus-border" />
-          <span className="focus-label">Name</span>
-          <span
-            className="focus-submit"
-            onClick={() => {
-              this.handleNext();
-            }}
-          >
-            <span className="icon has-text-centered is-large">
-              <i className="icon-right-open" />
-            </span>
-          </span>
-          <p className="help has-text-white">
-            Enter a name for your new session
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  renderPath() {
-    return (
-      <div className="column is-one-fifth">
-        <div className="control input-control">
-          <input
-            type="text"
-            className="input bottom-border"
-            placeholder="Path"
-            required
-          />
-          <span className="focus-border" />
-          <p className="help has-text-white">something something path</p>
-        </div>
-      </div>
-    );
-  }
-
-  handleNext() {
+  handlePath() {
+    let steps = this.state.steps.slice();
+    let current = steps[this.state.current_step];
+    console.log('Cur Step Click?: ', current.has_click);
+    if (current.has_click === false) {
+      console.log('No click');
+      return;
+    }
+    let path = dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      title: 'Choose a folder containing RAW (*.CR2) Files'
+    });
+    if (path === undefined) {
+      return;
+    }
+    current.value = path;
     this.setState({
-      current_step: this.state.current_step + 1
+      steps: steps
+    });
+  }
+
+  handleNext(val) {
+    let steps = this.state.steps.slice();
+    let curStep = this.state.current_step;
+    this.setState({
+      steps: steps,
+      current_step: curStep + 1
+    });
+  }
+
+  handleInput(event) {
+    let steps = this.state.steps.slice();
+    let current = steps[this.state.current_step];
+    if (current.has_click === true) {
+      return;
+    }
+    current.value = event.target.value;
+    this.setState({
+      steps: steps
     });
   }
 
   render() {
+    let curStep = this.state.steps[this.state.current_step];
     return (
       <div className="frame">
         <div className="exit-window">
@@ -131,9 +175,18 @@ class CreateFrame extends Component {
           </div>
         </div>
         <div className="columns is-centered has-space-top">
-          {this.state.steps[this.state.current_step].content}
+          <StepPage
+            key={curStep.label}
+            handleSubmit={e => this.handleNext()}
+            handleChange={e => this.handleInput(e)}
+            handleClick={e => this.handlePath()}
+            step={curStep}
+          />
         </div>
-        <Steps steps={this.state.steps} current={this.state.current_step} />
+        <StepTimeline
+          steps={this.state.steps}
+          current={this.state.current_step}
+        />
       </div>
     );
   }
