@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
 import { Icon } from '../elements/icons';
-import Input, { RequiredValidator } from '../elements/input';
+import Input from '../elements/input';
+import CircleProgress from '../elements/progress';
 const path = require('path');
 const electron = window.require('electron');
 const { dialog } = electron.remote;
 
-const trimPath = string => {
-  console.log('TRIM PATH', string);
-  let str = string.constructor === Array ? string[0] : string;
-  if (str.includes(path.sep)) {
-    var trim = str.split('/');
-    str = path.sep + trim[trim.length - 2] + path.sep + trim[trim.length - 1];
-    console.log(trim);
+const formatHelp = val => {
+  if (val.constructor === Number) {
+    return String(val) + '%';
+  } else {
+    let str = val.constructor === Array ? val[0] : val;
+    if (str.includes(path.sep)) {
+      var trim = str.split('/');
+      str = path.sep + trim[trim.length - 2] + path.sep + trim[trim.length - 1];
+    }
+    return str;
   }
-  return str;
 };
 
 const StepItem = props => {
@@ -24,7 +27,7 @@ const StepItem = props => {
       <div className="step-marker" />
       <div className="step-details">
         <p className="step-title">{props.title}</p>
-        <p>{trimPath(props.help)}</p>
+        <p>{formatHelp(props.help)}</p>
       </div>
     </div>
   );
@@ -61,6 +64,19 @@ class StepTimeline extends Component {
 }
 
 class StepPage extends Component {
+  constructor(props) {
+    super(props);
+    this.renderInput = this.renderInput.bind(this);
+    this.renderLoad = this.renderLoad.bind(this);
+  }
+  renderStep(step) {
+    const renderTypes = {
+      input: this.renderInput,
+      load: this.renderLoad
+    };
+    let r = renderTypes[step.type];
+    return r(step);
+  }
   renderInput(step) {
     return (
       <Input
@@ -77,10 +93,20 @@ class StepPage extends Component {
     );
   }
 
+  renderLoad(step) {
+    return (
+      <CircleProgress
+        style="inner-label"
+        percent={step.value}
+        title={step.helpText}
+      />
+    );
+  }
+
   render() {
     return (
       <div className="column is-one-fifth">
-        {this.renderInput(this.props.step)}
+        {this.renderStep(this.props.step)}
       </div>
     );
   }
@@ -103,6 +129,20 @@ class CreateFrame extends Component {
         helpText: 'Open your Raw images',
         has_click: true,
         type: 'input'
+      },
+      {
+        title: 'Copy',
+        value: 0,
+        helpText: 'Copying Files',
+        has_click: false,
+        type: 'load'
+      },
+      {
+        title: 'Convert',
+        value: 0,
+        helpText: 'Converting to DNG',
+        has_click: false,
+        type: 'load'
       }
     ];
     this.state = {
@@ -114,9 +154,7 @@ class CreateFrame extends Component {
   handlePath() {
     let steps = this.state.steps.slice();
     let current = steps[this.state.current_step];
-    console.log('Cur Step Click?: ', current.has_click);
     if (current.has_click === false) {
-      console.log('No click');
       return;
     }
     let path = dialog.showOpenDialog({
@@ -153,6 +191,22 @@ class CreateFrame extends Component {
     });
   }
 
+  // Testing
+  testPercent() {
+    let steps = this.state.steps.slice();
+    let current = steps[this.state.current_step];
+    let val = current.value;
+    setTimeout(
+      function() {
+        current.value++;
+        this.setState({
+          steps: steps
+        });
+      }.bind(this),
+      500
+    );
+  }
+
   render() {
     let curStep = this.state.steps[this.state.current_step];
     return (
@@ -180,6 +234,7 @@ class CreateFrame extends Component {
             handleSubmit={e => this.handleNext()}
             handleChange={e => this.handleInput(e)}
             handleClick={e => this.handlePath()}
+            // testPercent={this.testPercent()}
             step={curStep}
           />
         </div>

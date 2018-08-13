@@ -13,6 +13,7 @@
     "ignore-loader": "^0.1.2",
     "jquery": "^3.3.1",
     "npm": "^6.3.0",
+    "rc-progress": "^2.2.5",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-promise": "^2.0.3",

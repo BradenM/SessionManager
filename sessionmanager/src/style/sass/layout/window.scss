@@ -13,7 +13,7 @@
       opacity: 0;
       @include transition(opacity, 0.3s);
     }
-    & h1.title {
+    & h1.title.is-1 {
       font-size: ($size-1 * 1.5);
       text-shadow: 2px 4px 3px transparentize($dark, 0);
     }
