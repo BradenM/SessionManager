@@ -32,7 +32,7 @@ class Session(Base):
     images = relationship('Image', backref="sessions",
                           cascade="all, delete-orphan")
 
-    def __init__(self, name, raw_path, desc='', keep_raw=False, auto_create=True):
+    def __init__(self, name, raw_path, desc='', keep_raw=False):
         self.name = name
         self.rawpath = raw_path
         self.has_raw = keep_raw
@@ -42,18 +42,15 @@ class Session(Base):
         d = datetime.now()
         self.modify_date = d
         self.create_date = d
-        self.setup(auto_create)
+        # Callbacks
+        self.copy_callback = None
+        self.convert_callback = None
 
     # Functions
-
-    def setup(self, auto_create):
+    def create(self):
         self.path = m.structure(self)
-        m.copy_raw(self.rawpath, self.path)
-        if auto_create:
-            self.create(None)
-
-    def create(self, prog_callback):
-        m.convert_raw(self.path, prog_callback)
+        m.copy_raw(self.rawpath, self.path, self.copy_callback)
+        m.convert_raw(self.path, self.convert_callback)
         if not self.has_raw:
             m.delete_raw(self.path)
         m.rename_files(self.path, self.name)

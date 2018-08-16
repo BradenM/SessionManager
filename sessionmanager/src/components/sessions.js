@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { fetch_sessions, get_thumb } from './backend';
+import { fetch_sessions, load_thumbs, get_thumb } from './backend';
 import Async from 'react-promise';
 
 fetch_sessions().then(val => {
@@ -36,6 +36,17 @@ class SessionList extends Component {
     super(props);
   }
 
+  loadTiles(s) {
+    return (
+      <Async
+        promise={load_thumbs()}
+        then={x => {
+          return this.renderTiles();
+        }}
+      />
+    );
+  }
+
   renderTiles() {
     return (
       <Async
@@ -54,7 +65,7 @@ class SessionList extends Component {
     return (
       <div className="session-list">
         <div className="tile is-ancestor is-flex is-wrapping">
-          {this.renderTiles()}
+          {this.loadTiles()}
         </div>
       </div>
     );

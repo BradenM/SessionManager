@@ -11,9 +11,14 @@ from manage.session import Session
 from data import data
 from definitions import DATABASE, ROOT_DIR
 from shutil import copy
+import gevent
 
 
 class Api(object):
+    def __init__(self, *args, **kwargs):
+        self._create_progress = 0
+        self.copied = []
+
     def echo(self, text):
         """echo any text"""
         return text
@@ -30,20 +35,13 @@ class Api(object):
         """
         return reply
 
-    def get_thumb(self, thumb=None):
+    def get_thumb(self):
         web_img = Path.cwd() / 'src' / 'imgs' / 'thumb'
-        thumb = Path(thumb)
-        match = None
         for s in Session.all():
             tmb = Path(s.images[0].thumb)
             if not tmb.name in web_img.glob('*.jpg'):
                 copy(str(tmb), str(web_img / tmb.name))
-                if thumb.name == tmb.name:
-                    match = '../' + str(Path('src') / 'imgs' / tmb.name)
-        if match is not None:
-            return match
-        else:
-            return [str(x) for x in web_img.glob('*.jpg')]
+        return [str(x) for x in web_img.glob('*.jpg')]
 
     def fetch_sessions(self):
         sessions = Session.all()
@@ -51,6 +49,31 @@ class Api(object):
         for s in sessions:
             reply.append(json.dumps(s.to_dict()))
         return json.dumps(reply)
+
+    def create(self, json_request, callback):
+        request = json.loads(json_request)
+        s = Session(request['name'], request['raw_path'])
+        s.copy_callback = callback
+        s.create()
+        gevent.sleep(0)
+
+    def copy_callback(self, data=None, complete=False):
+        if complete:
+            self._create_progress = 100
+            gevent.sleep(0)
+            return self._create_progress
+        if data is not None:
+            self.copied.append(data[0])
+            percent = (len(self.copied) / data[1])*100
+            self._create_progress = int(percent)
+            gevent.sleep(0)
+        return self._create_progress
+
+    def create_session(self, json_request):
+        gevent.joinall([
+            gevent.spawn(self.create(json_request, self.copy_callback))
+        ])
+        return 'Temp session created return'
 
 
 def parse_port():
@@ -67,4 +90,4 @@ def start():
     s = zerorpc.Server(Api())
     s.bind(addr)
     print('start running on {}'.format(addr))
-    s.run()
+    gevent.spawn(s.run())

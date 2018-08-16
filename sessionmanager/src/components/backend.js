@@ -4,9 +4,8 @@ const ipcRenderer = electron.ipcRenderer;
 
 // Connect to Python Backend
 const zerorpc = electron.remote.require('zerorpc');
-let client = new zerorpc.Client();
+let client = new zerorpc.Client({ timeout: 90000, heartbeatInterval: 60000 });
 client.connect('tcp://127.0.0.1:4242');
-load_thumbs();
 
 // Test Backend with Echo function
 export function fetchHello() {
@@ -24,12 +23,17 @@ export function fetchHello() {
   return $req;
 }
 
-function load_thumbs() {
+export function load_thumbs() {
   /*
     Load thumbs to static resource through python server
   */
-  client.invoke('get_thumb', (error, res) => {
-    console.log('Images Loaded');
+  return new Promise(resolve => {
+    client.invoke('get_thumb', (error, res) => {
+      console.log('Images Loaded');
+      console.log('TH Error: ', error);
+      console.log(('TH RES:', res));
+      resolve(res);
+    });
   });
 }
 
@@ -70,6 +74,34 @@ export function fetch_sessions() {
     });
   });
   return $req;
+}
+
+// Create Session
+export function create_session(obj, callback) {
+  console.log('OBJ: ', obj);
+  let request = JSON.stringify(obj);
+  let $req = new Promise((resolve, reject) => {
+    client.invoke('create_session', request, (error, res, more) => {
+      if (error) {
+        console.log('INVOKE ERROR');
+        reject(error);
+      } else {
+        console.log('RES: ', res);
+        console.log(('MORE', more));
+        resolve(res);
+      }
+    });
+  });
+  return $req;
+}
+
+export function get_prog(callback) {
+  client.invoke('copy_callback', (error, res, more) => {
+    if (error) {
+      console.log('COPY ERROR', error);
+    }
+    callback(res);
+  });
 }
 
 function fetchPaths() {

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Icon } from '../elements/icons';
 import Input from '../elements/input';
 import CircleProgress from '../elements/progress';
+import { create_session, get_prog } from '../backend';
+import { resolve } from 'path';
 const path = require('path');
 const electron = window.require('electron');
 const { dialog } = electron.remote;
@@ -106,6 +108,7 @@ class StepPage extends Component {
   render() {
     return (
       <div className="column is-one-fifth">
+        {() => this.props.testCreate()}
         {this.renderStep(this.props.step)}
       </div>
     );
@@ -170,12 +173,50 @@ class CreateFrame extends Component {
     });
   }
 
+  handleCreate() {
+    let steps = this.state.steps.slice();
+    let curStep = this.state.current_step;
+    let session = {
+      name: steps[0].value,
+      raw_path: steps[1].value[0]
+    };
+    create_session(session).then((res, error) => {
+      // Debug
+      console.log('CREATE RES: ', res);
+      console.log('CREATE ERROR: ', error);
+    });
+    this.handleProgress(steps[curStep]);
+  }
+
+  handleProgress(step) {
+    let steps = this.state.steps.slice();
+    let curStep = this.state.current_step;
+    get_prog(res => {
+      // Debug
+      console.log('callback res: ', res);
+      if (res === undefined || res === null) {
+        res = steps[curStep].value;
+      } else {
+        steps[curStep].value = res;
+      }
+      this.setState({
+        steps: steps
+      });
+      if (res !== 100) {
+        this.handleProgress(step);
+        return;
+      }
+    });
+  }
+
   handleNext(val) {
     let steps = this.state.steps.slice();
     let curStep = this.state.current_step;
+    console.log(steps.length - 3);
+    console.log(steps.indexOf(steps[curStep]));
     this.setState({
       steps: steps,
-      current_step: curStep + 1
+      current_step: curStep // + 1
     });
   }
 
@@ -189,22 +230,6 @@ class CreateFrame extends Component {
     this.setState({
       steps: steps
     });
-  }
-
-  // Testing
-  testPercent() {
-    let steps = this.state.steps.slice();
-    let current = steps[this.state.current_step];
-    let val = current.value;
-    setTimeout(
-      function() {
-        current.value++;
-        this.setState({
-          steps: steps
-        });
-      }.bind(this),
-      500
-    );
   }
 
   render() {
@@ -234,7 +259,7 @@ class CreateFrame extends Component {
             handleSubmit={e => this.handleNext()}
             handleChange={e => this.handleInput(e)}
             handleClick={e => this.handlePath()}
-            // testPercent={this.testPercent()}
+            testCreate={() => this.handleCreate()}
             step={curStep}
           />
         </div>
