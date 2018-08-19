@@ -41,44 +41,52 @@ def iterate_files(path, ext):
 
 # Copy Raw Files
 def copy_raw(raw_path, path, callback):
-    count = len(os.listdir(raw_path))
+    count = len([i for i in os.listdir(raw_path)
+                 if i.lower().endswith('.cr2')])
     for file in os.listdir(raw_path):
         if file.lower().endswith(".cr2"):
             copyfile("%s/%s" % (raw_path, file), "%s/%s" %
                      (path, file.lower()))
             if callback is not None:
-                callback((file, count))
+                callback('copy', (file, count))
     if callback is not None:
         callback((file, count), complete=True)
 
+
 # Convert RAW to DNG MP
-
-
-def convert(chunk, path, callback):
+def convert(chunk, path):
     os.chdir(path)
+    count = len([i for i in os.listdir(path) if i.lower().endswith('.cr2')])
     for file in chunk:
         p = subprocess.Popen(f"{DNG} -c {file}", shell=True)
         p.wait()
-        if callback is not None:
-            callback(chunk)
-    return chunk
+    return (chunk, count)
 
 
 # Convert RAW to DNG
 def convert_raw(path, callback):
     raw = [file for file in os.listdir(
         path) if file.lower().endswith('.cr2')]
+    converted = [file for file in os.listdir(
+        path) if file.lower().endswith('.dng')]
     workers = mp.cpu_count()
     chunk_f = h.chunk_factor(raw)
     if chunk_f is False:
         chunk_f = workers
     chunks = list(h.chunk(raw, chunk_f))
     pool = mp.Pool(workers)
+    jobs = []
     for x in chunks:
         print('Process Called')
-        pool.apply_async(convert, args=(x, path), callback=callback)
+        jobs.append(pool.apply_async(convert, args=(x, path)))
+    for j in jobs:
+        val = j.get()
+        if callback is not None:
+            callback('convert', data=val)
     pool.close()
     pool.join()
+    if callback is not None:
+        callback(('', len(raw)), complete=True)
 
 
 # Delete CR2 files

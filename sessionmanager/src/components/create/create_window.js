@@ -1,119 +1,10 @@
 import React, { Component } from 'react';
 import { Icon } from '../elements/icons';
-import Input from '../elements/input';
-import CircleProgress from '../elements/progress';
 import { create_session, get_prog } from '../backend';
-import { resolve } from 'path';
-const path = require('path');
+import StepTimeline from './timeline';
+import StepPage from './step';
 const electron = window.require('electron');
 const { dialog } = electron.remote;
-
-const formatHelp = val => {
-  if (val.constructor === Number) {
-    return String(val) + '%';
-  } else {
-    let str = val.constructor === Array ? val[0] : val;
-    if (str.includes(path.sep)) {
-      var trim = str.split('/');
-      str = path.sep + trim[trim.length - 2] + path.sep + trim[trim.length - 1];
-    }
-    return str;
-  }
-};
-
-const StepItem = props => {
-  let active = props.active ? ' is-active' : '';
-  let complete = props.complete ? ' is-completed' : '';
-  return (
-    <div className={'step-item has-text-light is-link' + active + complete}>
-      <div className="step-marker" />
-      <div className="step-details">
-        <p className="step-title">{props.title}</p>
-        <p>{formatHelp(props.help)}</p>
-      </div>
-    </div>
-  );
-};
-
-class StepTimeline extends Component {
-  renderSteps(steps, current) {
-    let render = [];
-    for (var key in steps) {
-      let item = this.props.steps[key];
-      let itemIndex = this.props.steps.indexOf(item);
-      let curStep = this.props.steps[current];
-      let active = curStep == item;
-      let complete = itemIndex < current;
-      render.push(
-        <StepItem
-          key={'step_marker_' + item.title}
-          active={active}
-          complete={complete}
-          title={item.title}
-          help={item.value}
-        />
-      );
-    }
-    return render;
-  }
-  render() {
-    return (
-      <div className="steps">
-        {this.renderSteps(this.props.steps, this.props.current)}
-      </div>
-    );
-  }
-}
-
-class StepPage extends Component {
-  constructor(props) {
-    super(props);
-    this.renderInput = this.renderInput.bind(this);
-    this.renderLoad = this.renderLoad.bind(this);
-  }
-  renderStep(step) {
-    const renderTypes = {
-      input: this.renderInput,
-      load: this.renderLoad
-    };
-    let r = renderTypes[step.type];
-    return r(step);
-  }
-  renderInput(step) {
-    return (
-      <Input
-        class="fancy-step"
-        label={step.title}
-        handleChange={e => this.props.handleChange(e)}
-        handleSubmit={() => {
-          this.props.handleSubmit();
-        }}
-        handleClick={e => this.props.handleClick(e)}
-        value={step.value}
-        helpText={step.helpText}
-      />
-    );
-  }
-
-  renderLoad(step) {
-    return (
-      <CircleProgress
-        style="inner-label"
-        percent={step.value}
-        title={step.helpText}
-      />
-    );
-  }
-
-  render() {
-    return (
-      <div className="column is-one-fifth">
-        {() => this.props.testCreate()}
-        {this.renderStep(this.props.step)}
-      </div>
-    );
-  }
-}
 
 class CreateFrame extends Component {
   constructor(props) {
@@ -138,20 +29,30 @@ class CreateFrame extends Component {
         value: 0,
         helpText: 'Copying Files',
         has_click: false,
-        type: 'load'
+        type: 'load',
+        request: 'copy'
       },
       {
         title: 'Convert',
         value: 0,
         helpText: 'Converting to DNG',
         has_click: false,
-        type: 'load'
+        type: 'load',
+        request: 'convert'
+      },
+      {
+        title: 'Finish',
+        value: 'Finished',
+        helpText: 'Converting to DNG',
+        has_click: false,
+        type: 'input'
       }
     ];
     this.state = {
       steps: steps,
       current_step: 0
     };
+    this.handleProgress = this.handleProgress.bind(this);
   }
 
   handlePath() {
@@ -185,13 +86,13 @@ class CreateFrame extends Component {
       console.log('CREATE RES: ', res);
       console.log('CREATE ERROR: ', error);
     });
-    this.handleProgress(steps[curStep]);
   }
 
   handleProgress(step) {
     let steps = this.state.steps.slice();
     let curStep = this.state.current_step;
-    get_prog(res => {
+    let step_req = steps[curStep].request;
+    get_prog(step_req, res => {
       // Debug
       console.log('callback res: ', res);
       if (res === undefined || res === null) {
@@ -202,22 +103,47 @@ class CreateFrame extends Component {
       this.setState({
         steps: steps
       });
-      if (res !== 100) {
-        this.handleProgress(step);
-        return;
+      if (steps[curStep].value === 100) {
+        // Next Step if complete
+        setTimeout(
+          function() {
+            this.handleNext();
+          }.bind(this),
+          300
+        );
+      } else {
+        // Else keep requesting progress
+        setTimeout(
+          function() {
+            this.handleProgress(step);
+            return;
+          }.bind(this),
+          50
+        );
       }
     });
   }
 
-  handleNext(val) {
+  handleNext() {
     let steps = this.state.steps.slice();
     let curStep = this.state.current_step;
-    console.log(steps.length - 3);
-    console.log(steps.indexOf(steps[curStep]));
-    this.setState({
-      steps: steps,
-      current_step: curStep // + 1
-    });
+    let lastStep = steps.indexOf(steps[curStep + 1]);
+    this.setState(
+      {
+        steps: steps,
+        current_step: curStep + 1
+      },
+      () => {
+        let current = this.state.steps[this.state.current_step];
+
+        if (current.type === 'load') {
+          this.handleProgress(current);
+          if (current.title === 'Copy') {
+            this.handleCreate();
+          }
+        }
+      }
+    );
   }
 
   handleInput(event) {

@@ -95,8 +95,8 @@ export function create_session(obj, callback) {
   return $req;
 }
 
-export function get_prog(callback) {
-  client.invoke('copy_callback', (error, res, more) => {
+export function get_prog(request, callback) {
+  client.invoke('session_callback', request, (error, res, more) => {
     if (error) {
       console.log('COPY ERROR', error);
     }

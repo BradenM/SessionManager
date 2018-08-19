@@ -43,14 +43,14 @@ class Session(Base):
         self.modify_date = d
         self.create_date = d
         # Callbacks
-        self.copy_callback = None
+        self.callback = None
         self.convert_callback = None
 
     # Functions
     def create(self):
         self.path = m.structure(self)
-        m.copy_raw(self.rawpath, self.path, self.copy_callback)
-        m.convert_raw(self.path, self.convert_callback)
+        m.copy_raw(self.rawpath, self.path, self.callback)
+        m.convert_raw(self.path, self.callback)
         if not self.has_raw:
             m.delete_raw(self.path)
         m.rename_files(self.path, self.name)

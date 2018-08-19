@@ -1,4 +1,4 @@
-from __future__ import print_function
+import gevent
 import sys
 import zerorpc
 import json
@@ -11,12 +11,14 @@ from manage.session import Session
 from data import data
 from definitions import DATABASE, ROOT_DIR
 from shutil import copy
-import gevent
 
 
 class Api(object):
     def __init__(self, *args, **kwargs):
-        self._create_progress = 0
+        self.progress = {
+            'copy': 0,
+            'convert': 0
+        }
         self.copied = []
 
     def echo(self, text):
@@ -53,26 +55,31 @@ class Api(object):
     def create(self, json_request, callback):
         request = json.loads(json_request)
         s = Session(request['name'], request['raw_path'])
-        s.copy_callback = callback
+        s.callback = callback
         s.create()
-        gevent.sleep(0)
+        gevent.sleep(1)
 
-    def copy_callback(self, data=None, complete=False):
+    def session_callback(self, request, data=None, complete=False):
+        pr = self.progress
         if complete:
-            self._create_progress = 100
-            gevent.sleep(0)
-            return self._create_progress
+            print(f'PROGRESS: {self.progress}')
+            pr[request] = 0
+            self.copied = []
+            gevent.sleep(0.05)
+            return 0
         if data is not None:
-            self.copied.append(data[0])
+            if isinstance(data[0], list):
+                [self.copied.append(i) for i in data[0]]
+            else:
+                self.copied.append(data[0])
             percent = (len(self.copied) / data[1])*100
-            self._create_progress = int(percent)
-            gevent.sleep(0)
-        return self._create_progress
+            print(f"{request} -- {int(percent)}%")
+            pr[request] = int(percent)
+            gevent.sleep(0.05)
+        return pr[request]
 
     def create_session(self, json_request):
-        gevent.joinall([
-            gevent.spawn(self.create(json_request, self.copy_callback))
-        ])
+        self.create(json_request, self.session_callback)
         return 'Temp session created return'
 
 
@@ -87,7 +94,7 @@ def parse_port():
 
 def start():
     addr = 'tcp://127.0.0.1:' + parse_port()
-    s = zerorpc.Server(Api())
+    s = zerorpc.Server(Api(), heartbeat=None)
     s.bind(addr)
     print('start running on {}'.format(addr))
     gevent.spawn(s.run())
