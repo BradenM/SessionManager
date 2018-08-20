@@ -1,7 +1,9 @@
-# Program: Session Manager
-# File: manage/session.py
-# Desc: Session classes
-# Author: Braden Mars
+'''
+Program: Session Manager
+File: manage/session.py
+Desc: Session classes
+Author: Braden Mars
+'''
 
 
 from sqlalchemy import Column, String, Integer, Date, DateTime, Boolean, Table, ForeignKey
@@ -18,6 +20,18 @@ from pathlib import Path
 
 
 class Session(Base):
+    '''
+    Session object
+    Creates session from RAW images and converts
+    them into a format usable by photoshop
+
+     Params:
+        name (string): Name of Session
+        raw_path (string): Path to .CR2 Raw images
+        desc (string, optional): Description of Session
+        keep_raw (bool, optional): True/False to keep RAW images in session
+    '''
+
     # Database Information
     __tablename__ = "sessions"
     __dir__ = (Setting.get('Session Directory')).path
@@ -37,17 +51,20 @@ class Session(Base):
         self.rawpath = raw_path
         self.has_raw = keep_raw
         self.path = ""
-        self.desc = ""
+        self.desc = desc
         self.file_count = 0
-        d = datetime.now()
-        self.modify_date = d
-        self.create_date = d
+        now = datetime.now()
+        self.modify_date = now
+        self.create_date = now
         # Callbacks
         self.callback = None
         self.convert_callback = None
 
     # Functions
     def create(self):
+        '''
+        Start Session Creation
+        '''
         self.path = m.structure(self)
         m.copy_raw(self.rawpath, self.path, self.callback)
         m.convert_raw(self.path, self.callback)
@@ -63,9 +80,15 @@ class Session(Base):
 
     @staticmethod
     def delete(inst):
+        '''
+        Delete Session
+        '''
         m.delete_session(inst)
 
     def save(self):
+        '''
+        Saves Session to Database
+        '''
         self.path = str(self.path)
         m.save(self)
 
@@ -159,11 +182,11 @@ class Image(Base):
     def gen_proof(self, session, size="5x7", loose=True):
         proof = m.make_proof(self, session, size, loose)
         if loose is not True:
-            p = Proof(self, f"proof_{proof[0]}",
-                      proof[1], size, loose, proof[2])
+            pro = Proof(self, f"proof_{proof[0]}",
+                        proof[1], size, loose, proof[2])
         else:
-            p = Proof(self, proof[0], proof[1], size, loose, proof[2])
-        self.proofs.append(p)
+            pro = Proof(self, proof[0], proof[1], size, loose, proof[2])
+        self.proofs.append(pro)
         m.save(self)
 
     def edit_loose(self, loose, size):
@@ -178,11 +201,11 @@ class Image(Base):
             os.mkdir(export_path)
             os.mkdir(proof_path)
             os.mkdir(loose_path)
-        for p in self.proofs:
-            if p.loose:
-                p.export(loose_path)
+        for image in self.proofs:
+            if image.loose:
+                image.export(loose_path)
             else:
-                p.export(proof_path)
+                image.export(proof_path)
         return export_path
 
 

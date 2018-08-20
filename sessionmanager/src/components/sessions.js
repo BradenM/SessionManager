@@ -36,11 +36,11 @@ class SessionList extends Component {
     super(props);
   }
 
-  loadTiles(s) {
+  loadTiles() {
     return (
       <Async
         promise={load_thumbs()}
-        then={x => {
+        then={() => {
           return this.renderTiles();
         }}
       />

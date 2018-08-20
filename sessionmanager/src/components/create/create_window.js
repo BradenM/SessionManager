@@ -76,7 +76,6 @@ class CreateFrame extends Component {
 
   handleCreate() {
     let steps = this.state.steps.slice();
-    let curStep = this.state.current_step;
     let session = {
       name: steps[0].value,
       raw_path: steps[1].value[0]
@@ -127,7 +126,6 @@ class CreateFrame extends Component {
   handleNext() {
     let steps = this.state.steps.slice();
     let curStep = this.state.current_step;
-    let lastStep = steps.indexOf(steps[curStep + 1]);
     this.setState(
       {
         steps: steps,
@@ -182,9 +180,9 @@ class CreateFrame extends Component {
         <div className="columns is-centered has-space-top">
           <StepPage
             key={curStep.label}
-            handleSubmit={e => this.handleNext()}
+            handleSubmit={() => this.handleNext()}
             handleChange={e => this.handleInput(e)}
-            handleClick={e => this.handlePath()}
+            handleClick={() => this.handlePath()}
             testCreate={() => this.handleCreate()}
             step={curStep}
           />

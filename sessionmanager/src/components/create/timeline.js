@@ -5,7 +5,6 @@ Create Window Timeline component
 */
 
 import React, { Component } from 'react';
-import { resolve } from 'path';
 const path = require('path');
 
 const formatHelp = val => {

@@ -6,7 +6,7 @@
 import os
 import subprocess
 from shutil import copyfile, rmtree, copytree
-from utils import helpers as h, validate as v, image
+from utils import helpers as h, image
 import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
@@ -25,8 +25,8 @@ def structure(inst):
         session_path / 'proof',
         session_path / 'thumb'
     ]
-    for p in paths:
-        os.makedirs(p, exist_ok=True)
+    for path in paths:
+        os.makedirs(path, exist_ok=True)
     return session_path
 
 
@@ -67,8 +67,6 @@ def convert(chunk, path):
 def convert_raw(path, callback):
     raw = [file for file in os.listdir(
         path) if file.lower().endswith('.cr2')]
-    converted = [file for file in os.listdir(
-        path) if file.lower().endswith('.dng')]
     workers = mp.cpu_count()
     chunk_f = h.chunk_factor(raw)
     if chunk_f is False:
@@ -120,7 +118,7 @@ def session_exist(inst, name):
     return ex
 
 
-''' SETTINGS  '''
+# Settings
 
 
 # Create Settings
@@ -181,7 +179,7 @@ def migrate_update(origin, new_p, rows):
     return True
 
 
-''' ---- IMAGES ----'''
+# Images
 
 
 # Generate thumb from raw file

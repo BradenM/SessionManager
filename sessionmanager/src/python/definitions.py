@@ -4,7 +4,6 @@
 # Author: Braden Mars
 
 import os
-import sys
 import debug
 from pathlib import Path
 
