@@ -1,0 +1,16 @@
+.circle-pg {
+  &.has-inner-label {
+    position: relative;
+    .pg-label {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      font-family: $family-sans-serif;
+      span {
+        color: $light;
+        font-size: $size-1;
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+.control.input-control {
+  text-align: center;
+  span {
+    &.focus-border {
+      width: 0px;
+      height: 2px;
+      background: $light;
+      top: -11px;
+      @include transition(all, 0.3s);
+    }
+    &.focus-label {
+      color: $grey;
+      left: 0;
+      right: 0;
+      top: 0;
+      padding-top: 0.9rem;
+      margin-left: auto;
+      position: absolute;
+      z-index: 30;
+      @include transition(top, 0.3s, ease-in-out 0.3s, padding-right 1s);
+    }
+    &.focus-submit {
+      right: -1rem;
+      top: 0;
+      padding-top: 0.2rem;
+      margin-left: auto;
+      position: absolute;
+      font-size: $size-4;
+      color: $light;
+      cursor: pointer;
+      z-index: 45;
+      opacity: 0;
+      pointer-events: none;
+      @include transition(all, 0.3s, $delay: opacity 1s);
+    }
+    display: inline-block;
+    position: relative;
+  }
+}
+
+.input.fancy-step {
+  background: rgba(0, 0, 0, 0);
+  box-shadow: none !important;
+  color: $light;
+  border: none;
+  border-radius: 0px;
+  padding-bottom: 0px;
+  display: block;
+  z-index: 35;
+  width: 90%;
+
+  &:invalid:not(:active):not(:focus) + .focus-border {
+    height: 1px;
+    width: 70%;
+    color: $dark;
+  }
+
+  &::placeholder {
+    color: $light;
+  }
+  &:active,
+  &:focus,
+  &:valid {
+    & + .focus-border {
+      width: 100% !important;
+      & + .focus-label {
+        padding-top: 0rem;
+        top: -1rem;
+        padding-right: 75%;
+      }
+    }
+  }
+  &:valid {
+    & + .focus-border {
+      & + .focus-label {
+        & + .focus-submit {
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+    }
+  }
+}

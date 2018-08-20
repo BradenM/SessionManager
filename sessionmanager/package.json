@@ -1,0 +1,47 @@
+{
+  "name": "sessionmanager",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/electron-start.js",
+  "homepage": "./",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.0-14",
+    "@fortawesome/free-solid-svg-icons": "^5.1.0-11",
+    "@fortawesome/react-fontawesome": "0.1.0-11",
+    "fs-extra": "^7.0.0",
+    "i": "^0.3.6",
+    "ignore-loader": "^0.1.2",
+    "jquery": "^3.3.1",
+    "npm": "^6.3.0",
+    "rc-progress": "^2.2.5",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-promise": "^2.0.3",
+    "react-scripts": "1.1.4",
+    "react-transition-group": "^2.4.0",
+    "zerorpc": "fyears/zerorpc-node"
+  },
+  "scripts": {
+    "start": "nf start -p 3000",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-start": "node src/electron-wait-react",
+    "react-start": "react-scripts start",
+    "css-build": "node-sass --omit-source-map-url src/style/sass/main.scss src/style/main.css",
+    "start-sass": "npm run css-build -- --watch",
+    "clean": "rm -rf src/python/sessions && rm src/python/database.sqlite && rm src/imgs/thumb/*.jpg",
+    "backdev": "python src/python/main.py"
+  },
+  "devDependencies": {
+    "bulma": "^0.7.1",
+    "bulma-steps": "^2.2.1",
+    "electron": "2.0.6",
+    "electron-react-devtools": "^0.5.3",
+    "eslint": "^5.3.0",
+    "eslint-plugin-react": "^7.11.1",
+    "foreman": "^3.0.1",
+    "node-sass": "^4.9.2"
+  }
+}

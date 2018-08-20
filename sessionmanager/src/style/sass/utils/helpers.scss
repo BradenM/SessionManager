@@ -1,0 +1,60 @@
+/*
+    Helper classes
+    
+*/
+
+// Position
+.has-space- {
+  &all {
+    @include padding(1.5rem, 1.5rem);
+  }
+  &top {
+    @include padding(1.5rem, false);
+  }
+}
+
+// Size
+.has-height- {
+  &full {
+    height: 100vh;
+  }
+  &two-third {
+    height: 67vh;
+  }
+}
+
+// Flex
+.is-wrapping {
+  flex-wrap: wrap;
+}
+
+// Border
+.has-border {
+  &.bd-top {
+    border-top: 1px solid $dark;
+  }
+  &.bd-right {
+    border-right: 1px solid $dark;
+  }
+  &.bd-left {
+    border-left: 1px solid $dark;
+  }
+  &.bd-bottom {
+    border-bottom: 1px solid $dark;
+  }
+}
+
+// Shapes
+
+.is-square {
+  width: $navbar-height;
+  height: $navbar-height;
+  color: $light;
+  background-color: #ef7f5a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  i {
+    font-size: 2rem;
+  }
+}

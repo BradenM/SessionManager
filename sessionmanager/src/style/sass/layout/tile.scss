@@ -1,0 +1,29 @@
+// TIle Child, used for cards that are direct children of tiles
+.card.tile-child {
+  display: block;
+  cursor: pointer;
+  border-radius: 5px;
+  .card-image {
+    padding-top: 1rem;
+  }
+  .card-content {
+    padding: 1rem;
+  }
+  &.is-active {
+    box-shadow: rgba(10, 10, 10, 0.1) 0px 2px 3px, $info 0px 0px 1px 1px;
+  }
+}
+
+// Session tile
+.is-session-tile {
+  .card {
+    @include padding(1rem, 1rem);
+    border-radius: 0.75rem;
+    @extend %left-right-shadow;
+  }
+}
+
+// Wrapping Tile
+.tile.is-wrapping {
+  flex-wrap: wrap !important;
+}
