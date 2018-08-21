@@ -17,7 +17,7 @@ class CreateFrame extends Component {
         helpText: 'Enter a name for your new session',
         has_click: false,
         type: 'input',
-        exceptions: []
+        exceptions: [Exception('SessionExists')]
       },
       {
         title: 'Path',
@@ -166,7 +166,7 @@ class CreateFrame extends Component {
       () => {
         let current = this.state.steps[this.state.current_step];
 
-        if (current.type === 'load' || current_status !== this.status_good) {
+        if (current.type === 'load') {
           this.handleProgress(current);
           if (current.title === 'Copy' || current_status !== this.status_good) {
             this.handleCreate();
