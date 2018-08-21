@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { fetch_sessions, load_thumbs, get_thumb } from './backend';
 import Async from 'react-promise';
+import Img from 'react-image';
+import fallback_img from 'imgs/bg.jpg';
 
 fetch_sessions().then(val => {
   /* Debug */
@@ -13,21 +15,27 @@ const images = get_thumb(
 
 const Tile = props => {
   return (
-    <div className="tile is-3 is-parent ">
-      <div className="tile has-text-centered is-child hvr-outline-in hvr-grow">
-        <div className="card">
-          <div className="card-filter" />
-          <div className="card-image">
-            <figure className="image">
-              <img src={props.thumb} alt="" />
-            </figure>
+    <Img
+      src={props.thumb}
+      decode={false}
+      container={children => {
+        return (
+          <div className="tile is-3 is-parent ">
+            <div className="tile has-text-centered is-child hvr-outline-in hvr-grow">
+              <div className="card">
+                <div className="card-filter" />
+                <div className="card-image">
+                  <figure className="image">{children}</figure>
+                </div>
+                <div className="card-content">
+                  <h1 className="title is-4 has-text-light">{props.value}</h1>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="card-content">
-            <h1 className="title is-4 has-text-light">{props.value}</h1>
-          </div>
-        </div>
-      </div>
-    </div>
+        );
+      }}
+    />
   );
 };
 
@@ -63,7 +71,7 @@ class SessionList extends Component {
   }
   render() {
     return (
-      <div className="session-list">
+      <div className={'session-list'}>
         <div className="tile is-ancestor is-flex is-wrapping">
           {this.loadTiles()}
         </div>

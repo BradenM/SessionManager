@@ -1,4 +1,7 @@
 .session-list {
+  &.is-active {
+    opacity: 1;
+  }
   padding: 1rem;
   .is-child {
     cursor: pointer;
