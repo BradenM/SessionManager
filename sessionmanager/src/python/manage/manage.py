@@ -7,6 +7,7 @@ import os
 import subprocess
 from shutil import copyfile, rmtree, copytree
 from utils import helpers as h, image
+from utils.exceptions import NoRawFiles
 import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
@@ -43,6 +44,8 @@ def iterate_files(path, ext):
 def copy_raw(raw_path, path, callback):
     count = len([i for i in os.listdir(raw_path)
                  if i.lower().endswith('.cr2')])
+    if not count > 0:
+        raise NoRawFiles(str(raw_path))
     for file in os.listdir(raw_path):
         if file.lower().endswith(".cr2"):
             copyfile("%s/%s" % (raw_path, file), "%s/%s" %

@@ -27,7 +27,7 @@ const StepItem = props => {
   let active = props.active ? ' is-active' : '';
   let complete = props.complete ? ' is-completed' : '';
   return (
-    <div className={'step-item has-text-light is-link' + active + complete}>
+    <div className={'step-item has-text-light' + active + complete}>
       <div className="step-marker" />
       <div className="step-details">
         <p className="step-title">{props.title}</p>

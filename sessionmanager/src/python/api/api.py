@@ -57,7 +57,10 @@ class Api(object):
         return prog[request]
 
     def create_session(self, json_request):
+        prog_reset = self.progress.copy()
         self.create(json_request, self.session_callback)
+        self.progress = prog_reset
+        print(f'PROGRESS: {self.progress}')
         return 'Temp session created return'
 
 

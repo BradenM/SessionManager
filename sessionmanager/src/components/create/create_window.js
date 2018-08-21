@@ -3,6 +3,7 @@ import { Icon } from '../elements/icons';
 import { create_session, get_prog } from '../backend';
 import StepTimeline from './timeline';
 import StepPage from './step';
+import { Exception } from 'utils/validate';
 const electron = window.require('electron');
 const { dialog } = electron.remote;
 
@@ -15,14 +16,16 @@ class CreateFrame extends Component {
         value: '',
         helpText: 'Enter a name for your new session',
         has_click: false,
-        type: 'input'
+        type: 'input',
+        exceptions: []
       },
       {
         title: 'Path',
         value: '',
         helpText: 'Open your Raw images',
         has_click: true,
-        type: 'input'
+        type: 'input',
+        exceptions: [Exception('NoRawFiles')]
       },
       {
         title: 'Copy',
@@ -30,7 +33,8 @@ class CreateFrame extends Component {
         helpText: 'Copying Files',
         has_click: false,
         type: 'load',
-        request: 'copy'
+        request: 'copy',
+        exceptions: []
       },
       {
         title: 'Convert',
@@ -38,21 +42,27 @@ class CreateFrame extends Component {
         helpText: 'Converting to DNG',
         has_click: false,
         type: 'load',
-        request: 'convert'
+        request: 'convert',
+        exceptions: []
       },
       {
-        title: 'Finish',
-        value: 'Finished',
-        helpText: 'Converting to DNG',
+        title: 'Finished',
+        value: '',
+        helpText: 'Session Created!',
         has_click: false,
-        type: 'input'
+        type: 'finish',
+        exceptions: []
       }
     ];
+    this.status_good = 'GOOD';
     this.state = {
       steps: steps,
-      current_step: 0
+      current_step: 0,
+      status: this.status_good
     };
     this.handleProgress = this.handleProgress.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
   handlePath() {
@@ -80,17 +90,32 @@ class CreateFrame extends Component {
       name: steps[0].value,
       raw_path: steps[1].value[0]
     };
-    create_session(session).then((res, error) => {
-      // Debug
-      console.log('CREATE RES: ', res);
-      console.log('CREATE ERROR: ', error);
-    });
+    create_session(session)
+      .then(res => {
+        // Debug
+        console.log('CREATE RES: ', res);
+      })
+      .catch(error => {
+        console.log('CREATE ERROR: ', error);
+        if (error) {
+          // True meaning parse and create exception
+          let exception = Exception(error, true);
+          this.setState({
+            status: exception.code
+          });
+          this.handleError(exception);
+          return;
+        }
+      });
   }
 
   handleProgress(step) {
     let steps = this.state.steps.slice();
     let curStep = this.state.current_step;
     let step_req = steps[curStep].request;
+    if (this.state.status !== this.status_good) {
+      return;
+    }
     get_prog(step_req, res => {
       // Debug
       console.log('callback res: ', res);
@@ -126,22 +151,40 @@ class CreateFrame extends Component {
   handleNext() {
     let steps = this.state.steps.slice();
     let curStep = this.state.current_step;
+    let isDone = steps.indexOf(steps[curStep + 1]) == -1;
+    let current_status = this.state.status;
+    if (isDone) {
+      this.props.toggleCreate();
+      return;
+    }
     this.setState(
       {
         steps: steps,
-        current_step: curStep + 1
+        current_step: curStep + 1,
+        status: this.status_good
       },
       () => {
         let current = this.state.steps[this.state.current_step];
 
-        if (current.type === 'load') {
+        if (current.type === 'load' || current_status !== this.status_good) {
           this.handleProgress(current);
-          if (current.title === 'Copy') {
+          if (current.title === 'Copy' || current_status !== this.status_good) {
             this.handleCreate();
           }
         }
       }
     );
+  }
+
+  handleError(error) {
+    let steps = this.state.steps.slice();
+    let resp_step =
+      steps[steps.indexOf(steps.filter(s => s.exceptions.includes(error))[0])];
+    resp_step.helpText = error.helpText;
+    this.setState({
+      steps: steps,
+      current_step: steps.indexOf(resp_step)
+    });
   }
 
   handleInput(event) {
@@ -183,14 +226,18 @@ class CreateFrame extends Component {
             handleSubmit={() => this.handleNext()}
             handleChange={e => this.handleInput(e)}
             handleClick={() => this.handlePath()}
-            testCreate={() => this.handleCreate()}
+            hasError={this.state.status !== this.status_good}
             step={curStep}
           />
         </div>
-        <StepTimeline
-          steps={this.state.steps}
-          current={this.state.current_step}
-        />
+        <div className="columns">
+          <div className="column step-timeline">
+            <StepTimeline
+              steps={this.state.steps}
+              current={this.state.current_step}
+            />
+          </div>
+        </div>
       </div>
     );
   }

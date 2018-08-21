@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Icon } from '../elements/icons';
 
 class Input extends Component {
   render() {
@@ -8,7 +7,7 @@ class Input extends Component {
         <input
           type="text"
           id={'input_' + this.props.label}
-          className={'input ' + this.props.class}
+          className={'input ' + this.props.className}
           value={this.props.value}
           onChange={e => this.props.handleChange(e)}
           onClick={e => {
@@ -26,7 +25,7 @@ class Input extends Component {
             <i className="icon-right-open" />
           </span>
         </span>
-        <p className="help has-text-white">{this.props.helpText}</p>
+        <p className={'help ' + this.props.errorClass}>{this.props.helpText}</p>
       </div>
     );
   }
