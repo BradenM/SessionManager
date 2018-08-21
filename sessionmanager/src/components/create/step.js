@@ -19,10 +19,12 @@ class StepPage extends Component {
     let r = renderTypes[step.type];
     return r(step);
   }
+
   renderInput(step) {
     return (
       <Input
         className="fancy-step"
+        errorClass={this.props.hasError ? 'has-error' : ''}
         label={step.title}
         handleChange={e => this.props.handleChange(e)}
         handleSubmit={() => {

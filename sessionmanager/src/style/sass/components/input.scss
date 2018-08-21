@@ -1,5 +1,13 @@
 .control.input-control {
   text-align: center;
+  .help {
+    color: $white;
+    &.has-error {
+      color: $error_color;
+      font-size: $size-6;
+      font-weight: $weight-semibold;
+    }
+  }
   span {
     &.focus-border {
       width: 0px;
