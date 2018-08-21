@@ -41,11 +41,11 @@ class CreateFrame extends Component {
         request: 'convert'
       },
       {
-        title: 'Finish',
-        value: 'Finished',
-        helpText: 'Converting to DNG',
+        title: 'Finished',
+        value: '',
+        helpText: 'Session Created!',
         has_click: false,
-        type: 'input'
+        type: 'finish'
       }
     ];
     this.state = {
@@ -126,6 +126,11 @@ class CreateFrame extends Component {
   handleNext() {
     let steps = this.state.steps.slice();
     let curStep = this.state.current_step;
+    let isDone = steps.indexOf(steps[curStep + 1]) == -1;
+    if (isDone) {
+      this.props.toggleCreate();
+      return;
+    }
     this.setState(
       {
         steps: steps,
@@ -187,10 +192,14 @@ class CreateFrame extends Component {
             step={curStep}
           />
         </div>
-        <StepTimeline
-          steps={this.state.steps}
-          current={this.state.current_step}
-        />
+        <div className="columns">
+          <div className="column step-timeline">
+            <StepTimeline
+              steps={this.state.steps}
+              current={this.state.current_step}
+            />
+          </div>
+        </div>
       </div>
     );
   }
