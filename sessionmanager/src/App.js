@@ -2,12 +2,31 @@ import React, { Component } from 'react';
 import StatusBar from './components/statusbar';
 import NavBar from './components/navbar';
 import Carousel from './components/image_carousel';
-import SessionList from './components/sessions';
+import SessionList from 'components/sessions/list';
+import SessionInfo from 'components/sessions/info';
 import CreateFrame from './components/create/create_window';
 import image1 from './imgs/bg.jpg';
 import image2 from './imgs/ol.jpg';
 
 class MainWindow extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      active_session: null
+    };
+
+    this.setSession = this.setSession.bind(this);
+  }
+
+  setSession(session) {
+    if (session === this.state.active_session) {
+      return;
+    }
+    this.setState({
+      active_session: session
+    });
+  }
+
   render() {
     let active = this.props.active ? '' : 'is-blurred';
     return (
@@ -18,7 +37,7 @@ class MainWindow extends Component {
             <NavBar toggleCreate={this.props.toggleCreate} />
           </div>
           <div className="column is-3 has-height-full">
-            <h1>Hello</h1>
+            <SessionInfo session={this.state.active_session} />
           </div>
           <div className="column is-content-window has-height-full">
             <Carousel
@@ -27,7 +46,10 @@ class MainWindow extends Component {
               slideDelay={2000}
               content={
                 <div>
-                  <SessionList />
+                  <SessionList
+                    activeSession={this.state.active_session}
+                    onHover={s => this.setSession(s)}
+                  />
                 </div>
               }
             />

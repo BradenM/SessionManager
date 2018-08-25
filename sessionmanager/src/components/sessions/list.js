@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { fetch_sessions, load_thumbs, get_thumb } from './backend';
+import { fetch_sessions, load_thumbs, get_thumb } from 'components/backend';
 import Async from 'react-promise';
 import Img from 'react-image';
-import fallback_img from 'imgs/bg.jpg';
 
 fetch_sessions().then(val => {
   /* Debug */
@@ -10,7 +9,7 @@ fetch_sessions().then(val => {
 });
 
 const images = get_thumb(
-  require.context('../imgs/thumb', false, /\.(png|jpe?g|svg)$/)
+  require.context('imgs/thumb', false, /\.(png|jpe?g|svg)$/)
 );
 
 const Tile = props => {
@@ -20,7 +19,10 @@ const Tile = props => {
       decode={false}
       container={children => {
         return (
-          <div className="tile is-3 is-parent ">
+          <div
+            onMouseEnter={() => props.onMouseEnter(props.session)}
+            className="tile is-3 is-parent "
+          >
             <div className="tile has-text-centered is-child hvr-outline-in hvr-grow">
               <div className="card">
                 <div className="card-filter" />
@@ -42,6 +44,15 @@ const Tile = props => {
 class SessionList extends Component {
   constructor(props) {
     super(props);
+    this.renderTiles = this.renderTiles.bind(this);
+    this.loadTiles = this.loadTiles.bind(this);
+    this.state = {
+      sessions: null
+    };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.activeSession === this.props.activeSession;
   }
 
   loadTiles() {
@@ -62,7 +73,15 @@ class SessionList extends Component {
         then={sessions => {
           let tiles = [];
           sessions.forEach(s => {
-            tiles.push(<Tile value={s.name} thumb={images[s.cover_img]} />);
+            tiles.push(
+              <Tile
+                key={s.name}
+                onMouseEnter={s => this.props.onHover(s)}
+                value={s.name}
+                session={s}
+                thumb={images[s.cover_img]}
+              />
+            );
           });
           return tiles;
         }}

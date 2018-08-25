@@ -22,3 +22,15 @@
     }
   }
 }
+
+.session-info {
+  padding: 1rem;
+  .title {
+    color: $white;
+    font-size: $size-2;
+    text-shadow: $title-shadow;
+  }
+  .subtitle {
+    font-size: 0.9rem;
+  }
+}
