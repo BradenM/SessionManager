@@ -113,7 +113,8 @@ class Session(Base):
             'file_count': self.file_count,
             'create_date': helpers.translate_date(self.create_date),
             'modify_date': helpers.translate_date(self.modify_date),
-            'cover_img': Path(self.images[0].thumb).name
+            'cover_img': Path(self.images[0].thumb).name,
+            'images': [img.thumb for img in self.images]
         }
         return data
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Icon } from './elements/icons';
+import Anime from 'react-anime';
 
 function StatusItem(props) {
   return (
@@ -34,6 +35,25 @@ class StatusMenu extends Component {
 }
 
 class StatusBar extends Component {
+  handleTitle(title) {
+    if (title === 'Session Manager') {
+      return <h1 className="title is-4 has-text-weight-light">{title}</h1>;
+    } else {
+      console.log('Alt title');
+      return (
+        <Anime opacity={[1, 0]} delay={400}>
+          <Anime opacity={[0, 1]} delay={800}>
+            <a className="button is-light">
+              <span className="icon">
+                {Icon('arrow-circle-left', 'lg', 'grey')}
+              </span>
+            </a>
+            <h1 className="title is-4 has-text-weight-light">{title}</h1>
+          </Anime>
+        </Anime>
+      );
+    }
+  }
   render() {
     return (
       <nav
@@ -50,9 +70,7 @@ class StatusBar extends Component {
             </div>
           </div>
           <div className="navbar-item">
-            <h1 className="title is-4 has-text-weight-light">
-              Session Manager
-            </h1>
+            {this.handleTitle(this.props.title)}
           </div>
         </div>
         <StatusMenu />

@@ -33,10 +33,18 @@
       padding-bottom: 7rem;
     }
   }
+  &.manage-window {
+    .image-list {
+      padding: 1rem;
+    }
+  }
 
   // States
   &.is-blurred {
     filter: blur(5px);
+  }
+  &.is-hidden {
+    opacity: 0;
   }
   &.overlay {
     position: absolute;

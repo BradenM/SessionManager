@@ -21,6 +21,7 @@ const Tile = props => {
         return (
           <div
             onMouseEnter={() => props.onMouseEnter(props.session)}
+            onClick={() => props.onClick(props.session)}
             className="tile is-3 is-parent "
           >
             <div className="tile has-text-centered is-child hvr-outline-in hvr-grow">
@@ -77,6 +78,7 @@ class SessionList extends Component {
               <Tile
                 key={s.name}
                 onMouseEnter={s => this.props.onHover(s)}
+                onClick={s => this.props.onClick(s)}
                 value={s.name}
                 session={s}
                 thumb={images[s.cover_img]}

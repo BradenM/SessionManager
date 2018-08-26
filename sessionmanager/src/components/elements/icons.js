@@ -6,11 +6,12 @@ import {
   faPlus,
   faList,
   faTh,
-  faTimes
+  faTimes,
+  faArrowCircleLeft
 } from '@fortawesome/free-solid-svg-icons';
 
 // Font Awesome
-library.add(faCog, faPlus, faList, faTh, faTimes);
+library.add(faCog, faPlus, faList, faTh, faTimes, faArrowCircleLeft);
 
 export const Icon = (icon, size = '1x', color = 'grey') => (
   <div className={'has-text-' + color}>
