@@ -19,6 +19,18 @@ export function load_thumbs() {
   });
 }
 
+export function get_imgs(paths) {
+  /*
+    Encode Thumbnails to Base64 to use in frontend
+    TODO: Replace dynamic thumbs with this
+  */
+  return new Promise(resolve => {
+    client.invoke('get_images', paths, (error, res) => {
+      resolve(res);
+    });
+  });
+}
+
 export function get_thumb(r) {
   /*
     Dynamically Require Thumbs

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from manage.session import Session
 from shutil import copy
+import base64
 
 
 class Api(object):
@@ -22,6 +23,16 @@ class Api(object):
             if not tmb.name in web_img.glob('*.jpg'):
                 copy(str(tmb), str(web_img / tmb.name))
         return [str(x) for x in web_img.glob('*.jpg')]
+
+    def get_images(self, paths):
+        imgs = []
+        for p in paths:
+            img = open(p, 'rb')
+            bytes = bytearray(img.read())
+            str = base64.b64encode(bytes)
+            imgs.append(str)
+            img.close()
+        return imgs
 
     def fetch_sessions(self):
         sessions = Session.all()

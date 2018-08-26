@@ -67,7 +67,7 @@ class MainWindow extends Component {
             />
           </div>
           <ManageWindow
-            active={!this.props.active}
+            active={this.props.openSession !== null}
             session={this.props.openSession}
           />
         </div>
@@ -132,6 +132,10 @@ class App extends Component {
         foreground: 'is-blurred',
         infoActive: true,
         listActive: true
+      },
+      manage: {
+        active: false,
+        session: null
       },
       create: {
         active: !this.state.create.active
