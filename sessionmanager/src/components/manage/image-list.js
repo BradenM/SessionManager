@@ -3,7 +3,7 @@ import Async from 'react-promise';
 import { get_imgs } from 'components/backend';
 import Img from 'react-image';
 import Anime from 'react-anime';
-import TextFit from 'react-textfit';
+import TextFit from 'react-textfit'; 
 
 class ImageList extends Component {
   constructor(props) {

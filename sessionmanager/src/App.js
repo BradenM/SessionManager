@@ -34,7 +34,10 @@ class MainWindow extends Component {
     let active = this.props.active ? '' : this.props.foreground;
     return (
       <div className={'window main-window ' + active}>
-        <StatusBar title={this.props.title} />
+        <StatusBar
+          goHome={() => this.props.toggleManage()}
+          title={this.props.title}
+        />
         <div className="columns is-gapless">
           <div className="column is-narrow">
             <NavBar toggleCreate={this.props.toggleCreate} />
@@ -177,9 +180,10 @@ class App extends Component {
   }
 
   handleCreateWindow() {
+    let win_status = this.state.create.active;
     this.setState({
       main: {
-        active: !this.state.main.active,
+        active: win_status,
         foreground: 'is-blurred',
         infoActive: true,
         listActive: true
@@ -189,21 +193,22 @@ class App extends Component {
         session: null
       },
       create: {
-        active: !this.state.create.active
+        active: !win_status
       }
     });
     console.log('Create window toggled');
   }
 
-  handleManageWindow(session) {
+  handleManageWindow(session = null) {
+    let win_status = this.state.manage.active;
     this.setState({
       main: {
-        active: !this.state.main.active,
-        listActive: false,
-        infoActive: false
+        active: win_status,
+        listActive: win_status,
+        infoActive: win_status
       },
       manage: {
-        active: !this.state.manage.active,
+        active: !win_status,
         session: session
       }
     });

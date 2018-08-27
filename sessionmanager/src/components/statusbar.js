@@ -43,7 +43,7 @@ class StatusBar extends Component {
       return (
         <Anime opacity={[1, 0]} delay={400}>
           <Anime opacity={[0, 1]} delay={800}>
-            <a className="button is-light">
+            <a onClick={() => this.props.goHome()} className="button is-light">
               <span className="icon">
                 {Icon('arrow-circle-left', 'lg', 'grey')}
               </span>
