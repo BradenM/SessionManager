@@ -113,7 +113,8 @@ class Session(Base):
             'file_count': self.file_count,
             'create_date': helpers.translate_date(self.create_date),
             'modify_date': helpers.translate_date(self.modify_date),
-            'cover_img': Path(self.images[0].thumb).name
+            'cover_img': Path(self.images[0].thumb).name,
+            'images': [img.to_dict() for img in self.images]
         }
         return data
 
@@ -152,8 +153,8 @@ class Image(Base):
         self.session_path = session.path
         self.name = name
         self.path = "%s/%s" % (self.session_path, self.name)
-        display = self.name.rstrip(".dng")
-        self.display = display
+        display = self.session.name + '_' + self.name.split('_')[1]
+        self.display = display.rstrip('.dng')
         self.position = "RAW"
         self.thumb = ""
         self.jpg = ""
@@ -207,6 +208,18 @@ class Image(Base):
             else:
                 image.export(proof_path)
         return export_path
+
+    def to_dict(self):
+        data = {
+            'name': self.name,
+            'path': self.path,
+            'display_name': self.display,
+            'type': self.position,
+            'thumb': self.thumb,
+            'jpg': self.jpg,
+            'modify_date': helpers.translate_date(self.modify)
+        }
+        return data
 
 
 class Proof(Base):

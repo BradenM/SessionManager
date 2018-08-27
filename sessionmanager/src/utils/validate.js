@@ -17,6 +17,10 @@ const exceptions = [
     helpText: 'There are no .CR2 files in this path.'
   },
   {
+    code: 'SessionExists',
+    helpText: 'This Session already exists.'
+  },
+  {
     code: 'Error',
     helpText: 'Some Error'
   }

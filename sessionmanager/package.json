@@ -15,9 +15,12 @@
     "npm": "^6.3.0",
     "rc-progress": "^2.2.5",
     "react": "^16.4.1",
+    "react-anime": "^2.1.0",
     "react-dom": "^16.4.1",
+    "react-image": "^1.4.1",
     "react-promise": "^2.0.3",
     "react-scripts": "1.1.4",
+    "react-textfit": "^1.1.0",
     "react-transition-group": "^2.4.0",
     "zerorpc": "fyears/zerorpc-node"
   },

@@ -1,0 +1,47 @@
+// Variables
+$grid-gap: 8px
+
+// Class
+.grid
+  display: grid
+  grid-template-rows: auto
+  grid-gap: $grid-gap
+
+  @for $i from 1 through 12
+    &.is-#{$i}
+      grid-template-columns: repeat($i, +1fr)
+
+  +mobile
+    @for $i from 1 through 12
+      &.is-#{$i}-mobile
+        grid-template-columns: repeat($i, +1fr)
+
+
+  +tablet
+    @for $i from 1 through 12
+      &.is-#{$i}-tablet
+        grid-template-columns: repeat($i, +1fr)
+
+
+  +touch
+    @for $i from 1 through 12
+      &.is-#{$i}-touch
+        grid-template-columns: repeat($i, +1fr)
+
+
+  +desktop
+    @for $i from 1 through 12
+      &.is-#{$i}-desktop
+        grid-template-columns: repeat($i, +1fr)
+
+
+  +widescreen
+    @for $i from 1 through 12
+      &.is-#{$i}-widescreen
+        grid-template-columns: repeat($i, +1fr)
+
+
+  +fullhd
+    @for $i from 1 through 12
+      &.is-#{$i}-fullhd
+        grid-template-columns: repeat($i, +1fr)

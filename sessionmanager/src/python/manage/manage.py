@@ -7,7 +7,7 @@ import os
 import subprocess
 from shutil import copyfile, rmtree, copytree
 from utils import helpers as h, image
-from utils.exceptions import NoRawFiles
+from utils.exceptions import NoRawFiles, SessionExists
 import multiprocessing as mp
 from rawkit.raw import Raw
 from data import data
@@ -18,6 +18,9 @@ from pathlib import Path
 # Structure Session
 def structure(inst):
     # Base - (Session Dir, Date, Name)
+    existing = [s.name for s in inst.all()]
+    if inst.name in existing:
+        raise SessionExists(inst.name)
     session_path = Path(inst.__dir__) / h.get_month_year() / \
         h.remove_whitespace(inst.name)
     paths = [
