@@ -19,13 +19,13 @@ export function load_thumbs() {
   });
 }
 
-export function get_imgs(paths) {
+export function get_imgs(images) {
   /*
     Encode Thumbnails to Base64 to use in frontend
     TODO: Replace dynamic thumbs with this
   */
   return new Promise(resolve => {
-    client.invoke('get_images', paths, (error, res) => {
+    client.invoke('encode_thumbs', images, (error, res) => {
       resolve(res);
     });
   });

@@ -6,6 +6,8 @@ import SessionList from 'components/sessions/list';
 import SessionInfo from 'components/sessions/info';
 import ImageList from 'components/manage/image-list';
 import CreateFrame from './components/create/create_window';
+import Img from 'react-image';
+import _ from 'lodash';
 import image1 from './imgs/bg.jpg';
 import image2 from './imgs/ol.jpg';
 
@@ -32,7 +34,10 @@ class MainWindow extends Component {
     let active = this.props.active ? '' : this.props.foreground;
     return (
       <div className={'window main-window ' + active}>
-        <StatusBar title={this.props.title} />
+        <StatusBar
+          goHome={() => this.props.toggleManage()}
+          title={this.props.title}
+        />
         <div className="columns is-gapless">
           <div className="column is-narrow">
             <NavBar toggleCreate={this.props.toggleCreate} />
@@ -66,10 +71,14 @@ class MainWindow extends Component {
               }
             />
           </div>
-          <ManageWindow
-            active={this.props.openSession !== null}
-            session={this.props.openSession}
-          />
+          {this.props.openSession !== null ? (
+            <ManageWindow
+              active={this.props.openSession !== null}
+              session={this.props.openSession}
+            />
+          ) : (
+            ''
+          )}
         </div>
       </div>
     );
@@ -88,13 +97,58 @@ class CreateWindow extends Component {
 }
 
 class ManageWindow extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      focused_image: null,
+      image_active: false
+    };
+    this.handleHover = _.debounce(this.handleHover.bind(this), 250);
+  }
+  handleHover(img) {
+    if (img === this.state.focused_image) {
+      return;
+    }
+    this.setState(
+      {
+        image_active: false
+      },
+      () => {
+        setTimeout(
+          function() {
+            this.setState({
+              focused_image: img,
+              image_active: true
+            });
+          }.bind(this),
+          600
+        );
+      }
+    );
+  }
   render() {
     let active = this.props.active ? 'is-active' : '';
+    let img = this.state.focused_image;
     return (
       <div className={'window manage-window ' + (active ? '' : 'is-hidden')}>
+        <div
+          className={
+            'background-img ' + (this.state.image_active ? 'is-active' : '')
+          }
+        >
+          <div className="img-overlay" />
+          <Img
+            src={['data:image/jpeg;base64,' + (img !== null ? img.thumb : '')]}
+            className="img"
+          />
+        </div>
         <div className="image-list">
           {this.props.active ? (
-            <ImageList session={this.props.session} />
+            <ImageList
+              onHover={img => this.handleHover(img)}
+              focused={this.state.focused_image}
+              session={this.props.session}
+            />
           ) : (
             undefined
           )}
@@ -126,9 +180,10 @@ class App extends Component {
   }
 
   handleCreateWindow() {
+    let win_status = this.state.create.active;
     this.setState({
       main: {
-        active: !this.state.main.active,
+        active: win_status,
         foreground: 'is-blurred',
         infoActive: true,
         listActive: true
@@ -138,21 +193,22 @@ class App extends Component {
         session: null
       },
       create: {
-        active: !this.state.create.active
+        active: !win_status
       }
     });
     console.log('Create window toggled');
   }
 
-  handleManageWindow(session) {
+  handleManageWindow(session = null) {
+    let win_status = this.state.manage.active;
     this.setState({
       main: {
-        active: !this.state.main.active,
-        listActive: false,
-        infoActive: false
+        active: win_status,
+        listActive: win_status,
+        infoActive: win_status
       },
       manage: {
-        active: !this.state.manage.active,
+        active: !win_status,
         session: session
       }
     });
