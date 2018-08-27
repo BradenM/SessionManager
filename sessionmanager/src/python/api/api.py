@@ -24,13 +24,12 @@ class Api(object):
                 copy(str(tmb), str(web_img / tmb.name))
         return [str(x) for x in web_img.glob('*.jpg')]
 
-    def get_images(self, paths):
-        imgs = []
-        for p in paths:
-            img = open(p, 'rb')
+    def encode_thumbs(self, imgs):
+        for i in imgs:
+            img = open(i['thumb'], 'rb')
             bytes = bytearray(img.read())
-            str = base64.b64encode(bytes)
-            imgs.append(str)
+            encode = base64.b64encode(bytes)
+            i['thumb'] = encode
             img.close()
         return imgs
 

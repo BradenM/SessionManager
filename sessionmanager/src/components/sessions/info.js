@@ -12,7 +12,7 @@ class SessionInfo extends Component {
     return (
       <div className="session-info">
         <h1 className="title">{name}</h1>
-        <h6 class="subtitle has-text-grey">{date}</h6>
+        <h6 className="subtitle has-text-grey">{date}</h6>
       </div>
     );
   }

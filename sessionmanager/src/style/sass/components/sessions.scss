@@ -39,6 +39,37 @@
   padding: 1rem;
   height: 100vh;
   overflow-y: scroll;
+
+  .is-session-img {
+    box-shadow: 0 2px 3px rgba($black, 0.4), 0 0 0 1px rgba($black, 0.4);
+    .img-caption {
+      position: absolute;
+      width: 0;
+      opacity: 0;
+      height: 20%;
+      background-color: $white;
+      bottom: 0;
+      @include transition(all, 0.3s);
+      display: flex;
+      padding-left: 0.25rem;
+      justify-content: left;
+      align-items: center;
+      color: $dark;
+      text-shadow: $subtitle-shadow;
+      overflow: visible;
+      text-transform: uppercase;
+      font-size: $size-5;
+      font-family: 'Roboto', $family-sans-serif;
+      font-weight: $weight-bold;
+      cursor: pointer;
+    }
+    &:hover {
+      .img-caption {
+        width: 100%;
+        opacity: 1;
+      }
+    }
+  }
   img {
     cursor: pointer;
     height: 100% !important;
