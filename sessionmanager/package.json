@@ -40,7 +40,7 @@
   "devDependencies": {
     "bulma": "^0.7.1",
     "bulma-steps": "^2.2.1",
-    "electron": "2.0.6",
+    "electron": "9.1.0",
     "electron-react-devtools": "^0.5.3",
     "eslint": "^5.3.0",
     "eslint-plugin-react": "^7.11.1",
